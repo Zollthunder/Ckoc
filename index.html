@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C-kocka – egy kis barát az asztalodra</title>
+<meta name="description" content="C-kocka: asztali AI-asszisztens koncepció. 3D modell Fusion 360-ban, videó és weboldal – mindez egy AI-jal együtt, pár nap alatt.">
+<meta property="og:title" content="C-kocka – egy kis barát az asztalodra">
+<meta property="og:description" content="Asztali AI-asszisztens koncepció, amit egy AI-jal együtt terveztem meg.">
+<meta property="og:image" content="assets/poster.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='6' width='52' height='52' rx='12' fill='%2330333a'/%3E%3Cpath d='M44 22a14 14 0 1 0 0 20' fill='none' stroke='%23ff9a3c' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="web/site.css">
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+
+<header class="nav">
+  <a class="brand" href="#top"><span class="brand-c">C</span>-kocka</a>
+  <nav>
+    <a href="#video">Videó</a>
+    <a href="#funkciok">Funkciók</a>
+    <a href="#modell">3D modell</a>
+    <a href="#hogyan">Hogyan készült</a>
+    <a href="#letoltes">Letöltés</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ===== Nyitó rész az interaktív 3D kockával ===== -->
+  <section class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">AI Kihívás · koncepciótermék</p>
+      <h1>Egy kis barát<br>az asztalodra.</h1>
+      <p class="lead">A <strong>C-kocka</strong> egy tenyérnyi asztali AI-asszisztens: hozzá lehet szólni, mindig jókedvű, és a világító <span class="c-mark">C</span> betű meg a kis kijelzőn mosolygó arca mutatja, mit csinál éppen. Ha pedig rossz napod van, el is dobhatod.</p>
+      <p class="lead small">Az egészet – az ötlettől a 3D modellen és a videón át ezen a weboldalig – egy mesterséges intelligenciával együtt csináltam, pár nap alatt.</p>
+      <div class="cta">
+        <a class="btn primary" href="#video">▶ Videó megnézése</a>
+        <a class="btn" href="#hogyan">Hogyan készült?</a>
+      </div>
+    </div>
+    <div class="hero-3d">
+      <div id="viewer" class="viewer" aria-label="Interaktív 3D C-kocka – húzd az egérrel a forgatáshoz">
+        <div class="viewer-loading">3D modell betöltése…</div>
+      </div>
+      <div class="modes" role="group" aria-label="Próbáld ki a kocka módjait">
+        <button data-mode="sunny" class="on">☀️ Alap</button>
+        <button data-mode="party">🎵 Party</button>
+        <button data-mode="shake">🎱 Rázd meg!</button>
+        <button data-mode="dizzy">🤾 Dobás</button>
+        <button data-mode="dnd">📳 Ne zavarj</button>
+      </div>
+      <p class="hint">Húzd a kockát a forgatáshoz · a szeme követi az egeret 👀</p>
+    </div>
+  </section>
+
+  <!-- ===== Videó ===== -->
+  <section id="video" class="section stage">
+    <h2>A videó</h2>
+    <p class="section-lead">2:56 a C-kockáról: hogyan ébred, mit tud, és hogyan készült. A videó is kódból készült – a 3D jelenet, a zene és a hangeffektek is.</p>
+    <div class="video-wrap">
+      <video controls preload="metadata" poster="assets/poster.jpg">
+        <source src="video/c-kocka.mp4" type="video/mp4">
+        A böngésződ nem tudja lejátszani a videót – <a href="video/c-kocka.mp4">töltsd le innen</a>.
+      </video>
+    </div>
+  </section>
+
+  <!-- ===== Funkciók ===== -->
+  <section id="funkciok" class="section">
+    <h2>Mit tud?</h2>
+    <p class="section-lead">Három csoportban: szórakoztat, segít, vigyáz rád.</p>
+    <div class="groups">
+      <article class="group">
+        <h3>🎉 Szórakoztat</h3>
+        <ul>
+          <li><b>Party mód</b> – zenére a C és az alsó RGB fénygyűrű a ritmusra villog.</li>
+          <li><b>Andor, a favicc-gomb</b> 🌳 – fa borítású gomb, ami csak faviccet mond. <i>Ba-dum-tss!</i></li>
+          <li><b>A leskelődő kocka</b> – néha titokban rád néz. Ha visszanézel, gyorsan elkapja a tekintetét.</li>
+          <li><b>Stresszlabda mód</b> – dobható! A narancs gumi sarkok miatt kibírja, utána szédül egy kicsit.</li>
+          <li><b>Shake to Decide</b> – tegyél fel egy igen–nem kérdést, rázd meg, és a kijelzőn megjelenik: <b>YES</b> vagy <b>NO</b>.</li>
+        </ul>
+      </article>
+      <article class="group">
+        <h3>🤝 Segít</h3>
+        <ul>
+          <li><b>Hangalapú AI-asszisztens</b> – kérdés-válasz, emlékeztető, időzítő, fordítás, időjárás.</li>
+          <li><b>Ne zavarj mód</b> – csend és sötét, fontos dolognál csak finoman rezeg.</li>
+          <li><b>App, Bluetooth, kihangosító</b> – a telefonod hívásai a kockán keresztül.</li>
+          <li><b>Felvidít</b> – a kamera észreveszi, ha fáradt vagy szomorú vagy, és megpróbál felvidítani.</li>
+          <li><b>Bekapcsolási rituálé</b> – <i>„Welcome back, Captain! I haven't seen you for 14 hours…”</i></li>
+        </ul>
+      </article>
+      <article class="group">
+        <h3>🔒 Vigyáz rád</h3>
+        <ul>
+          <li><b>Fordítsd meg, és csend van</b> – fejjel lefelé a mikrofonok és a kamera is kikapcsolnak.</li>
+          <li><b>Helyi képfeldolgozás</b> – a kamera képe nem megy a felhőbe.</li>
+          <li><b>Jelzőfény</b> – mindig látszik, ha a kamera aktív.</li>
+        </ul>
+      </article>
+    </div>
+
+    <h3 class="sub-h">Válassz személyiséget – vagy építs sajátot</h3>
+    <div class="persona">
+      <div><span>☀️</span><b>Sunny</b><i>„Good morning, sunshine!”</i></div>
+      <div><span>🧘</span><b>Chill</b><i>„Breathe in… the emails can wait.”</i></div>
+      <div><span>🔥</span><b>Hype</b><i>„LET'S GOOOO!”</i></div>
+      <div><span>😏</span><b>Sarcastic</b><i>„Oh great. Monday.”</i></div>
+      <div><span>💼</span><b>Pro</b><i>„You have three meetings today.”</i></div>
+      <div><span>✨</span><b>Saját</b><i>csúszkák az appban: humor, energia, szarkazmus…</i></div>
+    </div>
+
+    <div class="shots">
+      <figure><img src="assets/shot-party.jpg" alt="Party mód: színes fények és hangszínkép a kijelzőn" loading="lazy"><figcaption>Party mód</figcaption></figure>
+      <figure><img src="assets/shot-dizzy.jpg" alt="Dobás után szédült szemek" loading="lazy"><figcaption>Dobás után</figcaption></figure>
+      <figure><img src="assets/shot-yes.jpg" alt="Shake to Decide: YES a kijelzőn" loading="lazy"><figcaption>Shake to Decide</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- ===== 3D modell ===== -->
+  <section id="modell" class="section">
+    <h2>A 3D modell</h2>
+    <p class="section-lead">Autodesk Fusion 360-ban készült – de nem egérrel rajzolva: az AI írt egy Python szkriptet, ami lépésről lépésre felépíti a modellt. 24 test, 51 lépés az idővonalon.</p>
+    <div class="specs">
+      <table>
+        <tr><th>Ház</th><td>8 × 8 × 8 cm, 9 mm-es lekerekítés, matt grafit</td></tr>
+        <tr><th>Előlap</th><td>Ø 33 mm-es kerek LCD kijelző, körülötte világító RGB „C”</td></tr>
+        <tr><th>Kamera</th><td>a C nyílásában, adatvédelmi jelzőfénnyel</td></tr>
+        <tr><th>Tető</th><td>alumínium lap, 6 mikrofon, érintőfelület, 4 programozható gomb (egyik fából: <i>Andor</i>)</td></tr>
+        <tr><th>Oldalak</th><td>sztereó hangszórórácsok</td></tr>
+        <tr><th>Hátlap</th><td>USB-C tápcsatlakozó</td></tr>
+        <tr><th>Sarkok</th><td>8 narancs gumi „ütköző” – ezért dobható</td></tr>
+        <tr><th>Alja</th><td>RGB fénygyűrű az asztalra vetülő fénnyel, gumitalp</td></tr>
+        <tr><th>Belül <span class="muted">(koncepció)</span></th><td>ESP32-S3 (Wi-Fi + Bluetooth), 6 tengelyes mozgásérzékelő, rezgőmotor, visszhangszűrés</td></tr>
+      </table>
+    </div>
+    <div class="gallery">
+      <figure><img src="assets/fusion/thumb-iso-top-right.jpg" alt="Fusion 360: izometrikus nézet" loading="lazy"><figcaption>Fusion – izometrikus</figcaption></figure>
+      <figure><img src="assets/fusion/thumb-front.jpg" alt="Fusion 360: elölnézet a mosolygó arccal" loading="lazy"><figcaption>Elöl: kijelző és C</figcaption></figure>
+      <figure><img src="assets/fusion/thumb-top.jpg" alt="Fusion 360: felülnézet a gombokkal" loading="lazy"><figcaption>Felül: gombok, mikrofonok</figcaption></figure>
+      <figure><img src="assets/fusion/thumb-back.jpg" alt="Fusion 360: hátulnézet" loading="lazy"><figcaption>Hátul: USB-C</figcaption></figure>
+    </div>
+    <figure class="wide"><img src="assets/build-steps.png" alt="A modell felépülése a Fusion idővonalán, hat lépésben" loading="lazy"><figcaption>Így épül fel a szkript futása közben (a Fusion idővonalát az AI léptette végig, és minden lépésről képet mentett)</figcaption></figure>
+  </section>
+
+  <!-- ===== Hogyan készült ===== -->
+  <section id="hogyan" class="section">
+    <h2>Hogyan készült?</h2>
+    <p class="section-lead">A kihívás lényege nem csak az eredmény volt, hanem az, hogyan tanulok meg valami újat egy AI segítségével. Az eszközöm a <b>Claude Code</b> volt (a beszélgetésben csak „C”-nek hívtam).</p>
+
+    <ol class="timeline">
+      <li>
+        <h4>1 · Ötlet</h4>
+        <blockquote>„kaptam egy feladatot, ahhoz kellene segítség … van valami jó ötleted?”</blockquote>
+        <p>Négy témajavaslatból a C-kocka nyert: illik az AI témához, és elég egyszerű a formája.</p>
+      </li>
+      <li>
+        <h4>2 · Koncepció és ötletelés</h4>
+        <blockquote>„esetleg van vmi ötleted még … ha lenne rajta egy kis LCD kijelző …”</blockquote>
+        <p>Közös brainstorming: én hoztam a poénokat (dobálható stresszlabda, favicc-gomb, leskelődés, kamera), az AI továbbgondolta őket működő funkcióvá.</p>
+      </li>
+      <li>
+        <h4>3 · 3D modell kódból</h4>
+        <blockquote>„Ezen a gépen van fusion360, ha esetleg tudod kezelni.”</blockquote>
+        <p>Az AI egy Fusion 360 Python szkriptet írt, ami felépíti a teljes modellt.</p>
+      </li>
+      <li>
+        <h4>4 · Ellenőrzés a Fusion MCP-vel</h4>
+        <blockquote>„fusion360hoz sincs mcp? nézz utána kérlek alaposan”</blockquote>
+        <p>Kiderült, hogy az Autodesknek van hivatalos, beépített MCP szervere. Ezzel az AI maga futtatott szkriptet, képeket készített, hibát talált és javított.</p>
+      </li>
+      <li>
+        <h4>5 · Videó – szintén kódból</h4>
+        <blockquote>„akkor lets goo, generáld a videót”</blockquote>
+        <p>Animált three.js jelenet élő arccal, Windows gépi hangok, saját szintetizált zene és hangeffektek, ffmpeg-gel összefűzve.</p>
+      </li>
+      <li>
+        <h4>6 · Ez a weboldal</h4>
+        <p>Interaktív 3D kocka, videó, a történet – és GitHub Pages-en bárki megnyithatja.</p>
+      </li>
+    </ol>
+
+    <h3 class="sub-h">Ahol elakadtam – és hogyan jutottunk túl rajta</h3>
+    <div class="stuck">
+      <div><b>A szkriptmenü nem jött elő</b><p>A Fusion a kezdőoldalon nyílik meg – ott nincs Shift+S. Előbb meg kell nyitni egy tervet.</p></div>
+      <div><b>Hiányzott a hangszórórács</b><p>A Fusion a lap éleit is a vázlatba tette, így az egész oldal besüllyedt. Megoldás: él nélküli vázlat, csak a kis profilok kivágása.</p></div>
+      <div><b>„Nincs Fusion MCP”</b><p>Az első keresés túl szűk volt. Rákérdeztem, alaposabb keresés: van hivatalos!</p></div>
+      <div><b>Régi Node.js</b><p>A gépen Node 14 van – a modern csomagok nem mentek, ezért az AI saját, egyszerű megoldásokat írt.</p></div>
+      <div><b>Robotos hang</b><p>A természetes hangokhoz Azure-kulcs kellett volna, de a céges bejelentkezésen elakadtam – maradt a finomított gépi hang.</p></div>
+      <div><b>Biztonság</b><p>Ugyanebben a Fusionben CAM-ezek a munkához – az AI minden lépés előtt ellenőrizte, hogy a C-kocka dokumentum aktív-e.</p></div>
+    </div>
+
+    <h3 class="sub-h">Eszközök</h3>
+    <ul class="tools">
+      <li>Claude Code (AI)</li><li>Autodesk Fusion 360 + Python API</li><li>Fusion MCP szerver</li><li>three.js</li><li>Node.js</li><li>ffmpeg</li><li>Windows beszédszintézis</li><li>Git + GitHub Pages</li>
+    </ul>
+    <p class="center"><a class="btn" href="NAPLO.md">📝 A teljes napló (példapromptokkal)</a> <a class="btn" href="DESIGN.md">💡 Tervezési koncepció</a></p>
+  </section>
+
+  <!-- ===== Letöltések ===== -->
+  <section id="letoltes" class="section">
+    <h2>Letöltések</h2>
+    <div class="downloads">
+      <a href="3d/c-kocka.f3d" download><b>c-kocka.f3d</b><span>Fusion 360 archív</span></a>
+      <a href="3d/c-kocka.step" download><b>c-kocka.step</b><span>STEP – bármely CAD programhoz</span></a>
+      <a href="3d/c-kocka.stl" download><b>c-kocka.stl</b><span>STL – 3D nyomtatáshoz / nézegetéshez</span></a>
+      <a href="3d/fusion/CKocka/CKocka.py" download><b>CKocka.py</b><span>a modellt felépítő Fusion szkript</span></a>
+      <a href="video/c-kocka.mp4" download><b>c-kocka.mp4</b><span>a videó (1080p)</span></a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <p><span class="brand-c">C</span>-kocka · Tervezte: Zollo &amp; C (Claude) · AI Kihívás 2026</p>
+  <p class="muted">Koncepciótermék – nem kerül forgalomba.</p>
+</footer>
+
+<script type="module" src="web/viewer.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+C-kocka – vágási DXF-ek (90 mm-es modell), mértékegység: mm, lépték 1:1
+
+tetolap_alu_2mm (alumínium 2 mm – CNC/lézer + eloxálás) – 72.0 × 2.0 × 72.0 mm
+C_fenycsatorna_opal_akril_3mm (opál akril 3 mm – lézer) – 44.0 × 48.2 × 3.0 mm
+erintobetet_opal_akril_2mm (opál akril 2 mm – lézer) – 17.8 × 2.0 × 17.8 mm
+fenygyuru_diffuzor_opal_akril_3mm (opál akril 3 mm – lézer) – 66.0 × 3.0 × 66.0 mm
+gumitalp_EPDM_1_5mm (EPDM gumi 1,5 mm – vízvágás/lézer) – 60.0 × 1.5 × 60.0 mm
+Andor_fabetet_fa_2mm (fa (bükk/tölgy) 2 mm – lézer, préselve az SLA sapkába) – 6.6 × 2.0 × 6.6 mm
+
+Megjegyzések:
+- Minden kontúr egyszer szerepel (nincs dupla vágás), zárt, mm-ben. Ellenőrzés: node tools/dxf_check.js
+- Tetőlap: 4 db Ø2,2 furat M2 süllyesztett fejű csavarhoz -> felülről 90°-os süllyesztés Ø4,2-re (a DXF ezt nem tartalmazza).
+- Diffúzor: 3 db Ø2,2 furat M2 süllyesztett csavarhoz -> ALULRÓL 90°-os süllyesztés Ø4,4-re. A gumitalp Ø5 lyukai a csavarfejek fölé esnek.
+- A betétek (C, érintőbetét) körben 0,1 mm-rel kisebbek a nyílásnál (illesztési hézag);
+  lézernél a vágásrést (kerf) ne kompenzáld kifelé.
+- Rögzítés: a C és az érintőbetét belülről SEMLEGES (neutrális) szilikonnal körbe. Ecetszagú (acetoxi) szilikont ne – repeszti az akrilt.

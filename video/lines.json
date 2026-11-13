@@ -1,0 +1,170 @@
+[
+ {
+  "id": "C01",
+  "voice": "zira",
+  "style": "cube",
+  "text": "Coffee loaded. Brain booting. Let's do this."
+ },
+ {
+  "id": "C02",
+  "voice": "zira",
+  "style": "cube",
+  "text": "Welcome back, Captain! I haven't seen you for 14 hours, 3 minutes and 12 seconds."
+ },
+ {
+  "id": "C03",
+  "voice": "zira",
+  "style": "cube",
+  "text": "Not that I was counting."
+ },
+ {
+  "id": "N01",
+  "voice": "szabolcs",
+  "style": "narrator",
+  "text": "Ez a C-kocka. Egy tenyérnyi asztali AI-asszisztens. Beszélhetsz hozzá, és mindig jókedvű."
+ },
+ {
+  "id": "N02",
+  "voice": "szabolcs",
+  "style": "narrator",
+  "text": "A kockát egy mesterséges intelligenciával együtt terveztem meg, pár nap alatt."
+ },
+ {
+  "id": "N03",
+  "voice": "szabolcs",
+  "style": "narrator",
+  "text": "Az ötlettől a kész modellig mindent beszélgetésben raktunk össze."
+ },
+ {
+  "id": "N04",
+  "voice": "szabolcs",
+  "style": "narrator",
+  "text": "A 3D modellt nem egérrel rajzoltam. Az AI egy programot írt, ami felépíti a Fusionben."
+ },
+ {
+  "id": "N05",
+  "voice": "szabolcs",
+  "style": "narrator",
+  "text": "Nem ment minden elsőre. A hibákat együtt találtuk meg, és javítottuk ki."
+ },
+ {
+  "id": "N06",
+  "voice": "szabolcs",
+  "style": "narrator",
+  "text": "A végén az AI saját maga nézte át a modellt a Fusionben, és még színt is javasolt."
+ },
+ {
+  "id": "N07",
+  "voice": "szabolcs",
+  "style": "narrator",
+  "text": "És minden lépés bekerült a naplóba."
+ },
+ {
+  "id": "N08",
+  "voice": "szabolcs",
+  "style": "narrator",
+  "text": "Kerek kijelző. Kamera. Két mikrofon. Sztereó hangszórók. RGB fények. Akku. És narancs gumi sarkok. Hogy miért? Mindjárt kiderül."
+ },
+ {
+  "id": "N09",
+  "voice": "szabolcs",
+  "style": "narrator",
+  "text": "Zenére a fények is táncolnak."
+ },
+ {
+  "id": "J01",
+  "voice": "szabolcs",
+  "style": "cube",
+  "text": "Mi az? Feldobod, repülve piros, ha leesik, fáj..."
+ },
+ {
+  "id": "J02",
+  "voice": "szabolcs",
+  "style": "cube",
+  "text": "Tégla!"
+ },
+ {
+  "id": "C05",
+  "voice": "zira",
+  "style": "cube",
+  "text": "Ouch!"
+ },
+ {
+  "id": "C06",
+  "voice": "zira",
+  "style": "cube",
+  "text": "That's 14 throws today. Coffee break?"
+ },
+ {
+  "id": "C07",
+  "voice": "zira",
+  "style": "cube",
+  "text": "Yes. Obviously."
+ },
+ {
+  "id": "N10",
+  "voice": "szabolcs",
+  "style": "narrator",
+  "text": "Ha nem akarsz zavarást, csak finoman jelez."
+ },
+ {
+  "id": "N11",
+  "voice": "szabolcs",
+  "style": "narrator",
+  "text": "Telefonhoz csatlakozik, és kihangosítóként is működik."
+ },
+ {
+  "id": "C08",
+  "voice": "zira",
+  "style": "cube",
+  "text": "Hey, you look tired. Want to hear a terrible joke?"
+ },
+ {
+  "id": "N12",
+  "voice": "szabolcs",
+  "style": "narrator",
+  "text": "Fordítsd fejjel lefelé, és a mikrofon meg a kamera is kikapcsol."
+ },
+ {
+  "id": "C09",
+  "voice": "zira",
+  "style": "sunny",
+  "text": "Good morning, sunshine!"
+ },
+ {
+  "id": "C10",
+  "voice": "zira",
+  "style": "chill",
+  "text": "Breathe in. The emails can wait."
+ },
+ {
+  "id": "C11",
+  "voice": "zira",
+  "style": "hype",
+  "text": "Let's gooooo!"
+ },
+ {
+  "id": "C12",
+  "voice": "zira",
+  "style": "sarcastic",
+  "text": "Oh great. Monday."
+ },
+ {
+  "id": "N13",
+  "voice": "szabolcs",
+  "style": "narrator",
+  "text": "Vagy rakd össze a sajátodat."
+ },
+ {
+  "id": "N14",
+  "voice": "szabolcs",
+  "style": "narrator",
+  "text": "C-kocka. Egy kis barát az asztalodra. És az első projektem, amit egy AI-jal együtt csináltam."
+ },
+ {
+  "id": "C13",
+  "voice": "zira",
+  "style": "cube",
+  "text": "See you tomorrow, Captain!"
+ }
+]

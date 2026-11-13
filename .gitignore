@@ -1,0 +1,34 @@
+# titkos kulcsok – soha ne kerüljenek fel a GitHubra
+.azure-speech.json
+.env
+
+# telepített csomagok és ideiglenes, újragenerálható fájlok
+node_modules/
+video/test/
+video/voice_raw/
+video/samples/
+video/render_log.txt
+video/contact*.jpg
+video/fusion_build_contact.png
+video/audio_wave.png
+video/audio_mix.wav
+video/voice/*.wav
+video/voice_neural/
+video/fusion_build/
+
+# a céglogó – nincs engedély a nyilvános használatra, ezért csak helyben marad
+assets/logo-original.png
+assets/logo.svg
+assets/logo-compare.html
+3d/fusion/CKocka/logo_coords.json
+tools/check_logo.py
+tools/piper_dl/
+tools/piper_bin/
+video/voice_raw_freetts/
+video/voice_raw_f5/
+
+# Python gyorsítótár (a gép elérési útját tartalmazza)
+__pycache__/
+*.pyc
+video/timeline_freetts.json
+video/voice/durations_freetts.json

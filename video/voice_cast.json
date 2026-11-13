@@ -1,0 +1,10 @@
+{
+  "narrator": { "voice": "hu-HU-TamasNeural", "rate": "+0%", "pitch": "+0Hz" },
+  "cube_en": { "voice": "en-US-AnaNeural", "rate": "+0%", "pitch": "+0Hz" },
+  "cube_hu": { "voice": "hu-HU-NoemiNeural", "rate": "+0%", "pitch": "+15Hz" },
+  "styles": {
+    "chill": { "rate": "-18%", "pitch": "-5Hz" },
+    "hype": { "rate": "+12%", "pitch": "+20Hz" },
+    "sarcastic": { "rate": "-10%", "pitch": "-15Hz" }
+  }
+}

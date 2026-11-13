@@ -1,0 +1,10 @@
+{
+  "autodeskProduct": "Fusion",
+  "type": "script",
+  "author": "Zollo + Claude",
+  "description": {
+    "": "C-kocka asztali AI-asszisztens 3D modelljének generálása"
+  },
+  "supportedOS": "windows|mac",
+  "editEnabled": true
+}

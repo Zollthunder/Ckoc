@@ -1,0 +1,112 @@
+[
+ {
+  "name": "Haz",
+  "file": "haz.stl",
+  "appearance": "CK grafit"
+ },
+ {
+  "name": "Tetolap",
+  "file": "tetolap.stl",
+  "appearance": "CK aluminium"
+ },
+ {
+  "name": "Gomb 1",
+  "file": "gomb_1.stl",
+  "appearance": "CK Andor fa"
+ },
+ {
+  "name": "Gomb 2",
+  "file": "gomb_2.stl",
+  "appearance": "CK gomb 2"
+ },
+ {
+  "name": "Gomb 3",
+  "file": "gomb_3.stl",
+  "appearance": "CK gomb 3"
+ },
+ {
+  "name": "Gomb 4",
+  "file": "gomb_4.stl",
+  "appearance": "CK gomb 4"
+ },
+ {
+  "name": "C fenycsatorna",
+  "file": "c_fenycsatorna.stl",
+  "appearance": "CK RGB feny"
+ },
+ {
+  "name": "Kijelzo",
+  "file": "kijelzo.stl",
+  "appearance": "CK kijelzo"
+ },
+ {
+  "name": "Arc",
+  "file": "arc.stl",
+  "appearance": "CK arc"
+ },
+ {
+  "name": "Arc 2",
+  "file": "arc_2.stl",
+  "appearance": "CK arc"
+ },
+ {
+  "name": "Arc 3",
+  "file": "arc_3.stl",
+  "appearance": "CK arc"
+ },
+ {
+  "name": "Kamera",
+  "file": "kamera.stl",
+  "appearance": "CK kijelzo"
+ },
+ {
+  "name": "RGB fenygyuru",
+  "file": "rgb_fenygyuru.stl",
+  "appearance": "CK RGB feny"
+ },
+ {
+  "name": "Gumitalp",
+  "file": "gumitalp.stl",
+  "appearance": "CK gumi"
+ },
+ {
+  "name": "Gumi sarok 1",
+  "file": "gumi_sarok_1.stl",
+  "appearance": "CK gumi narancs"
+ },
+ {
+  "name": "Gumi sarok 2",
+  "file": "gumi_sarok_2.stl",
+  "appearance": "CK gumi narancs"
+ },
+ {
+  "name": "Gumi sarok 3",
+  "file": "gumi_sarok_3.stl",
+  "appearance": "CK gumi narancs"
+ },
+ {
+  "name": "Gumi sarok 4",
+  "file": "gumi_sarok_4.stl",
+  "appearance": "CK gumi narancs"
+ },
+ {
+  "name": "Gumi sarok 5",
+  "file": "gumi_sarok_5.stl",
+  "appearance": "CK gumi narancs"
+ },
+ {
+  "name": "Gumi sarok 6",
+  "file": "gumi_sarok_6.stl",
+  "appearance": "CK gumi narancs"
+ },
+ {
+  "name": "Gumi sarok 7",
+  "file": "gumi_sarok_7.stl",
+  "appearance": "CK gumi narancs"
+ },
+ {
+  "name": "Gumi sarok 8",
+  "file": "gumi_sarok_8.stl",
+  "appearance": "CK gumi narancs"
+ }
+]

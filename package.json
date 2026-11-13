@@ -1,0 +1,15 @@
+{
+  "name": "c-kocka",
+  "version": "1.0.0",
+  "private": true,
+  "description": "C-kocka – AI kihívás projekt (3D modell, videó, weboldal)",
+  "scripts": {
+    "serve": "node serve.js"
+  },
+  "devDependencies": {
+    "ffmpeg-static": "^4.4.1",
+    "puppeteer-core": "^19.11.1",
+    "three": "^0.160.0",
+    "ws": "^8.17.1"
+  }
+}
