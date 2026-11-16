@@ -25,7 +25,7 @@ def main():
     for l in todo:
         for k in range(a.n):
             torch.manual_seed(1000 + k)
-            wav = np.asarray(tts.tts(text=l['text'], speaker=SPEAKER, language='en'), dtype=np.float32)
+            wav = np.asarray(tts.tts(text=l['text'], speaker=SPEAKER, language='en', split_sentences=False), dtype=np.float32)  # egyben: mondatonként külön generálva fix 0,42 s digitális csend kerülne közéjük
             wav = np.concatenate([np.zeros(7200, np.float32), wav, np.zeros(7200, np.float32)])  # 0,3 s csend elöl-hátul
             sf.write(os.path.join(a.out, '%s_%d.wav' % (l['id'], k)), wav, 24000)
         print('%s jelöltek kész (%.1f perc)' % (l['id'], (time.time() - t0) / 60), flush=True)

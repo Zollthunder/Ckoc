@@ -8,22 +8,26 @@
    {
     "file": "N01_0.wav",
     "score": 1.0,
+    "inner_gap_s": 1.08,
     "heard": "This is C -Cube, a palm -sized desktop AI assistant. You can talk to it, and it's always in a good mood."
    },
    {
     "file": "N01_1.wav",
     "score": 1.0,
-    "heard": "This is C -Cube, a palm -sized desktop AI assistant. You can talk to it, and it's always in a good mood."
+    "inner_gap_s": 0.81,
+    "heard": "This is C -Cube, a palm -sized desktop AI assistant. You can talk to it and it's always in a good mood."
    },
    {
     "file": "N01_2.wav",
-    "score": 0.905,
-    "heard": "This is CQ Bataille, a Ponsai's desktop AI assistant. You can talk to it, and it's always in a good mood."
+    "score": 1.0,
+    "inner_gap_s": 0.9,
+    "heard": "This is C -Cube, a palm -sized desktop AI assistant. You can talk to it, and it's always in a good mood."
    },
    {
     "file": "N01_3.wav",
-    "score": 0.969,
-    "heard": "This is CQ, a palm -sized desktop AI assistant. You can talk to it, and it's always in a good mood."
+    "score": 1.0,
+    "inner_gap_s": 1.58,
+    "heard": "This is C -Cube, a palm -sized desktop AI assistant. You can talk to it, and it's always in a good mood."
    }
   ]
  },
@@ -36,21 +40,25 @@
    {
     "file": "N02_0.wav",
     "score": 1.0,
+    "inner_gap_s": 0.63,
     "heard": "I designed the cube together with an AI, in just a few days."
    },
    {
     "file": "N02_1.wav",
     "score": 1.0,
+    "inner_gap_s": 0.84,
     "heard": "I designed the cube together with an AI in just a few days."
    },
    {
     "file": "N02_2.wav",
     "score": 1.0,
+    "inner_gap_s": 0.47,
     "heard": "I designed the cube together with an AI in just a few days."
    },
    {
     "file": "N02_3.wav",
     "score": 1.0,
+    "inner_gap_s": 0.96,
     "heard": "I designed the cube together with an AI in just a few days."
    }
   ]
@@ -64,21 +72,25 @@
    {
     "file": "N03_0.wav",
     "score": 1.0,
+    "inner_gap_s": 0.81,
     "heard": "From the first idea to the finished model, we built everything in conversation."
    },
    {
     "file": "N03_1.wav",
     "score": 1.0,
+    "inner_gap_s": 0.54,
     "heard": "From the first idea to the finished model, we built everything in conversation."
    },
    {
     "file": "N03_2.wav",
     "score": 1.0,
+    "inner_gap_s": 0.82,
     "heard": "From the first idea to the finished model, we built everything in conversation."
    },
    {
     "file": "N03_3.wav",
     "score": 1.0,
+    "inner_gap_s": 0.57,
     "heard": "From the first idea to the finished model, we built everything in conversation."
    }
   ]
@@ -91,23 +103,27 @@
   "candidates": [
    {
     "file": "N04_0.wav",
-    "score": 0.96,
-    "heard": "I didn't draw the three model with a mouse. The AI wrote a program that builds it in fusion."
+    "score": 0.966,
+    "inner_gap_s": 0.76,
+    "heard": "I didn't draw the Threed model with a mouse. The AI wrote a program that builds it in fusion."
    },
    {
     "file": "N04_1.wav",
     "score": 1.0,
+    "inner_gap_s": 1.15,
     "heard": "I didn't draw the 3D model with a mouse. The AI wrote a program that builds it in fusion."
    },
    {
     "file": "N04_2.wav",
     "score": 1.0,
+    "inner_gap_s": 0.81,
     "heard": "I didn't draw the 3D model with a mouse. The AI wrote a program that builds it in fusion."
    },
    {
     "file": "N04_3.wav",
-    "score": 0.966,
-    "heard": "I didn't draw the threed model with a mouse. The AI wrote a program that builds it in fusion."
+    "score": 1.0,
+    "inner_gap_s": 0.45,
+    "heard": "I didn't draw the 3D model with a mouse. The AI wrote a program that builds it in Fusion."
    }
   ]
  },
@@ -120,21 +136,25 @@
    {
     "file": "N05_0.wav",
     "score": 1.0,
+    "inner_gap_s": 0.86,
     "heard": "Not everything worked the first time. We found the bugs together and fixed them."
    },
    {
     "file": "N05_1.wav",
     "score": 1.0,
+    "inner_gap_s": 1.38,
     "heard": "Not everything worked the first time. We found the bugs together and fixed them."
    },
    {
     "file": "N05_2.wav",
     "score": 1.0,
+    "inner_gap_s": 0.92,
     "heard": "Not everything worked the first time. We found the bugs together and fixed them."
    },
    {
     "file": "N05_3.wav",
     "score": 1.0,
+    "inner_gap_s": 1.25,
     "heard": "Not everything worked the first time. We found the bugs together and fixed them."
    }
   ]
@@ -148,21 +168,25 @@
    {
     "file": "N06_0.wav",
     "score": 1.0,
+    "inner_gap_s": 0.83,
     "heard": "In the end, the AI reviewed the model in Fusion by itself, and even suggested colors."
    },
    {
     "file": "N06_1.wav",
     "score": 1.0,
+    "inner_gap_s": 0.66,
     "heard": "In the end, the AI reviewed the model in Fusion by itself, and even suggested colors."
    },
    {
     "file": "N06_2.wav",
     "score": 0.994,
+    "inner_gap_s": 0.87,
     "heard": "In the end, the AI reviewed the model infusion by itself, and even suggested colors."
    },
    {
     "file": "N06_3.wav",
     "score": 0.988,
+    "inner_gap_s": 1.09,
     "heard": "In the end, the A reviewed the model infusion by itself and even suggested colors."
    }
   ]
@@ -176,50 +200,58 @@
    {
     "file": "N07_0.wav",
     "score": 1.0,
+    "inner_gap_s": 0.73,
     "heard": "And every step went into the log."
    },
    {
     "file": "N07_1.wav",
     "score": 1.0,
+    "inner_gap_s": 0.59,
     "heard": "And every step went into the log."
    },
    {
     "file": "N07_2.wav",
     "score": 1.0,
+    "inner_gap_s": 0.74,
     "heard": "And every step went into the log."
    },
    {
     "file": "N07_3.wav",
     "score": 1.0,
+    "inner_gap_s": 0.61,
     "heard": "And every step went into the log."
    }
   ]
  },
  "N08": {
   "text": "Round display. Camera. Two microphones. Stereo speakers. RGB lights. Battery. And orange rubber corners. Why? You'll see in a moment.",
-  "chosen": "N08_2.wav",
+  "chosen": "N08_0.wav",
   "score": 1.0,
-  "heard": "Round display, camera, two microphones, stereo speakers, RGB, lights, battery, and orange rubber corners. Why? You'll see in a moment.",
+  "heard": "Round display, camera, two microphones, stereo speakers, RGB lights, battery, and orange rubber corners. Why? You'll see in a moment.",
   "candidates": [
    {
     "file": "N08_0.wav",
-    "score": 0.861,
-    "heard": "Round display, camera, two microphone start, stereo speakers, RGB lights dust, battery, and orange rubber corners. Why? You'll see in a moment."
+    "score": 1.0,
+    "inner_gap_s": 3.6,
+    "heard": "Round display, camera, two microphones, stereo speakers, RGB lights, battery, and orange rubber corners. Why? You'll see in a moment."
    },
    {
     "file": "N08_1.wav",
-    "score": 0.75,
-    "heard": "Round display, camera, two microphones, stereo speakers, RGB lights or to a battery door and orange rubber corners. Why? You'll see in a moment."
+    "score": 0.802,
+    "inner_gap_s": 3.31,
+    "heard": "Brown display, camera, two microphones, stereo speakers, RGB lights, battery, and orange rubber corners. Why? You'll see it in a moment."
    },
    {
     "file": "N08_2.wav",
     "score": 1.0,
-    "heard": "Round display, camera, two microphones, stereo speakers, RGB, lights, battery, and orange rubber corners. Why? You'll see in a moment."
+    "inner_gap_s": 1.75,
+    "heard": "Round display, camera, two microphones, stereo speakers, RGB lights, battery, and orange rubber corners. Why? You'll see in a moment."
    },
    {
     "file": "N08_3.wav",
     "score": 1.0,
-    "heard": "Round display, camera, two microphones, stereo speakers, RGB lights, battery, and orange rubber corners. Why? You'll see in a moment."
+    "inner_gap_s": 2.01,
+    "heard": "Round display, camera, two microphones, stereo speakers, RGB lights, battery, and orange rubber corners. Why you'll see in a moment."
    }
   ]
  },
@@ -232,21 +264,25 @@
    {
     "file": "N09_0.wav",
     "score": 1.0,
+    "inner_gap_s": 0.62,
     "heard": "With music, the lights dance too."
    },
    {
     "file": "N09_1.wav",
     "score": 1.0,
+    "inner_gap_s": 0.47,
     "heard": "With music, the lights dance too."
    },
    {
     "file": "N09_2.wav",
     "score": 1.0,
+    "inner_gap_s": 0.76,
     "heard": "With music, the lights dance too."
    },
    {
     "file": "N09_3.wav",
     "score": 1.0,
+    "inner_gap_s": 0.95,
     "heard": "With music, the lights dance too."
    }
   ]
@@ -260,21 +296,25 @@
    {
     "file": "J01_0.wav",
     "score": 1.0,
+    "inner_gap_s": 0.62,
     "heard": "What do you call a tree that fits in your hand?"
    },
    {
     "file": "J01_1.wav",
     "score": 1.0,
+    "inner_gap_s": 0.65,
     "heard": "What do you call a tree that fits in your hand?"
    },
    {
     "file": "J01_2.wav",
     "score": 1.0,
+    "inner_gap_s": 0.55,
     "heard": "What do you call a tree that fits in your hand?"
    },
    {
     "file": "J01_3.wav",
     "score": 1.0,
+    "inner_gap_s": 0.93,
     "heard": "What do you call a tree that fits in your hand?"
    }
   ]
@@ -288,21 +328,25 @@
    {
     "file": "J02_0.wav",
     "score": 1.0,
+    "inner_gap_s": 0.5,
     "heard": "A palm tree."
    },
    {
     "file": "J02_1.wav",
     "score": 1.0,
+    "inner_gap_s": 0.54,
     "heard": "A palm tree."
    },
    {
     "file": "J02_2.wav",
     "score": 0.442,
+    "inner_gap_s": 0.26,
     "heard": "Armtree"
    },
    {
     "file": "J02_3.wav",
     "score": 1.0,
+    "inner_gap_s": 0.26,
     "heard": "A palm tree."
    }
   ]
@@ -316,21 +360,25 @@
    {
     "file": "N10_0.wav",
     "score": 1.0,
+    "inner_gap_s": 0.65,
     "heard": "If you don't want to be disturbed, it only gives a gentle buzz."
    },
    {
     "file": "N10_1.wav",
     "score": 1.0,
+    "inner_gap_s": 0.6,
     "heard": "If you don't want to be disturbed, it only gives a gentle buzz."
    },
    {
     "file": "N10_2.wav",
     "score": 1.0,
+    "inner_gap_s": 0.26,
     "heard": "If you don't want to be disturbed, it only gives a gentle buzz."
    },
    {
     "file": "N10_3.wav",
     "score": 1.0,
+    "inner_gap_s": 0.79,
     "heard": "If you don't want to be disturbed, it only gives a gentle buzz."
    }
   ]
@@ -344,21 +392,25 @@
    {
     "file": "N11_0.wav",
     "score": 1.0,
+    "inner_gap_s": 1.55,
     "heard": "It connects to your phone and works as a speakerphone too."
    },
    {
     "file": "N11_1.wav",
     "score": 1.0,
+    "inner_gap_s": 0.98,
     "heard": "It connects to your phone and works as a speakerphone too."
    },
    {
     "file": "N11_2.wav",
     "score": 1.0,
+    "inner_gap_s": 0.67,
     "heard": "It connects to your phone and works as a speakerphone too."
    },
    {
     "file": "N11_3.wav",
     "score": 1.0,
+    "inner_gap_s": 0.54,
     "heard": "It connects to your phone and works as a speakerphone too."
    }
   ]
@@ -372,21 +424,25 @@
    {
     "file": "N12_0.wav",
     "score": 1.0,
+    "inner_gap_s": 0.5,
     "heard": "Turn it upside down and the microphone and camera switch off."
    },
    {
     "file": "N12_1.wav",
     "score": 1.0,
+    "inner_gap_s": 0.64,
     "heard": "Turn it upside down and the microphone and camera switch off."
    },
    {
     "file": "N12_2.wav",
     "score": 1.0,
+    "inner_gap_s": 0.89,
     "heard": "Turn it upside down, and the microphone and camera switch off."
    },
    {
     "file": "N12_3.wav",
     "score": 1.0,
+    "inner_gap_s": 0.74,
     "heard": "Turn it upside down, and the microphone and camera switch off."
    }
   ]
@@ -400,50 +456,58 @@
    {
     "file": "N13_0.wav",
     "score": 1.0,
+    "inner_gap_s": 0.47,
     "heard": "Or build your own."
    },
    {
     "file": "N13_1.wav",
     "score": 1.0,
+    "inner_gap_s": 0.54,
     "heard": "Or build your own."
    },
    {
     "file": "N13_2.wav",
     "score": 1.0,
+    "inner_gap_s": 0.53,
     "heard": "Or build your own."
    },
    {
     "file": "N13_3.wav",
     "score": 1.0,
+    "inner_gap_s": 0.93,
     "heard": "Or build your own."
    }
   ]
  },
  "N14": {
   "text": "C-Cube. A little friend for your desk. And my first project made together with an AI.",
-  "chosen": "N14_1.wav",
+  "chosen": "N14_2.wav",
   "score": 1.0,
-  "heard": "C -Cube, a little friend for your desk, and my first project made together with an AI.",
+  "heard": "C -Cube, a little friend for your desk, and my first project made together with an AI",
   "candidates": [
    {
     "file": "N14_0.wav",
     "score": 0.994,
-    "heard": "C -Cube, a little friend for your desk, and my first project made together with an AIY,"
+    "inner_gap_s": 2.3,
+    "heard": "C. Cube, a little friend for your desk, and my first project made together with an AIY."
    },
    {
     "file": "N14_1.wav",
-    "score": 1.0,
-    "heard": "C -Cube, a little friend for your desk, and my first project made together with an AI."
+    "score": 0.994,
+    "inner_gap_s": 0.93,
+    "heard": "C -Cube, a little friend for your desk, and my first project made together with an AIY."
    },
    {
     "file": "N14_2.wav",
-    "score": 0.82,
-    "heard": "C. Cube, a little friend for your desk, and my first project made together with an A .I .U .I."
+    "score": 1.0,
+    "inner_gap_s": 0.62,
+    "heard": "C -Cube, a little friend for your desk, and my first project made together with an AI"
    },
    {
     "file": "N14_3.wav",
-    "score": 0.994,
-    "heard": "C -Cube, a little friend for your desk, and my first project made together with an AIY."
+    "score": 1.0,
+    "inner_gap_s": 0.55,
+    "heard": "C -Cube, a little friend for your desk, and my first project made together with an AI"
    }
   ]
  }

@@ -391,3 +391,5 @@ A szkript előbb megszámolta a furatokat sugár szerint, és csak akkor módos�
 **Elakadás:** az AI saját hibája: a magyar „Nos.” előtag felismerője az angol „Not” szót összekeverte vele, és levágta. Angolul ezt a lépést ki kellett kapcsolni.
 
 **Tanulság:** a helyi hangmodellek minősége nyelvenként nagyon eltér. Ahol a magyar kevés, ott az angol egy kész, jó megoldás lehet.
+
+**Javítás (ugyanaznap):** Zollo 2:43-nál „szünetet a szóban” hallott. Az AI a hullámformából találta meg az okot: az XTTS a sorokat **pontonként külön** generálta, és közéjük fix 0,42 s **teljes digitális csendet** tett. Így a „C-Cube.” egy elnyújtott, magában álló mini-mondat lett, utána hirtelen némasággal. Egy első javítási kísérlet, ami a Whisper szóidőpontjaiból próbálta mérni a szón belüli csendet, téves eredményt adott (a Whisper a szavak közti szünetet is a szóhoz számolja), ezért az AI visszavonta. A valódi megoldás: a sorok **egyben** készülnek (`split_sentences=False`). Mind a 16 mondat újra 1,00-s pontszámot kapott, és egyikben sincs már belső digitális csend.

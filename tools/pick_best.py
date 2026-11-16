@@ -9,6 +9,26 @@ from f5_best import score, last_expected_word, cut_after_last_word, cut_before_f
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+def inner_gap(wav, sr, words, db=-45, min_s=0.08, edge_s=0.05):
+    """Szavakon BELÜLI csendes szakaszok összhossza (s): az XTTS néha „megakad” egy szó közepén."""
+    peak = np.max(np.abs(wav)) + 1e-9
+    win = int(sr * 0.01)
+    total = 0.0
+    for w, a, b in words:
+        if a is None or b is None or b - a < 0.25:
+            continue
+        seg = wav[int((a + edge_s) * sr):int((b - edge_s) * sr)]
+        run = 0
+        for i in range(0, len(seg) - win, win):
+            quiet = 20 * np.log10(np.sqrt(np.mean(seg[i:i + win] ** 2)) / peak + 1e-12) < db
+            run = run + 1 if quiet else 0
+            if run * 0.01 == min_s:
+                total += min_s
+            elif run * 0.01 > min_s:
+                total += 0.01
+    return total
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--only', default='')
@@ -28,8 +48,9 @@ def main():
             _, all_words = transcribe(wav, sr, a.lang)
             words = last_expected_word(all_words, l['text'])          # angolul nincs „Nos.” előtag
             heard = ' '.join(w[0] for w in words)
-            s = score(l['text'], heard)
-            tried.append({'file': os.path.basename(fp), 'score': round(s, 3), 'heard': heard})
+            gap = inner_gap(wav, sr, words)
+            s = score(l['text'], heard)            # (az inner_gap csak tájékoztató: a Whisper a szavak közti szünetet is a szóhoz számolja)
+            tried.append({'file': os.path.basename(fp), 'score': round(s, 3), 'inner_gap_s': round(gap, 2), 'heard': heard})
             if not best or s > best[0]:
                 best = (s, wav, sr, words, heard, os.path.basename(fp))
         if not best:
