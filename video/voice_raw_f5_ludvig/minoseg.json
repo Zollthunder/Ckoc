@@ -1,0 +1,754 @@
+{
+ "N01": {
+  "text": "Ez a C-kocka. Egy tenyérnyi asztali AI-asszisztens. Beszélhetsz hozzá, és mindig jókedvű.",
+  "chosen": {
+   "seed": 11,
+   "tail": " ... +előtag",
+   "score": 0.947,
+   "heard": "ez a cékotka. Egy tenyérni asztali éjjáj asszisztens. Beszélhetsz hozzá, és mindig jókedvű."
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 0.947,
+    "heard": "ez a cékotka. Egy tenyérni asztali éjjáj asszisztens. Beszélhetsz hozzá, és mindig jókedvű."
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 0.92,
+    "heard": "Az a C. Kotka. Egy tenyérnyi asztali AI -asszisztens. Beszélhetsz hozzá, és mindig jókedvű."
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 0.929,
+    "heard": "Az AC kocka. Egy tenyérnyi asztali éjjájasszisztens. Te szélhetsz hozzá, és mindig jókedvű."
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 0.929,
+    "heard": "Ez a cékotka. Egy tenyérnyi asztali éjjájasszisztens. Mesélhetsz hozzá, és mindig jókedvű."
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 0.82,
+    "heard": "ez a c -kocka, egy tenyérnyi asztali éjjel jogasszisztens. Te szélhetsz hozzá, és mindig jókedvű."
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 0.92,
+    "heard": "Az a C -kocka. Egy tenyernyi asztali AI -asszisztens. Deszélhetsz hozzá, és mindig jókedvű."
+   }
+  ]
+ },
+ "N02": {
+  "text": "A kockát egy mesterséges intelligenciával együtt terveztem meg, pár nap alatt.",
+  "chosen": {
+   "seed": 11,
+   "tail": " ... +előtag",
+   "score": 1.0,
+   "heard": "a kockát egy mesterséges intelligenciával együtt terveztem meg pár nap alatt."
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 1.0,
+    "heard": "a kockát egy mesterséges intelligenciával együtt terveztem meg pár nap alatt."
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 0.987,
+    "heard": "A kockát egy mesterséges intelligenciával együtt terveztem meg, pár nap alattal."
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 1.0,
+    "heard": "A kockát egy mesterséges intelligenciával együtt terveztem meg pár nap alatt."
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 1.0,
+    "heard": "a kockát egy mesterséges intelligenciával együtt terveztem meg pár nap alatt"
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 1.0,
+    "heard": "A kockát egy mesterséges intelligenciával együtt terveztem meg pár nap alatt."
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 1.0,
+    "heard": "A kockát egy mesterséges intelligenciával együtt terveztem meg, pár nap alatt"
+   }
+  ]
+ },
+ "N03": {
+  "text": "Az ötlettől a kész modellig mindent beszélgetésben raktunk össze.",
+  "chosen": {
+   "seed": 11,
+   "tail": " ... +előtag",
+   "score": 1.0,
+   "heard": "Az ötlettől a kész modellig mindent beszélgetésben raktunk össze."
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 1.0,
+    "heard": "Az ötlettől a kész modellig mindent beszélgetésben raktunk össze."
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 1.0,
+    "heard": "Az ötlettől a kész modellig mindent beszélgetésben raktunk össze."
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 0.992,
+    "heard": "Az ötlettől a készmodellig mindent beszélgetésben raktunk össze."
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 0.992,
+    "heard": "az ötlettől a kész modellig minden beszélgetésben raktunk össze."
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 1.0,
+    "heard": "Az ötlettől a kész modellig mindent beszélgetésben raktunk össze."
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 1.0,
+    "heard": "Az ötlettől a kész modellig mindent beszélgetésben raktunk össze."
+   }
+  ]
+ },
+ "N04": {
+  "text": "A 3D modellt nem egérrel rajzoltam. Az AI egy programot írt, ami felépíti a Fusionben.",
+  "chosen": {
+   "seed": 33,
+   "tail": " ...",
+   "score": 0.988,
+   "heard": "A 3D modellt nem egérrel rajzoltam. Az AI egy programot írt, ami felépíti a tusionben."
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 0.982,
+    "heard": "a 3D modellt nem egérrel rajzoltam. Az AI egy programot írt, ami felépíti a buszionben."
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 0.914,
+    "heard": "A 3D modellt nem egérrel rajzoltam. Az AI egy programot írt, ami felépíti a Deucion -ben."
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 0.988,
+    "heard": "A 3D modellt nem egérrel rajzoltam. Az AI egy programot írt, ami felépíti a tusionben."
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 0.988,
+    "heard": "a 3D modellt nem egérrel rajzoltam. Az AI egy programot írt, ami felépíti a dusionben."
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 0.982,
+    "heard": "A 3D modellt nem egérrel rajzoltam. Az AI egy programot írt, ami felépíti a buszionben."
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 0.982,
+    "heard": "A 3D modellt nem egérrel rajzoltam. Az AI egy programot írt, ami felépíti a puszionben,"
+   }
+  ]
+ },
+ "N05": {
+  "text": "Nem ment minden elsőre. A hibákat együtt találtuk meg, és javítottuk ki.",
+  "chosen": {
+   "seed": 44,
+   "tail": ". +előtag",
+   "score": 1.0,
+   "heard": "nem ment minden elsőre. A hibákat együtt találtuk meg és javítottuk ki."
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 0.545,
+    "heard": "A hossz nem ment minden elsőre. A hibákat együtt találtuk meg és javítottuk ki."
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 0.993,
+    "heard": "nem ment minden elsőre. A hibákat együtt találtuk meg, és javítottuk kié."
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 0.835,
+    "heard": "M ment minden elsőre. A hibákat együtt találtuk meg, és javítottuk ki."
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 1.0,
+    "heard": "nem ment minden elsőre. A hibákat együtt találtuk meg és javítottuk ki."
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 1.0,
+    "heard": "nem ment minden elsőre. A hibákat együtt találtuk meg, és javítottuk ki"
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 0.629,
+    "heard": "Ha nem ment minden elsőre, a hibákat együtt találtuk meg és javítottuk ki."
+   }
+  ]
+ },
+ "N06": {
+  "text": "A végén az AI saját maga nézte át a modellt a Fusionben, és még színt is javasolt.",
+  "chosen": {
+   "seed": 22,
+   "tail": ".",
+   "score": 0.988,
+   "heard": "A végén az AI saját maga nézte át a modellt a busionben, és még szint is javasolt."
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 0.945,
+    "heard": "a végén az Éjjáj saját maga nézte át a modellt a gusjonben, és még szint is javasolt."
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 0.988,
+    "heard": "A végén az AI saját maga nézte át a modellt a busionben, és még szint is javasolt."
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 0.975,
+    "heard": "A végén az AI saját maga nézte át a modelt a tuszionben, és még szint is javasolt."
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 0.988,
+    "heard": "A végén az AI saját maga nézte át a modellt a busionben, és még szint is javasolt"
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 0.919,
+    "heard": "A végén az AI saját ma maga nézte át a modellt a busionben, és még szint is javasolt."
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 0.975,
+    "heard": "A végén az AI saját maga nézte át a modellt a tusjonben, és még szint is javasolt"
+   }
+  ]
+ },
+ "N07": {
+  "text": "És minden lépés bekerült a naplóba.",
+  "chosen": {
+   "seed": 11,
+   "tail": " ... +előtag",
+   "score": 1.0,
+   "heard": "és minden lépés bekerült a naplóba"
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 1.0,
+    "heard": "és minden lépés bekerült a naplóba"
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 0.88,
+    "heard": "As minden lépés bekerül itt a naplóba,"
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 0.828,
+    "heard": "lépés bekerült a naplóba."
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 1.0,
+    "heard": "és minden lépés bekerült a naplóba."
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 1.0,
+    "heard": "és minden lépés bekerült a naplóba."
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 0.828,
+    "heard": "lépés bekerült a naplóba."
+   }
+  ]
+ },
+ "N08": {
+  "text": "Kerek kijelző. Kamera. Két mikrofon. Sztereó hangszórók. RGB fények. Akku. És narancs gumi sarkok. Hogy miért? Mindjárt kiderül.",
+  "chosen": {
+   "seed": 11,
+   "tail": " ... +előtag",
+   "score": 0.91,
+   "heard": "terek kijelző. Lamera. Két mikrofon. Esztereó hanszórók. RGB fények. Akku. És narancsgumi sarkok. Hogy miért? Mindjárt kiderül."
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 0.91,
+    "heard": "terek kijelző. Lamera. Két mikrofon. Esztereó hanszórók. RGB fények. Akku. És narancsgumi sarkok. Hogy miért? Mindjárt kiderül."
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 0.878,
+    "heard": "berek kijelző, tamera, két mikrofon, sztereó hangszórogszórog, RGB fények, akku és narancs gumisarkok. Hogy miért? Nindjárt kiderül."
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 0.906,
+    "heard": "verek kijelző, hamera, két mikrofon asztereohanszórók RGB fények, akku és narancsgumi sarkok, hogy miért mindjárt kiderül."
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 0.91,
+    "heard": "derek kijelző, namera, két mikrofon, asztereó hangszórók, RGB fények, aku és narancs gumisarkok. Hogy miért? Mindjárt kiderül."
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 0.816,
+    "heard": "terekkijelző kamera, két mikrofon, esztereó hangszórók, RGB fények, akku, s narancs gumisarkok. Hogy miért? Mindjárt kiderül."
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 0.91,
+    "heard": "verek kijelző. Namera, két mikrofon, asztereó hanszórók RGB fények, akku és narancs gumisarkok, hogy miért mindjárt kiderül."
+   }
+  ]
+ },
+ "N09": {
+  "text": "Zenére a fények is táncolnak.",
+  "chosen": {
+   "seed": 33,
+   "tail": " ...",
+   "score": 0.955,
+   "heard": "enére a fények is táncolnak."
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 0.914,
+    "heard": "Denére a fények is táncolnak."
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 0.914,
+    "heard": "venére a fények is táncolnak"
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 0.955,
+    "heard": "enére a fények is táncolnak."
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 0.914,
+    "heard": "menére a fények is táncolnak"
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 0.858,
+    "heard": "oszszenére a fények is táncolnak."
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 0.914,
+    "heard": "venére a fények is táncolnak"
+   }
+  ]
+ },
+ "J01": {
+  "text": "Mi az? Feldobod, repülve piros, ha leesik, fáj...",
+  "chosen": {
+   "seed": 55,
+   "tail": " ... +előtag",
+   "score": 0.859,
+   "heard": "mi az? Náldobod repjú elve piros, ha leesik fájú"
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 0.575,
+    "heard": "geldobod repülve piros, ha leesik, fájná"
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 0.791,
+    "heard": "ni az, peldobod repülve piros, ha lelesik fáj"
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 0.75,
+    "heard": "Ani az, eldobod repülve piros, ha leesik fájlő."
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 0.755,
+    "heard": "ni az leldobod repülve piros, ha lelsíg fáj"
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 0.859,
+    "heard": "mi az? Náldobod repjú elve piros, ha leesik fájú"
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 0.802,
+    "heard": "ni az, példobod repülve piros, ha leesik fáj,"
+   }
+  ]
+ },
+ "J02": {
+  "text": "Tégla!",
+  "chosen": {
+   "seed": 22,
+   "tail": ".",
+   "score": 0.74,
+   "heard": "mégla"
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": ". +előtag",
+    "score": -0.011,
+    "heard": "Amoš"
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 0.74,
+    "heard": "mégla"
+   },
+   {
+    "seed": 33,
+    "tail": ".",
+    "score": 0.567,
+    "heard": "igla"
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": -0.011,
+    "heard": "Amoš."
+   },
+   {
+    "seed": 55,
+    "tail": ". +előtag",
+    "score": 0,
+    "heard": "(néma)"
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 0.74,
+    "heard": "Végla"
+   }
+  ]
+ },
+ "N10": {
+  "text": "Ha nem akarsz zavarást, csak finoman jelez.",
+  "chosen": {
+   "seed": 66,
+   "tail": ".",
+   "score": 0.988,
+   "heard": "Ha nem akarsz zavarást, csak finoman jelezé."
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 0.743,
+    "heard": "A hús, a nem akarsz zavarást csak finoman jelez,"
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 0.888,
+    "heard": "A nem akarsz zavarást, csak finoman jelez."
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 0.888,
+    "heard": "A nem akarsz zavarást csak finoman jelez"
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 0.864,
+    "heard": "a nem akarsz zavarást csak finoman jelezók."
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 0.67,
+    "heard": "Amos, a nem akarsz zavarást csak finoman jelezé."
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 0.988,
+    "heard": "Ha nem akarsz zavarást, csak finoman jelezé."
+   }
+  ]
+ },
+ "N11": {
+  "text": "Telefonhoz csatlakozik, és kihangosítóként is működik.",
+  "chosen": {
+   "seed": 33,
+   "tail": " ...",
+   "score": 0.975,
+   "heard": "elefonhoz csatlakozik, és kihangosítóként is működik."
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 0.529,
+    "heard": "A hossz. Telefonhoz csatlakozik, és kihangosítóként is működik"
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 0.951,
+    "heard": "velefonhoz csatlakozik, és kihangosítóként is működik."
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 0.975,
+    "heard": "elefonhoz csatlakozik, és kihangosítóként is működik."
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 0.62,
+    "heard": "Amos, telefonosz csatlakozik és kihangosítóként is működiké."
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 0.951,
+    "heard": "felefonhoz csatlakozik és kihangosítóként is működik."
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 0.975,
+    "heard": "elefonhoz csatlakozik, és kihangosítóként is működik"
+   }
+  ]
+ },
+ "N12": {
+  "text": "Fordítsd fejjel lefelé, és a mikrofon meg a kamera is kikapcsol.",
+  "chosen": {
+   "seed": 11,
+   "tail": " ... +előtag",
+   "score": 0.946,
+   "heard": "mordítsd fejjel lefelé, és a mikrofon meg a kamera is kikapcsol."
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 0.946,
+    "heard": "mordítsd fejjel lefelé, és a mikrofon meg a kamera is kikapcsol."
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 0.822,
+    "heard": "bordic fejjel lefelé, és a mikrofon meg a kamera is kikapcsol."
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 0.839,
+    "heard": "gordicst fejjel lefelé, és a mikrofon meg a kamera is kikapcsol."
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 0.893,
+    "heard": "mordítsz fejjel lefelé, és a mikrofon meg a kamera is kikapcsol."
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 0.822,
+    "heard": "Pordic fejjel lefelé, és a mikrofon meg a kamera is kikapcsol."
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 0.859,
+    "heard": "gordict fejjel lefelé, és a mikrofon meg a kamera is kikapcsol."
+   }
+  ]
+ },
+ "N13": {
+  "text": "Vagy rakd össze a sajátodat.",
+  "chosen": {
+   "seed": 22,
+   "tail": ".",
+   "score": 1.0,
+   "heard": "vagy rakd össze a sajátodat."
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 0.539,
+    "heard": "Amos, majd rakd össze a sajátodat."
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 1.0,
+    "heard": "vagy rakd össze a sajátodat."
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 0.769,
+    "heard": "magyrak dössze a sajátodat."
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 0.539,
+    "heard": "Amos, majd rakd össze a sajátodat."
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 0.677,
+    "heard": "A smagyrakt össze a sajátodat."
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 0.769,
+    "heard": "magyrak dössze a sajátodat."
+   }
+  ]
+ },
+ "N14": {
+  "text": "C-kocka. Egy kis barát az asztalodra. És az első projektem, amit egy AI-jal együtt csináltam.",
+  "chosen": {
+   "seed": 11,
+   "tail": " ... +előtag",
+   "score": 1.0,
+   "heard": "C kocka. Egy kis barát az asztalodra. És az első projektem, amit egy AI -jal együtt csináltam."
+  },
+  "candidates": [
+   {
+    "seed": 11,
+    "tail": " ... +előtag",
+    "score": 1.0,
+    "heard": "C kocka. Egy kis barát az asztalodra. És az első projektem, amit egy AI -jal együtt csináltam."
+   },
+   {
+    "seed": 22,
+    "tail": ".",
+    "score": 1.0,
+    "heard": "C kocka. Egy kis barát az asztalodra. És az első projektem, amit egy AI -jal együtt csináltam."
+   },
+   {
+    "seed": 33,
+    "tail": " ...",
+    "score": 0.859,
+    "heard": "– Székocka, egy kis barát az asztalodra, és az első projektem, amit egy éjjájjal együtt csináltam."
+   },
+   {
+    "seed": 44,
+    "tail": ". +előtag",
+    "score": 1.0,
+    "heard": "C kocka. Egy kis barát az asztalodra. És az első projektem, amit egy AI -jal együtt csináltam,"
+   },
+   {
+    "seed": 55,
+    "tail": " ... +előtag",
+    "score": 0.601,
+    "heard": "A mosz cég kocka. Egy kis barát az asztalodra. És az első projektem, amit egy éjjájjal együtt csináltam."
+   },
+   {
+    "seed": 66,
+    "tail": ".",
+    "score": 0.938,
+    "heard": "Acé kocka. Egy kis barát az asztalodra. És az első projektem, amit egy éjjájjal együtt csináltam."
+   }
+  ]
+ }
+}

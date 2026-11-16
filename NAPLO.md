@@ -355,3 +355,22 @@ A szkript előbb megszámolta a furatokat sugár szerint, és csak akkor módos�
 **Elakadások:**
 - A lassabb mondatok közül kettő nem fért a helyére. Gyorsítás helyett az AI az N04–N08 szakaszt 0,4–0,9 s-mal arrébb tolta, mert ott volt hely.
 - A legrövidebb mondatból („Tégla!”) az F5 lassítva **teljesen néma** fájlt adott. Az AI ezt a hangerő méréséből vette észre, és ezt az egy mondatot normál tempóval generálta újra. **Tanulság:** a nagyon rövid szövegekkel az F5 bizonytalan, ezért minden kimenetet érdemes legalább hangerőre ellenőrizni.
+
+## 2026-11-16 – Automatikus minőségellenőrzés Whisperrel
+
+**Példaprompt:**
+> „ennek a minősége jó, de néha vannak ilyen fura hangok benne, mint ÁÁÁÁÁÁÁÁ meg hasonlók”
+
+**Hogyan:** az AI nem hallja a hangot, ezért egy beszédfelismerő modellt (**Whisper large-v3-turbo**) tett a generálás mellé. Mondatonként több F5-jelölt készül, a Whisper visszaírja, mit hallott, és a gép azt választja ki, amelyik szó szerint a legjobban egyezik a szöveggel. Az utolsó elvárt szó után a felvételt levágja, így a végére nem maradhat „ÁÁÁ” ([tools/f5_best.py](tools/f5_best.py)). A választás indoklása mondatonként ide kerül: `video/voice_raw_f5_ludvig/minoseg.json`.
+
+**Mit derített ki a Whisper:**
+- a mondatok végén „Áh!”, „Ár…”, „Alf.” hangok voltak (ezek voltak az „ÁÁÁ”-k);
+- sok mondat elején volt egy plusz „A” hang;
+- a mássalhangzóval kezdődő mondatok első hangja sérült („Tégla” → „mégla”). Ennek egyik oka az AI saját hibája volt: az eleji zajvágás a halk kezdő mássalhangzókat is levágta.
+
+**Elakadások:**
+- A 6 GB-os videókártyára az F5, a Whisper és a Fusion grafikája együtt nem fért rá, ezért a futás két fázisra bomlott: előbb az összes jelölt generálása, utána az ellenőrzés.
+- Egy „feláldozható” előtag („Nos.”) a hosszabb mondatoknál eltüntette az eleji „A”-t, a nagyon rövideknél viszont rontott. Ezért most előtaggal és anélkül is készülnek jelöltek, és a Whisper választ.
+- Néhány kezdő mássalhangzót a Whisper továbbra is másnak hall. Hogy ez a modell kiejtése-e vagy a Whisper tévedése, az AI nem tudja eldönteni: **ezt csak emberi füllel lehet ellenőrizni.**
+
+**Tanulság:** egy második AI (a beszédfelismerő) „füllé” teheti az elsőt. Számszerűsíti a hibákat, és a jelöltek közül automatikusan választ. A végső ítélet viszont az emberé.
