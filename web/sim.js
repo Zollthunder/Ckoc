@@ -55,6 +55,8 @@ const cubeEl = $('#cube'), faceCv = $('#face'), g = faceCv?.getContext('2d');
 const F = { mode: 'off', mouth: 'smile', talking: false, text: '', sub: '', look: { x: 0, y: 0 }, target: { x: 0, y: 0 }, blink: 0, nextBlink: 2, pointer: null, peeking: false, eq: null };
 let audio = null, master = null, analyser = null;
 
+// minden kattintás felébreszti a hangrendszert (a böngészők felfüggesztik, ha nem közvetlen kattintásra indult)
+addEventListener('pointerdown', () => { if (audio && audio.state !== 'running') audio.resume(); }, { capture: true });
 function ensureAudio() {
   if (audio) return;
   audio = new (window.AudioContext || window.webkitAudioContext)();
@@ -149,7 +151,12 @@ async function say(id, { mouthAfter = 'smile', sub = null } = {}) {
       const src = audio.createBufferSource(), gn = audio.createGain();
       src.buffer = buf; src.playbackRate.value = p.rate; gn.gain.value = 1.6;
       src.connect(voiceAn); voiceAn.connect(gn); gn.connect(master);
-      src.onended = done; voiceSrc = src; src.start();
+      src.onended = done; voiceSrc = src;
+      if (audio.state !== 'running') audio.resume();
+      src.start();
+      // biztonsági időkorlát: ha a böngésző nem küldi el a "vége" jelzést (pl. felfüggesztett hang), a hossz alapján lépünk tovább –
+      // különben a vicc csattanója a következő kattintásig várna
+      setTimeout(done, (buf.duration / p.rate) * 1000 + 600);
     } else if (S.voice && enVoice && 'speechSynthesis' in window) {   // tartalék: csak valódi angol hanggal
       const u = new SpeechSynthesisUtterance(text);
       u.voice = enVoice; u.lang = enVoice.lang; u.rate = p.rate;
@@ -306,7 +313,7 @@ function schedulePeek() {
   }, 9000 + Math.random() * 9000);
 }
 cubeEl?.addEventListener('pointerenter', async () => {
-  if (!F.peeking) return;
+  if (!F.peeking || S.busy) return;
   F.peeking = false; F.lookAway = true; F.snap = true; F.target = { x: 1, y: -0.6 }; $('#camLed').classList.remove('on');
   emit('event.caught_peeking', {});
   await say(S.persona === 'sarcastic' ? 'peek_2' : 'peek_1');
@@ -345,6 +352,7 @@ async function needOn() { if (!S.on) await boot(); return !S.flipped; }
 async function pressButton(n) {
   const cap = $(`.cap[data-btn="${n}"]`); cap?.classList.add('pressed'); setTimeout(() => cap?.classList.remove('pressed'), 150);
   if (!(await needOn())) return;
+  if (S.busy) { log('kocka', 'button.ignored', { id: n, reason: 'busy' }); return; }   // egy vicc vagy mondat közben nem vágunk bele
   emit('event.button', { id: n });
   if (S.dnd) return vibrate();
   if (n === 1) {   // Andor: dad joke
