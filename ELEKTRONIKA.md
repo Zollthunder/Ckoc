@@ -17,12 +17,12 @@ Az ESP32-S3-as tervhez a Bluetooth-kihangosítás miatt **egy második chip** é
 | # | Funkció | Kész modul | Méret | Megjegyzés |
 |---|---|---|---|---|
 | 1 | Agy, Wi-Fi, Bluetooth | **Raspberry Pi Zero 2 W** | 65 × 30 mm | 4 magos, klasszikus BT + BLE |
-| 2 | Hang: 2 mikrofon + **sztereó** hangszóró-kimenet | **Adafruit Voice Bonnet** (WM8960 kodek) | 65 × 30 mm | a Pi tetejére dugható; **2 mikrofon** a tetőfuratok alatt |
+| 2 | Hang: 2 mikrofon + **sztereó** hangszóró-kimenet | **Adafruit Voice Bonnet** (WM8960 kodek) | 65 × 30 mm | a Pi tetejére dugható; **2 mikrofon** a tetőfuratok alatt. A gyártó már kivezette, de a C-kocka elméleti termék, ezért marad (döntés: 2026-11-16) |
 | 3 | Akku + töltés + táp | **18650-es UPS panel Pi Zeróhoz** (pl. **Pi-Ener-lite**: USB-C, töltöttségmérő, RTC; vagy **Geekworm X306**) | Pi Zero méret + 18650 cella | rugós érintkezőkkel a Pi alá; kb. 2,5 A kimenet |
 | 4 | Akku cella | **18650 Li-ion, védett, ~3000 mAh** | Ø 18,6 × 65 mm | TPU bölcsőben |
 | 5 | Kerek kijelző | **1,28" kerek IPS, GC9A01, 240×240, kerek NYÁK-os változat** | Ø 37,5 mm | látható terület Ø 32,4 mm; SPI |
-| 6 | Kamera | **mini „spy” kameramodul (OV5647, 8,5 × 8,5 mm)** szalagkábellel | 8,5 × 8,5 mm | a nagy Pi kameramodul nem fér el a kijelző mellett |
-| 7 | Hangszórók | 2× **40 mm-es, 8 Ω, 1–2 W** teljes sávú hangszóró | Ø 40 × 16 mm | a Voice Bonnet két kimenetére |
+| 6 | Kamera | **mini „spy” kameramodul, OV5647, Pi Zero (22 pólusú, 0,5 mm) szalagkábellel**, pl. **Arducam B006603** vagy **Pi Supply Spy Camera** | kamerafej kb. 8,5 × 8,5 – 8,5 × 11,3 mm | a nagy Pi kameramodul nem fér el a kijelző mellett. Az Adafruit 1937 kábele nem Pi Zero-s; a Kailap JAL-KH3-C20B-1B (OV5640) DVP párhuzamos interfészű, ezért egyik sem jó |
+| 7 | Hangszórók | 2× **VISATON K 36 WP, Ø36 mm, 8 Ω, 2 W** teljes sávú hangszóró | Ø 36 mm | a Voice Bonnet két kimenetére; a 40 mm-es helyett (döntés: 2026-11-16), a rögzítőgyűrű Ø36-ra módosul |
 | 8 | Alsó fénygyűrű | **NeoPixel Ring 24** (WS2812) | **Ø 66 mm** – pont a modell gyűrűjének mérete | |
 | 9 | C betű fénye | **S-alakú (síkban hajlítható) WS2812 LED-szalag**, 5 mm széles – a sima szalag síkban nem hajlik C alakba | kb. 110 mm (6–7 LED, 60 LED/m) | az előlapi tartó C bordáján fekszik, előtte az opál akril C |
 | 10 | „Kisegítő” mikrovezérlő | **Seeed XIAO RP2040** | 21 × 17,5 mm | LED-ek, gombok, IMU, rezgés valós időben; USB-n vagy UART-on a Pi-hez |
@@ -30,6 +30,8 @@ Az ESP32-S3-as tervhez a Bluetooth-kihangosítás miatt **egy második chip** é
 | 12 | Rezgés | **DRV2605L** panel + kis rezgőmotor (LRA vagy ERM) | ~20 × 18 mm | „Ne zavarj” jelzések |
 | 13 | Érintés | **AT42QT1010** érintőpanel + rézfólia elektróda a Ø18 mm-es műanyag betét alatt | kicsi | egy kimenet → XIAO |
 | 14 | 4 gomb | 4× **6×6 mm-es nyomógomb** (kis NYÁK-modulon), SLA sapkák szárral és gallérral; az Andor-gomb tetején préselt fa betét | 6 × 6 mm | a XIAO bemeneteire |
+| 15 | Rendszer-tároló | **microSD kártya, 32 GB, A1** | – | a Pi Zero 2 W operációs rendszeréhez és programjaihoz |
+| 16 | Óraelem | **CR1220 gombelem** | Ø 12,5 mm | a UPS panel valós idejű órájához (RTC); a panelhez nem jár |
 
 **Kábelezés:** az I2C eszközök (IMU, rezgés) **STEMMA QT / Qwiic** csatlakozós kábelekkel láncba fűzhetők, forrasztás nélkül. A többi rövid vezetékkel, egy kis prototípus-lapon gyűjtve.
 
@@ -37,7 +39,7 @@ Az ESP32-S3-as tervhez a Bluetooth-kihangosítás miatt **egy második chip** é
 - **Felül:** Voice Bonnet (a mikrofonok a tetőfuratok alatt), alatta a Pi Zero 2 W.
 - **Középen:** a UPS panel a 18650-es akkuval (a stack hosszában, elölről hátra).
 - **Elöl:** a kerek kijelző, mellette a mini kamera a C nyílásában, a C mögött az S-alakú LED-szalag (a tartó C bordáján).
-- **Oldalt:** a két 40 mm-es hangszóró, a rácsok mögött.
+- **Oldalt:** a két 36 mm-es hangszóró, a rácsok mögött.
 - **Alul:** a NeoPixel gyűrű, benne a XIAO RP2040, az IMU és a rezgéspanel.
 - **A tető sarkaiban:** a 4 gomb kapcsolói; középen az érintőbetét alatt az elektróda.
 

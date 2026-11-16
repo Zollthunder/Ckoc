@@ -1,7 +1,7 @@
 # Magyar mondatok generálása F5-TTS-sel (magyar finomhangolás, Maxdorger29/f5-tts-hungarian, CC-BY-NC-4.0)
 # Referenciahang: alapból a Piper "Anna" (CC0) szintetikus hangja – valódi személy hangját hozzájárulás nélkül nem klónozzuk.
 # Futtatás (a hordozható környezetből):
-#   %LOCALAPPDATA%\f5tts\venv\Scripts\python.exe tools/f5_generate.py [--ref ref.wav --ref_text "..."] [--only N01,N02]
+#   %LOCALAPPDATA%\f5tts\venv_gpu\Scripts\python.exe tools/f5_generate.py   (GPU, CUDA 11.8; a régi CPU-s: ...\venv\...) [--ref ref.wav --ref_text "..."] [--only N01,N02]
 import argparse, json, os, sys, time
 import numpy as np
 import soundfile as sf
@@ -53,15 +53,18 @@ def main():
     ap.add_argument('--only', default='')
     ap.add_argument('--out', default=os.path.join(ROOT, 'video', 'voice_raw_f5'))
     ap.add_argument('--nfe', type=int, default=32)
+    ap.add_argument('--device', default='auto', help='auto | cuda | cpu (auto: RTX 2060, ha a GPU-s környezetből fut)')
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
     lines = json.load(open(os.path.join(ROOT, 'video', 'lines.json'), encoding='utf-8'))
     todo = [l for l in lines if l['voice'] == 'szabolcs' and (not a.only or l['id'] in a.only.split(','))]
-    torch.set_num_threads(max(1, os.cpu_count() or 4))
+    dev = a.device if a.device != 'auto' else ('cuda' if torch.cuda.is_available() else 'cpu')
+    if dev == 'cpu':
+        torch.set_num_threads(max(1, os.cpu_count() or 4))
     t0 = time.time()
     tts = F5TTS(model='F5TTS_v1_Base', ckpt_file=os.path.join(MODEL, 'model_last_final.safetensors'),
-                vocab_file=os.path.join(MODEL, 'vocab.txt'), device='cpu', use_ema=True)
-    print('modell betöltve %.1f s alatt' % (time.time() - t0), flush=True)
+                vocab_file=os.path.join(MODEL, 'vocab.txt'), device=dev, use_ema=True)
+    print('modell betöltve %.1f s alatt (%s)' % (time.time() - t0, torch.cuda.get_device_name(0) if dev == 'cuda' else 'CPU'), flush=True)
     for l in todo:
         t1 = time.time()
         text = speakable(l['text'])

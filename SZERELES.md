@@ -18,13 +18,13 @@ A kocka **négy egységből** áll, amiket külön lehet összerakni és kiprób
 ### Kötőelemek
 | Db | Elem | Hová |
 |---|---|---|
-| 25 | **M2 menetes betét** (beolvasztós, Ø3,2-es furatba, 3–4 mm hosszú) | tetőtartó 4, ház elöl 4, ház a tálcához 4, ház a hangszórókhoz 6, tálca a diffúzorhoz 3, szán lábai 4 |
-| 4 | M2×8 süllyesztett fejű (ISO 10642 / DIN 7991) | tetőlap → tetőtartó |
-| 4 | M2×6 hengeres fejű (ISO 7380 / DIN 912) | előlapi tartó → ház |
-| 6 | M2×6 hengeres fejű | hangszóró-rögzítő gyűrűk → ház |
-| 4 | M2×14 hengeres fejű | tálca → ház (alulról) |
-| 3 | M2×6 süllyesztett fejű | diffúzor → tálca |
-| 4 | M2×6 süllyesztett fejű | tálca → szán lábai (alulról) |
+| 25 | **M2,5 menetes betét** (beolvasztós, Ø3,6-os furatba, 4 mm hosszú) | tetőtartó 4, ház elöl 4, ház a tálcához 4, ház a hangszórókhoz 6, tálca a diffúzorhoz 3, szán lábai 4 |
+| 4 | M2,5×8 süllyesztett fejű (ISO 10642 / DIN 7991) | tetőlap → tetőtartó |
+| 4 | M2,5×6 hengeres fejű (ISO 7380 / DIN 912) | előlapi tartó → ház |
+| 6 | M2,5×6 hengeres fejű | hangszóró-rögzítő gyűrűk → ház |
+| 4 | M2,5×14 hengeres fejű | tálca → ház (alulról) |
+| 3 | M2,5×6 süllyesztett fejű | diffúzor → tálca |
+| 4 | M2,5×6 süllyesztett fejű | tálca → szán lábai (alulról) |
 | 4+ | M2,5 távtartó (11 mm) + csavar | Pi + Voice Bonnet |
 
 A csavarhosszak a modellből számolt **javaslatok**, az első próbaszerelésnél ellenőrizni kell őket.
@@ -45,7 +45,7 @@ A csavarhosszak a modellből számolt **javaslatok**, az első próbaszerelésn�
 ---
 
 ## 0. Előkészítés: menetes betétek
-Minden nyomtatott alkatrészbe olvaszd be az M2-es betéteket (a fenti táblázat szerint 25 db). A betét felülete egy síkba kerüljön a felülettel, és ne álljon ferdén – a pákát függőlegesen tartsd, lassan nyomd.
+Minden nyomtatott alkatrészbe olvaszd be az M2,5-Ã¶s betéteket (a fenti táblázat szerint 25 db). A betét felülete egy síkba kerüljön a felülettel, és ne álljon ferdén – a pákát függőlegesen tartsd, lassan nyomd.
 
 ## 1. Ház: C fénycsatorna, érintőbetét és hangszórók
 ![A ház belülről: a C és a két hangszóró a rögzítőgyűrűkkel](szereles/kepek/01_haz_elokeszites.png)
@@ -54,21 +54,21 @@ Minden nyomtatott alkatrészbe olvaszd be az M2-es betéteket (a fenti tábláza
 2. Tedd be a **C-t kívülről** a horonyba: elöl egy síkba kerül a fallal, belül 0,5 mm-rel kilóg.
 3. **Belülről** húzz körbe egy vékony szilikoncsíkot a C kilógó része és a fal közé. Kívül ne kerüljön szilikon a résbe.
 4. Ugyanígy: az **érintőbetétet** tedd az alu tetőlap Ø18-as furatába (a tetőlap felső síkjával egy síkba), és alulról szilikonozd körbe.
-5. **Hangszórók:** a 40 mm-es hangszórót a rács mögé tedd, a PETG gyűrűvel szorítsd oda, 3 db M2×6 csavarral. Mindkét oldalon.
+5. **Hangszórók:** a 36 mm-es hangszórót (VISATON K 36 WP) a rács mögé tedd, a PETG gyűrűvel szorítsd oda, 3 db M2,5×6 csavarral. Mindkét oldalon.
 6. Hagyd **24 órát** kötni (ez idő alatt jöhet a többi egység).
 
 ## 2. Tálca: diffúzor és gumitalp
 ![A tálca alulról: a diffúzor 3 süllyesztett csavarral](szereles/kepek/02_talca_diffuzor.png)
 
 1. Az opál diffúzort tedd a tálca aljára, a süllyesztett oldala nézzen kifelé.
-2. Rögzítsd 3 db M2×6 süllyesztett fejű csavarral.
+2. Rögzítsd 3 db M2,5×6 süllyesztett fejű csavarral.
 3. A gumitalp védőfóliáját húzd le, és ragaszd a diffúzorra úgy, hogy a 3 lyuk a csavarfejek fölé essen.
 
 ## 3. Szán: elektronika
 ![A szán a tálcán, rajta az elektronika](szereles/kepek/03_szan_elektronika.png)
 
 1. A **NeoPixel gyűrűt** a tálca fényablaka fölé tedd (a LED-ek lefelé, a diffúzor felé nézzenek).
-2. A **szánt** tedd a tálcára, és alulról 4 db M2×6 süllyesztett csavarral húzd a lábaiba.
+2. A **szánt** tedd a tálcára, és alulról 4 db M2,5×6 süllyesztett csavarral húzd a lábaiba.
 3. A szán aljára: **XIAO RP2040, IMU, rezgőmotor-meghajtó**, és a tálca peremére az **USB-C panel**.
 4. A szán polcaira: **UPS panel + 18650 akku**, felette a **Raspberry Pi Zero 2 W**, rá 11 mm-es távtartókkal a **Voice Bonnet**.
 5. Kösd be a kábeleket: gyűrű → XIAO, IMU és rezgés → XIAO (I²C), XIAO → Pi (USB vagy UART), UPS → Pi táp, USB-C → UPS.
@@ -95,18 +95,18 @@ Mielőtt bármi a házba kerülne: csatlakoztass mindent, és nézd meg, hogy m�
 ## 7. Előlapi egység és tetőegység a házba
 ![Az előlapi egység és a tetőegység a házban (a ház áttetsző)](szereles/kepek/07_teto_be.png)
 
-1. Az **előlapi egységet** alulról tedd be, a ház elejéhez, és belülről 4 db M2×6 csavarral rögzítsd.
+1. Az **előlapi egységet** alulról tedd be, a ház elejéhez, és belülről 4 db M2,5×6 csavarral rögzítsd.
 2. A **tetőtartót** alulról told fel a ház pereme alá, és tartsd ott.
 3. A 4 **gombsapkát alulról** dugd át az alu tetőlap furatain (a gallér a tetőlap alá kerül).
 4. A tetőlapot a sapkákkal együtt tedd a helyére **felülről**: a gallérok beleülnek a ház peremének kivágásaiba.
-5. 4 db M2×8 süllyesztett fejű csavar a tetőlapon és a ház peremén át a tetőtartó betéteibe: ez fogja össze a tetőlapot, a peremet és a tetőtartót.
+5. 4 db M2,5×8 süllyesztett fejű csavar a tetőlapon és a ház peremén át a tetőtartó betéteibe: ez fogja össze a tetőlapot, a peremet és a tetőtartót.
 
 ## 8. Szán alulról
 ![A szán alulról betolva (a ház áttetsző)](szereles/kepek/08_szan_alulrol.png)
 
 1. Csatlakoztasd a kábeleket: előlapi egység, tetőegység, hangszórók.
 2. Tolj be **alulról** a tálcát a szánnal együtt (vigyázz, hogy kábel ne csípődjön be).
-3. Rögzítsd 4 db M2×14 csavarral alulról a ház oszlopaiba.
+3. Rögzítsd 4 db M2,5×14 csavarral alulról a ház oszlopaiba.
 
 ## 9. Gumisarkok
 ![A kész C-kocka](szereles/kepek/09_kesz.png)

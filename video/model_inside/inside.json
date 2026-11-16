@@ -1,0 +1,492 @@
+[
+ {
+  "name": "Also talca (szan alap)",
+  "comp": "",
+  "file": "also_talca_szan_alap.stl",
+  "center": [
+   0.0,
+   4.5,
+   0.0
+  ]
+ },
+ {
+  "name": "Tetolap",
+  "comp": "",
+  "file": "tetolap.stl",
+  "center": [
+   0.0,
+   90.0,
+   -0.0
+  ]
+ },
+ {
+  "name": "Erinto betet",
+  "comp": "",
+  "file": "erinto_betet.stl",
+  "center": [
+   0.0,
+   90.0,
+   -0.0
+  ]
+ },
+ {
+  "name": "C fenycsatorna",
+  "comp": "",
+  "file": "c_fenycsatorna.stl",
+  "center": [
+   -2.1,
+   45.0,
+   43.5
+  ]
+ },
+ {
+  "name": "Arc",
+  "comp": "",
+  "file": "arc.stl",
+  "center": [
+   -5.0,
+   48.5,
+   42.65
+  ]
+ },
+ {
+  "name": "Arc 2",
+  "comp": "",
+  "file": "arc_2.stl",
+  "center": [
+   5.0,
+   48.5,
+   42.65
+  ]
+ },
+ {
+  "name": "Arc 3",
+  "comp": "",
+  "file": "arc_3.stl",
+  "center": [
+   0.0,
+   41.17,
+   42.65
+  ]
+ },
+ {
+  "name": "Kamera",
+  "comp": "",
+  "file": "kamera.stl",
+  "center": [
+   26.0,
+   45.0,
+   45.0
+  ]
+ },
+ {
+  "name": "RGB fenygyuru",
+  "comp": "",
+  "file": "rgb_fenygyuru.stl",
+  "center": [
+   0.0,
+   -1.5,
+   0.0
+  ]
+ },
+ {
+  "name": "Gumitalp",
+  "comp": "",
+  "file": "gumitalp.stl",
+  "center": [
+   0.0,
+   -3.75,
+   0.0
+  ]
+ },
+ {
+  "name": "Gumi sarok 1",
+  "comp": "",
+  "file": "gumi_sarok_1.stl",
+  "center": [
+   -38.75,
+   6.25,
+   38.75
+  ]
+ },
+ {
+  "name": "Gumi sarok 2",
+  "comp": "",
+  "file": "gumi_sarok_2.stl",
+  "center": [
+   -38.75,
+   83.74,
+   38.75
+  ]
+ },
+ {
+  "name": "Gumi sarok 3",
+  "comp": "",
+  "file": "gumi_sarok_3.stl",
+  "center": [
+   -38.75,
+   6.25,
+   -38.75
+  ]
+ },
+ {
+  "name": "Gumi sarok 4",
+  "comp": "",
+  "file": "gumi_sarok_4.stl",
+  "center": [
+   -38.75,
+   83.74,
+   -38.75
+  ]
+ },
+ {
+  "name": "Gumi sarok 5",
+  "comp": "",
+  "file": "gumi_sarok_5.stl",
+  "center": [
+   38.75,
+   6.25,
+   38.75
+  ]
+ },
+ {
+  "name": "Gumi sarok 6",
+  "comp": "",
+  "file": "gumi_sarok_6.stl",
+  "center": [
+   38.75,
+   83.74,
+   38.75
+  ]
+ },
+ {
+  "name": "Gumi sarok 7",
+  "comp": "",
+  "file": "gumi_sarok_7.stl",
+  "center": [
+   38.75,
+   6.25,
+   -38.75
+  ]
+ },
+ {
+  "name": "Gumi sarok 8",
+  "comp": "",
+  "file": "gumi_sarok_8.stl",
+  "center": [
+   38.75,
+   83.74,
+   -38.75
+  ]
+ },
+ {
+  "name": "Haz (SLS)",
+  "comp": "",
+  "file": "haz_sls.stl",
+  "center": [
+   0.0,
+   49.5,
+   0.0
+  ]
+ },
+ {
+  "name": "Gomb 1",
+  "comp": "",
+  "file": "gomb_1.stl",
+  "center": [
+   -27.5,
+   87.7,
+   27.5
+  ]
+ },
+ {
+  "name": "Gomb 2",
+  "comp": "",
+  "file": "gomb_2.stl",
+  "center": [
+   27.5,
+   87.7,
+   27.5
+  ]
+ },
+ {
+  "name": "Gomb 3",
+  "comp": "",
+  "file": "gomb_3.stl",
+  "center": [
+   27.5,
+   87.7,
+   -27.5
+  ]
+ },
+ {
+  "name": "Gomb 4",
+  "comp": "",
+  "file": "gomb_4.stl",
+  "center": [
+   -27.5,
+   87.7,
+   -27.5
+  ]
+ },
+ {
+  "name": "Andor fa betet",
+  "comp": "",
+  "file": "andor_fa_betet.stl",
+  "center": [
+   -27.5,
+   91.0,
+   27.5
+  ]
+ },
+ {
+  "name": "Szan (PETG)",
+  "comp": "Belso szerkezet (PETG)",
+  "file": "szan_petg.stl",
+  "center": [
+   0.0,
+   35.25,
+   -3.0
+  ]
+ },
+ {
+  "name": "Tetotarto (PETG)",
+  "comp": "Belso szerkezet (PETG)",
+  "file": "tetotarto_petg.stl",
+  "center": [
+   0.0,
+   83.3,
+   0.0
+  ]
+ },
+ {
+  "name": "Elolapi tarto (PETG)",
+  "comp": "Belso szerkezet (PETG)",
+  "file": "elolapi_tarto_petg.stl",
+  "center": [
+   0.0,
+   45.0,
+   38.0
+  ]
+ },
+ {
+  "name": "Hangszoro rogzito bal (PETG)",
+  "comp": "Belso szerkezet (PETG)",
+  "file": "hangszoro_rogzito_bal_petg.stl",
+  "center": [
+   -38.25,
+   45.0,
+   0.0
+  ]
+ },
+ {
+  "name": "Hangszoro rogzito jobb (PETG)",
+  "comp": "Belso szerkezet (PETG)",
+  "file": "hangszoro_rogzito_jobb_petg.stl",
+  "center": [
+   38.25,
+   45.0,
+   0.0
+  ]
+ },
+ {
+  "name": "Voice Bonnet (2 mikrofon + sztereo hang)",
+  "comp": "Elektronika (vazlat)",
+  "file": "voice_bonnet_2_mikrofon_sztereo_hang.stl",
+  "center": [
+   0.0,
+   76.05,
+   -4.0
+  ]
+ },
+ {
+  "name": "Raspberry Pi Zero 2 W",
+  "comp": "Elektronika (vazlat)",
+  "file": "raspberry_pi_zero_2_w.stl",
+  "center": [
+   0.0,
+   60.3,
+   -4.0
+  ]
+ },
+ {
+  "name": "UPS + 18650 akku",
+  "comp": "Elektronika (vazlat)",
+  "file": "ups_18650_akku.stl",
+  "center": [
+   0.0,
+   43.8,
+   -4.0
+  ]
+ },
+ {
+  "name": "Kerek kijelzo 1.28\" (GC9A01, kerek NYAK)",
+  "comp": "Elektronika (vazlat)",
+  "file": "kerek_kijelzo_1_28_gc9a01_kerek_nyak.stl",
+  "center": [
+   0.0,
+   45.0,
+   40.5
+  ]
+ },
+ {
+  "name": "Mini kamera (OV5647, 8.5 mm)",
+  "comp": "Elektronika (vazlat)",
+  "file": "mini_kamera_ov5647_8_5_mm.stl",
+  "center": [
+   26.0,
+   45.0,
+   39.8
+  ]
+ },
+ {
+  "name": "Hangszoro jobb – perem (40 mm)",
+  "comp": "Elektronika (vazlat)",
+  "file": "hangszoro_jobb_perem_40_mm.stl",
+  "center": [
+   41.0,
+   45.0,
+   0.0
+  ]
+ },
+ {
+  "name": "Hangszoro jobb – test",
+  "comp": "Elektronika (vazlat)",
+  "file": "hangszoro_jobb_test.stl",
+  "center": [
+   33.0,
+   45.0,
+   0.0
+  ]
+ },
+ {
+  "name": "Hangszoro bal – perem (40 mm)",
+  "comp": "Elektronika (vazlat)",
+  "file": "hangszoro_bal_perem_40_mm.stl",
+  "center": [
+   -41.0,
+   45.0,
+   0.0
+  ]
+ },
+ {
+  "name": "Hangszoro bal – test",
+  "comp": "Elektronika (vazlat)",
+  "file": "hangszoro_bal_test.stl",
+  "center": [
+   -33.0,
+   45.0,
+   0.0
+  ]
+ },
+ {
+  "name": "NeoPixel Ring 24 (66 mm)",
+  "comp": "Elektronika (vazlat)",
+  "file": "neopixel_ring_24_66_mm.stl",
+  "center": [
+   0.0,
+   4.5,
+   0.0
+  ]
+ },
+ {
+  "name": "XIAO RP2040 (LED, gomb, IMU)",
+  "comp": "Elektronika (vazlat)",
+  "file": "xiao_rp2040_led_gomb_imu.stl",
+  "center": [
+   0.0,
+   10.75,
+   -3.0
+  ]
+ },
+ {
+  "name": "IMU (LSM6DS3TR-C)",
+  "comp": "Elektronika (vazlat)",
+  "file": "imu_lsm6ds3tr_c.stl",
+  "center": [
+   0.0,
+   10.5,
+   -26.0
+  ]
+ },
+ {
+  "name": "Rezgo (DRV2605L + motor)",
+  "comp": "Elektronika (vazlat)",
+  "file": "rezgo_drv2605l_motor.stl",
+  "center": [
+   0.0,
+   11.0,
+   20.0
+  ]
+ },
+ {
+  "name": "USB-C aljzat panel",
+  "comp": "Elektronika (vazlat)",
+  "file": "usb_c_aljzat_panel.stl",
+  "center": [
+   0.0,
+   10.0,
+   -40.0
+  ]
+ },
+ {
+  "name": "Erintes (AT42QT1010)",
+  "comp": "Elektronika (vazlat)",
+  "file": "erintes_at42qt1010.stl",
+  "center": [
+   -27.5,
+   82.5,
+   0.0
+  ]
+ },
+ {
+  "name": "Gomb 1 kapcsolo",
+  "comp": "Elektronika (vazlat)",
+  "file": "gomb_1_kapcsolo.stl",
+  "center": [
+   -27.5,
+   81.05,
+   27.5
+  ]
+ },
+ {
+  "name": "Gomb 2 kapcsolo",
+  "comp": "Elektronika (vazlat)",
+  "file": "gomb_2_kapcsolo.stl",
+  "center": [
+   27.5,
+   81.05,
+   27.5
+  ]
+ },
+ {
+  "name": "Gomb 3 kapcsolo",
+  "comp": "Elektronika (vazlat)",
+  "file": "gomb_3_kapcsolo.stl",
+  "center": [
+   27.5,
+   81.05,
+   -27.5
+  ]
+ },
+ {
+  "name": "Gomb 4 kapcsolo",
+  "comp": "Elektronika (vazlat)",
+  "file": "gomb_4_kapcsolo.stl",
+  "center": [
+   -27.5,
+   81.05,
+   -27.5
+  ]
+ },
+ {
+  "name": "C LED (S-szalag, WS2812)",
+  "comp": "Elektronika (vazlat)",
+  "file": "c_led_s_szalag_ws2812.stl",
+  "center": [
+   -2.87,
+   45.0,
+   39.9
+  ]
+ }
+]

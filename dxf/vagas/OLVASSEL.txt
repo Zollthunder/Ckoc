@@ -9,8 +9,8 @@ Andor_fabetet_fa_2mm (fa (bükk/tölgy) 2 mm – lézer, préselve az SLA sapká
 
 Megjegyzések:
 - Minden kontúr egyszer szerepel (nincs dupla vágás), zárt, mm-ben. Ellenőrzés: node tools/dxf_check.js
-- Tetőlap: 4 db Ø2,2 furat M2 süllyesztett fejű csavarhoz -> felülről 90°-os süllyesztés Ø4,2-re (a DXF ezt nem tartalmazza).
-- Diffúzor: 3 db Ø2,2 furat M2 süllyesztett csavarhoz -> ALULRÓL 90°-os süllyesztés Ø4,4-re. A gumitalp Ø5 lyukai a csavarfejek fölé esnek.
+- Tetőlap: 4 db Ø2,8 furat M2,5 süllyesztett fejű csavarhoz (DIN 7991) -> felülről 90°-os süllyesztés Ø5,0-re (a DXF ezt nem tartalmazza).
+- Diffúzor: 3 db Ø2,8 furat M2,5 süllyesztett csavarhoz -> ALULRÓL 90°-os süllyesztés Ø5,0-re. A gumitalp Ø5 lyukai a csavarfejek (Ø4,7) fölé esnek.
 - A betétek (C, érintőbetét) körben 0,1 mm-rel kisebbek a nyílásnál (illesztési hézag);
   lézernél a vágásrést (kerf) ne kompenzáld kifelé.
 - Rögzítés: a C és az érintőbetét belülről SEMLEGES (neutrális) szilikonnal körbe. Ecetszagú (acetoxi) szilikont ne – repeszti az akrilt.

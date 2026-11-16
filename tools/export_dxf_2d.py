@@ -52,8 +52,8 @@ def run(_context: str):
         f.write('\n'.join(done) + '\n')
         f.write('\nMegjegyzések:\n'
                 '- Minden kontúr egyszer szerepel (nincs dupla vágás), zárt, mm-ben. Ellenőrzés: node tools/dxf_check.js\n'
-                '- Tetőlap: 4 db Ø2,2 furat M2 süllyesztett fejű csavarhoz -> felülről 90°-os süllyesztés Ø4,2-re (a DXF ezt nem tartalmazza).\n'
-                '- Diffúzor: 3 db Ø2,2 furat M2 süllyesztett csavarhoz -> ALULRÓL 90°-os süllyesztés Ø4,4-re. A gumitalp Ø5 lyukai a csavarfejek fölé esnek.\n'
+                '- Tetőlap: 4 db Ø2,8 furat M2,5 süllyesztett fejű csavarhoz (DIN 7991) -> felülről 90°-os süllyesztés Ø5,0-re (a DXF ezt nem tartalmazza).\n'
+                '- Diffúzor: 3 db Ø2,8 furat M2,5 süllyesztett csavarhoz -> ALULRÓL 90°-os süllyesztés Ø5,0-re. A gumitalp Ø5 lyukai a csavarfejek (Ø4,7) fölé esnek.\n'
                 '- A betétek (C, érintőbetét) körben 0,1 mm-rel kisebbek a nyílásnál (illesztési hézag);\n'
                 '  lézernél a vágásrést (kerf) ne kompenzáld kifelé.\n'
                 '- Rögzítés: a C és az érintőbetét belülről SEMLEGES (neutrális) szilikonnal körbe. Ecetszagú (acetoxi) szilikont ne – repeszti az akrilt.\n')

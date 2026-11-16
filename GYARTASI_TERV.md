@@ -19,7 +19,7 @@ A kocka **dobálható**. Egy alumínium ház nehéz és kemény, ami kockázatos
 | 4 | **Tetőlap** 72×72×2 mm | alumínium (EN AW-5754 vagy 6082) | **lézervágás vagy CNC marás** + eloxálás | **DXF** | furatok: 6 mikrofon, 4 gomb, Ø18 betét |
 | 5 | **Érintőbetét** Ø17,8×2 mm | opál PMMA (akril) | **lézervágás** | **DXF** | belülről semleges szilikonnal körbe |
 | 6 | **C fénycsatorna** | opál PMMA 3 mm | **lézervágás** | **DXF** | kívül síkban, 0,5 mm-rel a fal mögé nyúlik, belülről semleges szilikonnal körbe |
-| 7 | **Alsó fénygyűrű-diffúzor** Ø66 | opál PMMA 3 mm | **lézervágás** | **DXF** | 3× M2 süllyesztett csavar a tálcához |
+| 7 | **Alsó fénygyűrű-diffúzor** Ø66 | opál PMMA 3 mm | **lézervágás** | **DXF** | 3× M2,5 süllyesztett csavar a tálcához |
 | 8 | ~~Kijelzőablak~~ | – | – | – | elhagyva: a kijelző 2,5 mm-re a fal mögött |
 | 9 | **Gombsapkák** (4 db, szárral + gallérral) | gyanta (SLA) | 3D nyomtatás | 3D (STL) | 3 színes + az Andor-gomb alapja |
 | 10 | **Andor fa betét** Ø6,6 × 2 | fa (bükk/tölgy) | **lézervágás** | **DXF** | préselve az SLA sapka tetejébe |
@@ -59,7 +59,7 @@ A kocka **dobálható**. Egy alumínium ház nehéz és kemény, ami kockázatos
   - **felső ház (SLS PA12):** 2,5 mm-es fal, alul nyitott, **kb. 79 g**,
   - **alsó tálca:** lekerekített, felül nyitott, ez **a belső szán alapja**. Így a szán alulról, teljes szélességben (85 mm) betolható, és kívülről nem látszik az osztás.
 - **Átmenő nyílások:** kijelzőablak (Ø33), kamera (Ø4,4, a C nyílásában), a C fénycsatorna, a két hangszórórács és a 60×60 mm-es tetőnyílás a tetőlap alatt.
-- **Tetőlap rögzítése:** 4 db **M2-es süllyesztett fejű csavar** a sarkokban. A csavarok átmennek a tetőlapon és a ház peremén, és a nyomtatott **tetőtartó** menetes betéteibe húznak, így a csavarok a tetőlapot, a ház peremét és a tetőtartót fogják össze. A tetőlap a sapkákkal felülről leemelhető; a tetőtartó (72 mm) csak alulról fér be/ki, mert a tetőnyílás 60 mm.
+- **Tetőlap rögzítése:** 4 db **M2,5-Ã¶s süllyesztett fejű csavar** a sarkokban. A csavarok átmennek a tetőlapon és a ház peremén, és a nyomtatott **tetőtartó** menetes betéteibe húznak, így a csavarok a tetőlapot, a ház peremét és a tetőtartót fogják össze. A tetőlap a sapkákkal felülről leemelhető; a tetőtartó (72 mm) csak alulról fér be/ki, mert a tetőnyílás 60 mm.
 - **Belső szerkezet (helyőrzők):** a szán két sínje, a tetőtartó és az előlapi tartó. Az ütközés- és hézagvizsgálat szerint **mindenhol legalább 3 mm** hely van. Kivétel a kijelző és az előlapi tartó közti 1,5 mm, de ott a rögzítő távtartók vannak.
 - A geometriát **14 pontos ellenőrzés** igazolta: üreges belső, átmenő nyílások, tömör falak és perem.
 
@@ -92,7 +92,7 @@ A kocka **dobálható**. Egy alumínium ház nehéz és kemény, ami kockázatos
 1. **Gombsapkák:** SLA sapka **szárral és gallérral**. A fej Ø7,6 a tetőlap Ø8,2-es furatában ül, 1 mm-rel kiáll. A Ø9,6-os gallér a tetőlap alatt tartja a sapkát. A Ø3,5-ös szár 0,1 mm-re van a kapcsoló tetejétől. A ház peremében Ø10,6-os kiszabadítás van a gallérnak. **Andor-gomb:** ugyanilyen SLA alap, a tetejébe préselve egy **Ø6,6 × 2 mm-es fa betét** (`Andor_fabetet_fa_2mm.dxf`).
 2. **A C fénye:** **S-alakú, síkban hajlítható WS2812 szalag** (5 mm széles, ~110 mm, 6–7 LED). Az előlapi tartó C bordáján fekszik.
 3. **Kijelzőablak:** elhagyva. A kijelző üvege 2,5 mm-re van a homlokfal mögött, a fal védi.
-4. **Alsó diffúzor:** 3 db **M2 süllyesztett fejű csavar** (r = 22 mm, 120°-onként), a tálcában Ø6-os oszlop M2 menetes betéttel. A gumitalpon Ø5-ös lyuk van a csavarfejeknél. Csak a gumitalp öntapadós.
+4. **Alsó diffúzor:** 3 db **M2,5 süllyesztett fejű csavar** (r = 22 mm, 120°-onként), a tálcában Ø7-es oszlop M2,5 menetes betéttel (Ø3,6-os furat). A gumitalpon Ø5-ös lyuk van a csavarfejeknél. Csak a gumitalp öntapadós.
 
 5. **C-akril és érintőbetét:** **semleges (neutrális) szilikonnal**, belülről körbe. A szilikon rugalmas, így dobáskor elnyeli az ütést, és késsel kivágható, ha cserélni kell. A C 3 mm-es, kívül egy síkban van a fallal, belül 0,5 mm-rel kilóg, hogy a szilikon megfogja. Ecetszagú (acetoxi) szilikont nem szabad használni, mert repeszti az akrilt, és korrodálja az elektronikát.
 

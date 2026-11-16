@@ -29,7 +29,7 @@
 | Kép | Hang |
 |---|---|
 | [3D] Lassan forgó kocka egy sötét asztalon, a fénygyűrű színes fényt vet az asztalra. | 🎙️ „Ez a C-kocka. Egy tenyérnyi asztali AI-asszisztens. Beszélhetsz hozzá, és mindig jókedvű.” |
-| [FELIRAT] *8 × 8 × 8 cm · hangvezérlés · mindig jókedvű* | |
+| [FELIRAT] *9 × 9 × 9 cm · hangvezérlés · mindig jókedvű* | |
 
 ## 3. Hogyan készült? (0:25–0:58)
 | Kép | Hang |
@@ -47,14 +47,14 @@ Gyors, közeli képek, mindegyik 2–3 másodperc, egy-egy felirattal:
 |---|---|
 | [3D] Elölnézet: a kijelző az arccal, körülötte a világító C | **Kerek LCD kijelző és világító C** |
 | [3D] A C nyílásában a kamera | **Kamera – felismer, és figyel rád** |
-| [3D] Felülnézet: mikrofonok, érintőfelület, 4 gomb | **6 mikrofon · 4 programozható gomb** |
+| [3D] Robbantott ábra: a gyártható modell belseje, feliratokkal | **kijelző · kamera · 2 mikrofon · hangszórók · RGB · akku · gumisarkok** |
 | [3D] Közelkép a fa gombra | **„Andor” – a favicc-gomb** 🪵 |
 | [3D] Oldalnézet, a hangszórórács | **Sztereó hangszórók** |
 | [3D] Hátlap: USB-C | **USB-C** |
 | [3D] Alulról: a fénygyűrű színeket vált | **RGB fénygyűrű** |
 | [3D] Közelkép egy narancs sarokra | **Narancs gumi sarkok – mindjárt kiderül, minek** 😏 |
 
-🎙️ *(a képek alatt):* „Kerek kijelző. Kamera. Hat mikrofon. Sztereó hangszórók. RGB fények. És narancs gumi sarkok. Hogy miért? Mindjárt kiderül.”
+🎙️ *(a képek alatt):* „Kerek kijelző. Kamera. Két mikrofon. Sztereó hangszórók. RGB fények. Akku. És narancs gumi sarkok. Hogy miért? Mindjárt kiderül.”
 
 ## 5. Szórakoztat (1:20–2:04)
 [FELIRAT] nagy betűkkel: **SZÓRAKOZTAT**

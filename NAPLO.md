@@ -276,3 +276,69 @@ A weboldal nyilvános lesz, a logó használatára pedig nincs engedélyem, ezé
 **Megoldás:** a narráció a helyi F5-TTS-ből jön, egy szabad licencű szintetikus referenciahanggal. Ez a gépen fut, így vízjel nem lehet benne. Az F5-ös mondatok kicsit hosszabbak, ezért az AI 0,8–2,2 másodperccel későbbre tolt öt megszólalást az idővonalon, és a videót újrarenderelte. A FreeTTS-es fájlok nem kerülnek fel a GitHubra.
 
 **Tanulság:** ingyenes online szolgáltatásnál mindig meg kell nézni a feltételeket, és **végig kell hallgatni a kimenetet** – az AI ellenőrzései a hangtartalomra „vakok”.
+
+## 2026-11-13 – Robbantott ábra a videóban és GitHub
+
+**Példaprompt:**
+> „a videóba tehetnénk ilyen betekintős részt, ahol látnánk mint egy robbantott ábrán, hogy mik vannak belül, ilyen-olyan nyák, akksi, stb.”
+
+**Hogyan:** az AI a Fusionből kiexportálta a gyártható, 90 mm-es modell mind a 49 alkatrészét ([tools/export_inside.py](tools/export_inside.py)), és a videó jelenetében ezekből robbantott ábrát épített. A kocka szétnyílik, a ház áttetsző lesz, a részek csoportonként szétválnak. A feliratok vonallal mutatnak az alkatrészekre, és akkor jelennek meg, amikor a narrátor kimondja őket: a szó időpontját az AI a mondatban elfoglalt helyéből becsülte meg. A „Közelről” jelenet helyére került, így a videó hossza nem változott. Közben a narráció „hat mikrofonja” „két mikrofonra” javult, a „8 × 8 × 8 cm” felirat pedig „9 × 9 × 9 cm” lett.
+
+**GitHub:** a projekt felkerült a [github.com/Zollthunder/Ckoc](https://github.com/Zollthunder/Ckoc) címre, a weboldal a [zollthunder.github.io/Ckoc](https://zollthunder.github.io/Ckoc/) címen él. Feltöltés előtt az AI átnézte a fájlokat, a 3D exportokat is (cégnév, e-mail). A commitok a GitHub noreply címével mennek.
+
+**Hol akadtunk el:** a tálca nézeti DXF-exportja több mint egy órára lefagyasztotta a Fusiont. Az AI csendben várt, ahelyett hogy szólt volna – Zollo jogosan jelezte, hogy erről azonnal tudnia kellett volna. A Fusiont a Feladatkezelőből kellett bezárni, utána az AI a mentett `c-kocka.f3d`-ből folytatta.
+
+**Tanulság:** a hosszú, gépet foglaló feladatoknál kell egy várható idő és egy „szólok, ha túllépi” jelzés.
+
+## 2026-11-16 – Mégis van videókártya: az F5-TTS GPU-n
+
+**Példaprompt:**
+> „nézzük meg újra azt a lokális hang generátort, mert a hangok mindig nagyon gyengék. Tudom, gyenge ez a gép hozzá, és sokáig fog tartani.”
+
+**Mi derült ki:** az AI ellenőrizte a gépet, és kiderült, hogy az Intel grafika mellett van egy **NVIDIA RTX 2060 (6 GB)** is, működő meghajtóval. A 11-13-i bejegyzés szerint nincs NVIDIA kártya: ez **tévedés volt**, mert akkor csak azt nézte az AI, hogy a telepített PyTorch látja-e a GPU-t. A CPU-s változat nem látta.
+
+**Hogyan:** a régi meghajtó (CUDA 11.6) miatt csak a CUDA 11.8-as PyTorch 2.7.1 használható. Az AI ezt egy külön környezetbe telepítette (`venv_gpu`), a régi, CPU-s környezet megmaradt. A [tools/f5_generate.py](tools/f5_generate.py) most magától a videókártyát használja, ha elérhető.
+
+**Eredmény:** egy 8,7 másodperces mondat **7 másodperc** alatt készül el a korábbi kb. 2,5 perc helyett. Ez több mint 20-szoros gyorsulás, és a generálás gyorsabb, mint maga a beszéd.
+
+**Elakadás:** a Claude asztali app a `%LOCALAPPDATA%` alá írt új fájlokat a saját csomagmappájába irányítja át (Windows-virtualizáció). Az appból minden működik, de az Intézőben máshol kell keresni a fájlokat.
+
+**Következő lépés:** a gyenge hangminőség fő oka valószínűleg nem a gép, hanem a referenciahang. Az F5 hangklónozó, és most egy szintetikus Piper-hangot utánoz. Jobb referenciát keresünk (saját hang vagy szabad licencű emberi felvétel).
+
+## 2026-11-16 – Új narrátorhang: F5-TTS + XTTS stúdióhang
+
+**Példaprompt:**
+> „Keress szabad hangot”
+
+**Az akadály:** a magyar F5-modell licence tiltja, hogy valódi ember hangját az ő kifejezett hozzájárulása nélkül utánozzuk. Ezért a közkincs hangoskönyvek (LibriVox) és a CC0 hangadatbázisok (Common Voice) nem jöhettek szóba: a felolvasók lemondtak a jogaikról, de a klónozáshoz nem járultak hozzá.
+
+**Megoldás:** az **XTTS-v2** nyílt beszédmodell (Coqui, CPML, nem kereskedelmi licenc) tud magyarul, és beépített stúdióhangjai vannak, amelyeket hangszintézishez licencelt beszélők adtak. Az AI egy külön környezetbe telepítette, és **12 stúdióhanggal** elmondatott egy magyar mondatot. A 12 másodpercnél rövidebb mintákat (7 db) F5-referenciaként is kipróbálta, és mindet egy lejátszóoldalra tette ([video/test/hangmintak.html](video/test/hangmintak.html)).
+
+**Választás:** hallgatás után Zollo az **F5 + „Ludvig Milivoj” XTTS-referencia** változatot választotta. A 16 narrációs mondat a videókártyán **1,3 perc** alatt elkészült (a processzoron ez kb. 40 perc lett volna). Az új hang tempósabb, így két mondatot kellett csak minimálisan (legfeljebb 6%-kal) gyorsítani, és a videót újrarenderelni.
+
+**Elakadások:** a coqui-tts telepítőjéből kimaradt a PyTorch és egy kis csomag (`six`). Az AI ezeket a hibaüzenetből azonosította és pótolta.
+
+**Közben:** az AI egy segédágenssel **költségbecslést és ajánlatkérő e-mail-tervezeteket** készíttetett a 3 prototípushoz ([AJANLATKERESEK.md](AJANLATKERESEK.md)). Ezek gyakorló anyagok, egyiket sem küldtük el. Fontos lelet: az Adafruit Voice Bonnet kifutó termék.
+
+## 2026-11-16 – Döntések a költségbecslés után
+
+**Példaprompt:**
+> „legyen m2,5, kérlek nézd át a többi dokumentumot is. […] microsd és cr1220 elem is legyen benne a beszerzési tervbe”
+
+Az ajánlatkérések átnézése után a következő döntések születtek, és az AI átvezette őket a dokumentumokba:
+- **Raspberry Pi Zero 2 W + Voice Bonnet marad**, bár a Voice Bonnetet a gyártó már kivezette. A C-kocka elméleti termék, sosem kerül gyártásba, és semmit nem rendelünk meg.
+- **Mindenhol M2,5-ös csavar és menetes betét** (eddig a szerelési leírás M2-vel számolt). Érintett fájlok: [SZERELES.md](SZERELES.md), [GYARTASI_TERV.md](GYARTASI_TERV.md), [AJANLATKERESEK.md](AJANLATKERESEK.md). A betétek Ø3,6-os, a tetőlap csavarjai Ø2,8-es furatot kapnak.
+- **microSD kártya és CR1220 óraelem** került az [ELEKTRONIKA.md](ELEKTRONIKA.md) alkatrészlistájába.
+- **Hangszóró:** a 40 mm-es helyett a Ø36 mm-es VISATON K 36 WP.
+- **Kamera:** Zollo egy Kailap kameramodult javasolt. Az AI megnézte, de az OV5640-es, **DVP párhuzamos interfészű** modul nem csatlakoztatható a Pi CSI-portjához. Helyette Pi Zero-kábeles OV5647 „spy” kamera kerül be (pl. Arducam B006603 vagy Pi Supply Spy Camera).
+
+**Még nyitott:** a 3D modellben és a DXF-ekben a furatok és a hangszórógyűrű még a régi méretűek. A Fusion most nem érhető el, és Zollo ugyanebben a Fusionben dolgozik, ezért ez külön, egyeztetett lépés lesz.
+
+**Átvezetés a 3D modellbe (ugyanaznap):** Zollo megnyitotta a Fusiont. Az AI a mentett modellt új dokumentumként nyitotta meg, és az idővonal végére 10 **felületeltolás** (Offset Faces) műveletet tett. Így az eredeti felépítés érintetlen maradt, és a módosítás egyben visszavonható.
+- **Menetes betétek:** 29 furat Ø3,2-ről Ø3,6-ra.
+- **Átmenő csavarfuratok:** 15 furat Ø2,2/2,4-ről Ø2,8-ra. A süllyesztések Ø5,0-ra nőttek, ez pont az M2,5-ös süllyesztett fejhez való.
+- **Hangszóró-rögzítő gyűrű:** a belső nyílás Ø34-ről Ø30-ra szűkült, így a gyűrű a Ø36 mm-es hangszóró peremére szorít.
+
+A szkript előbb megszámolta a furatokat sugár szerint, és csak akkor módosított, ha minden darabszám stimmelt. Az ütközésvizsgálat után csak a korábbi, szándékos érintkezések maradtak. Az újraexportált fájlok: f3d, STEP, STL, 19 nyomtatási STL és 6 vágási DXF.
+
+**Elakadás:** a Fusion indításakor véletlenül az alapmodell szkriptje futott le, és **felülírta** a mentett modellt egy régi változattal. Az AI ezt a fájlok időbélyegéből és méretéből vette észre, és a gitből visszaállította a jó változatot. **Tanulság:** a verziókezelés (git) itt mentette meg a pénteki munkát.

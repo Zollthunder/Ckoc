@@ -40,18 +40,21 @@ function wavInfo(file) {
   return { sr, ch, bits, dur: dataLen / (sr * ch * bits / 8) };
 }
 
-// hangforrás a magyar mondatokhoz: VOICE_SRC=f5 -> helyi F5-TTS (vízjel nélkül, ez az alapértelmezett a videóhoz)
+// hangforrás a magyar mondatokhoz: alapból helyi F5-TTS GPU-n, az XTTS-v2 „Ludvig Milivoj” stúdióhangjával mint referenciával
+// (video/voice_raw_f5_ludvig) – Zollo ezt választotta 2026-11-16-án;
+// VOICE_SRC=szabolcs -> Windows beépített hang (video/voice_raw), VOICE_SRC=f5anna -> F5 a régi, szintetikus Anna-referenciával
 // a FreeTTS ingyenes hangja reklámot mond be a felvételbe, ezért NEM használjuk (VOICE_SRC=freetts csak összehasonlításhoz)
 const FREETTS = path.join(ROOT, 'video/voice_raw_freetts');
-const F5 = path.join(ROOT, 'video/voice_raw_f5');
+const VSRC = process.env.VOICE_SRC || 'ludvig';
+const F5 = path.join(ROOT, VSRC === 'f5anna' ? 'video/voice_raw_f5' : 'video/voice_raw_f5_ludvig');
 const durations = {};
 for (const l of lines) {
   let src = path.join(RAW, l.id + '.wav');
   let info;
   const alt = path.join(FREETTS, l.id + '.mp3');
   const f5 = path.join(F5, l.id + '.wav');
-  if (process.env.VOICE_SRC === 'freetts' && fs.existsSync(alt)) { src = alt; info = { sr: 24000 }; }
-  else if ((process.env.VOICE_SRC || 'f5') === 'f5' && fs.existsSync(f5)) { src = f5; info = wavInfo(src); }
+  if (VSRC === 'freetts' && fs.existsSync(alt)) { src = alt; info = { sr: 24000 }; }
+  else if (VSRC !== 'szabolcs' && fs.existsSync(f5)) { src = f5; info = wavInfo(src); }
   else info = wavInfo(src);
   const [pitch, tempo, vol] = STYLE[l.style] || STYLE.narrator;
   const filters = [

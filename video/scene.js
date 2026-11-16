@@ -207,7 +207,7 @@ const inside = new THREE.Group();
 inside.visible = false;
 cubeRoot.add(inside);
 const IMAT = {
-  petg: new THREE.MeshStandardMaterial({ color: 0xd7dbe2, roughness: 0.62 }),
+  petg: new THREE.MeshStandardMaterial({ color: 0xb4b9c2, roughness: 0.7 }),
   pcb: new THREE.MeshStandardMaterial({ color: 0x1f6e3c, roughness: 0.5, metalness: 0.1 }),
   pcbDark: new THREE.MeshStandardMaterial({ color: 0x1b2230, roughness: 0.45, metalness: 0.1 }),
   batt: new THREE.MeshStandardMaterial({ color: 0x2f62b0, roughness: 0.4, metalness: 0.2 }),
@@ -216,7 +216,7 @@ const IMAT = {
   ghost: new THREE.MeshPhysicalMaterial({ color: 0x30333a, roughness: 0.5, transparent: true, opacity: 1, depthWrite: true }),
   ring: new THREE.MeshBasicMaterial({ color: 0xffd9a8, toneMapped: false }),
   strip: new THREE.MeshBasicMaterial({ color: 0xffb878, toneMapped: false }),
-  opal: new THREE.MeshStandardMaterial({ color: 0xf2efe8, roughness: 0.3, emissive: 0xffb878, emissiveIntensity: 0.35, transparent: true, opacity: 0.92 }),
+  opal: new THREE.MeshStandardMaterial({ color: 0xf2efe8, roughness: 0.3, emissive: 0xffb878, emissiveIntensity: 0.12, transparent: true, opacity: 0.92 }),
 };
 // név -> [anyag, robbantási eltolás (jelenet-egység), csoport]
 function insideRole(n, c) {
@@ -388,7 +388,7 @@ function wrap(g, text, maxW) {
   for (const w of words) { const t = cur ? cur + ' ' + w : w; if (g.measureText(t).width > maxW && cur) { lines.push(cur); cur = w; } else cur = t; }
   if (cur) lines.push(cur); return lines;
 }
-function caption(t, a, b, text, sub) {
+function caption(t, a, b, text, sub, top = false) {
   if (!inR(t, a, b)) return;
   const k = ease(t, a, a + 0.35) * (1 - ease(t, b - 0.35, b));
   ctx.save(); ctx.globalAlpha = k;
@@ -397,7 +397,7 @@ function caption(t, a, b, text, sub) {
   ctx.font = `500 30px ${FONT}`;
   const w2 = sub ? ctx.measureText(sub).width : 0;
   const w = Math.max(w1, w2) + 70, h = sub ? 128 : 86;
-  const x = 90 - (1 - k) * 40, y = H - 110 - h;
+  const x = 90 - (1 - k) * 40, y = top ? 80 : H - 110 - h;
   ctx.fillStyle = 'rgba(12,14,18,0.78)'; rr(ctx, x, y, w, h, 18); ctx.fill();
   ctx.fillStyle = ACC; rr(ctx, x, y, 8, h, 4); ctx.fill();
   ctx.fillStyle = '#fff'; ctx.font = `700 46px ${FONT}`; ctx.textBaseline = 'top'; ctx.fillText(text, x + 36, y + 18);
@@ -562,7 +562,7 @@ function stateAt(t) {
       s.explode = e; s.inside = true;
       s.root = V3(0, 4 + 5.6 * e, 0);
       const ang = lerp(0.62, 0.98, seg(t, EX.a, EX.d));
-      s.cam = orbit(ang, lerp(17, 37, e), lerp(7.5, 19, e), V3(0, 4 + 5.6 * e, 0));
+      s.cam = orbit(ang, lerp(17, 43, e), lerp(7.5, 21, e), V3(0, 4 + 6.3 * e, 0));
       s.led = 1;
       if (t >= EX.word('RGB') - 0.2) { s.ringColor = (p, tt) => hsl(p + tt * 0.5, 1, 0.55); s.glowColor = hsl(t * 0.5, 1, 0.55); s.glowI = 1.1; }
     } else s.cam = shot(V3(lerp(-9.5, -7.8, seg(t, EX.d, 69)), lerp(10.5, 9.8, seg(t, EX.d, 69)), lerp(9.5, 7.8, seg(t, EX.d, 69))), V3(-3.6, 7.6, 3.6));
@@ -709,7 +709,7 @@ function overlays(t) {
   // 1.
   title(t, 13.0, 15.5, 'C-kocka', 'asztali AI-asszisztens', 0.35);
   // 2.
-  caption(t, 17.0, 23.6, '8 × 8 × 8 cm', 'hangvezérlés · RGB fények · mindig jókedvű');
+  caption(t, 17.0, 23.6, '9 × 9 × 9 cm', 'hangvezérlés · RGB fények · mindig jókedvű');
   // 3.
   chat(t, 24.0, 29.2, [
     { me: true, text: 'kaptam egy feladatot, ahhoz kellene segítség… van valami jó ötleted?' },
@@ -765,7 +765,7 @@ function overlays(t) {
   caption(t, 52.4, 55.4, 'Napló', 'eszközök · példapromptok · elakadások és megoldások');
   // 4.
   caption(t, 55.7, EX.a, 'Kerek LCD kijelző és világító C');
-  caption(t, EX.a + 0.2, EX.a + 2.8, 'Belülről', 'a gyártható, 90 mm-es modell');   // a robbantott ábra címkéi: insideLabels()
+  caption(t, EX.a + 0.2, EX.a + 2.8, 'Belülről', 'a gyártható, 90 mm-es modell', true);   // a robbantott ábra címkéi: insideLabels()
   caption(t, EX.d + 0.1, 68.8, 'Narancs gumi sarkok', 'mindjárt kiderül, minek 😏');
   // 5.
   title(t, 69.0, 70.6, 'SZÓRAKOZTAT');
@@ -843,31 +843,32 @@ function overlays(t) {
 // robbantott ábra feliratai: [cím, alcím, alkatrész, a narráció szava, ami előhívja (+ késleltetés)]
 const INSIDE_LABELS = [
   ['Kerek kijelző', '1,28" · 240 × 240', /Kerek kijelzo/, 'Kerek kijelző', 0],
-  ['Kamera', 'OV5647 · a C nyílásában', /Mini kamera/, 'Kamera', 0],
+  ['Kamera', 'OV5647 · a C nyílásában', /Mini kamera/, 'Kamera', 0, [0, 120]],
   ['Két mikrofon', 'Voice Bonnet · sztereó hang', /Voice Bonnet/, 'Két mikrofon', 0],
   ['Raspberry Pi Zero 2 W', 'Wi-Fi · Bluetooth · Linux', /Raspberry/, 'Két mikrofon', 0.7],
   ['Sztereó hangszórók', '2 × 40 mm', /Hangszoro jobb – test/, 'Sztereó', 0],
   ['RGB fények', '24 LED-es gyűrű + világító C', /NeoPixel/, 'RGB', 0],
-  ['Akku', '18650 · USB-C töltés', /UPS/, 'Akku', 0],
+  ['Akku', '18650 · USB-C töltés', /UPS/, 'Akku', 0, [0, -90], [-1.1, -0.3, 1.2], 1],
   ['Narancs gumisarkok', 'TPU · dobálható', /Gumi sarok 6/, 'narancs', 0],
 ];
 function insideLabels(t, s) {
   const v = new THREE.Vector3();
-  for (const [text, sub, re, word, delay] of INSIDE_LABELS) {
+  for (const [text, sub, re, word, delay, shift = [0, 0], aOff = [0, 0, 0], side = 0] of INSIDE_LABELS) {
     const p = insidePart(re);
     const t0 = EX.word(word) + delay;
     if (!p || t < t0 || t > EX.c + 0.4) continue;
     const k = ease(t, t0, t0 + 0.35) * (1 - ease(t, EX.c, EX.c + 0.4)) * s.explode;
     if (k <= 0.01) continue;
-    v.copy(p.center).addScaledVector(p.off, s.explode);
+    v.copy(p.center).addScaledVector(p.off, s.explode).add(new THREE.Vector3(...aOff));
     inside.localToWorld(v); v.project(camera);
     const ax = (v.x + 1) / 2 * W, ay = (1 - v.y) / 2 * H;
     let dx = ax - W / 2, dy = ay - H / 2; const dl = Math.hypot(dx, dy) || 1; dx /= dl; dy /= dl;
+    if (side) dx = side;
     ctx.save(); ctx.globalAlpha = k;
     ctx.font = `700 34px ${FONT}`; const w1 = ctx.measureText(text).width;
     ctx.font = `500 22px ${FONT}`; const w2 = ctx.measureText(sub).width;
     const bw = Math.max(w1, w2) + 44, bh = 84;
-    let lx = ax + dx * 170, ly = ay + dy * 110;
+    let lx = ax + dx * 170 + shift[0], ly = ay + dy * 110 + shift[1];
     let bx = dx >= 0 ? lx : lx - bw, by = ly - bh / 2;
     bx = clamp(bx, 30, W - bw - 30); by = clamp(by, 30, H - bh - 160);
     const ex = dx >= 0 ? bx : bx + bw, ey = by + bh / 2;
@@ -891,7 +892,7 @@ function renderAt(t) {
     for (const p of insideParts) p.mesh.position.copy(p.off).multiplyScalar(s.explode);
     IMAT.ghost.opacity = lerp(1, 0.14, s.explode); IMAT.ghost.depthWrite = s.explode < 0.3;
     insideScreen.position.set(0, 0, 42.62 * IK).addScaledVector(insideScreenOff, s.explode);
-    IMAT.ring.color.copy(s.ringColor(0.3, t)); IMAT.strip.color.copy(s.cColor(0.5, t));
+    IMAT.ring.color.copy(s.ringColor(0.3, t)).multiplyScalar(0.8); IMAT.strip.color.copy(s.cColor(0.5, t)).multiplyScalar(0.8);
     IMAT.opal.emissive.copy(s.cColor(0.5, t));
   }
   paintLight(parts.c_fenycsatorna, s.cColor, t);
@@ -900,7 +901,7 @@ function renderAt(t) {
   const height = clamp(1 - (s.root.y - 4) / 6);
   glow.position.set(s.root.x, -0.44, s.root.z);
   glow.material.color.copy(s.glowColor).multiplyScalar(s.glowI * height);
-  under.position.set(s.root.x, 0.6, s.root.z); under.color.copy(s.glowColor); under.intensity = 9 * s.glowI * height;
+  under.position.set(s.root.x, 0.6, s.root.z); under.color.copy(s.glowColor); under.intensity = 9 * s.glowI * height * (1 - 0.85 * s.explode);
   MAT.orange.color.copy(s.corner);
   patch.visible = s.patch > 0; patch.material.opacity = s.patch;
   led.material.color.setScalar(s.led ? 1.5 : 0.05);
