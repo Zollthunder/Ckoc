@@ -32,9 +32,18 @@ function persona() {
   const s = S.sliders, base = s.sarcasm > 60 ? PERSONAS.sarcastic : s.energy > 70 ? PERSONAS.hype : s.energy < 30 ? PERSONAS.chill : PERSONAS.sunny;
   return { ...base, hue: S.hue, rate: 0.94 + s.energy / 666 };
 }
-const JOKE_COUNT = 8;
-let jokeIdx = Math.floor(Math.random() * JOKE_COUNT);
-const nextJoke = () => (jokeIdx++ % JOKE_COUNT) + 1;
+// viccek: "zsákból húzás" – véletlen sorrend, és egyik sem ismétlődik, amíg mind el nem hangzott
+// (új kör után sem jöhet rögtön ugyanaz, mint ami utoljára volt)
+let jokeBag = [], lastJoke = 0;
+function nextJoke() {
+  if (!jokeBag.length) {
+    const n = Object.keys(LINES).filter(k => /^joke_\d+q$/.test(k)).length || 8;
+    jokeBag = Array.from({ length: n }, (_, i) => i + 1);
+    for (let i = n - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [jokeBag[i], jokeBag[j]] = [jokeBag[j], jokeBag[i]]; }
+    if (n > 1 && jokeBag[n - 1] === lastJoke) [jokeBag[0], jokeBag[n - 1]] = [jokeBag[n - 1], jokeBag[0]];
+  }
+  return (lastJoke = jokeBag.pop());
+}
 const pick = n => 1 + Math.floor(Math.random() * n);
 let LINES = {};
 const linesReady = fetch('web/voice/lines.json').then(r => r.json()).then(a => { for (const l of a) LINES[l.id] = l.text; }).catch(() => {});
