@@ -448,3 +448,17 @@ A szkripteket egy rövid próbaszövegen kipróbálta: mindkét mondat hibátlan
 **Javítás (ugyanaznap):** Zollo szerint a szimulátor „nagyon töri az angolt”. Az ok: a böngésző beépített hangját használta, és ha a gépen nincs angol hang, magyar hanggal olvassa fel az angol szöveget. A megoldás a friss **video-narration skill első éles bevetése** volt: a kocka mind a 47 mondatát előre legeneráltuk XTTS-v2-vel (vidám női stúdióhang, „Daisy Studious”), mondatonként 3 jelöltből a Whisper választott. A szimulátor ezeket az MP3-akat játssza le (összesen kb. 1 MB, [web/voice/](web/voice/)), és a kocka szája most már a hang valódi hangerejére mozog. A változó adat (megszólítás, idő, mennyi ideje nem látott) a feliratba került. A Whisper négy sort jelzett gyanúsnak, de ezek a szóviccek miatt hangzanak úgy, ahogy kell („knotty” = „naughty”, „Leaf” = „Leave”). **Tanulság:** a Whisper pontszáma jelzés, nem ítélet; a szóvicceknél az „eltérés” maga a poén.
 
 **Bővítés (ugyanaznap):** Zollo kérésére a dad jokes 8-ról **25**-re bővült (fás, kávés, programozós, irodai viccek), és véletlen sorrendben jönnek „zsákból húzással”: egyik sem ismétlődik, amíg mind el nem hangzott, és egy kör végén sem jöhet kétszer egymás után ugyanaz. Az AI ezt 75 húzáson tesztelte. A 34 új mondatot a skill generálta; két csattanót a Whisper jelzése alapján át kellett fogalmazni („In case he got…” → a modell „you”-t mondott). A „planet”-et viszont a Whisper „plan it”-nek írta, ami kiejtésben pont a poén, ezért az maradt. **Elakadás a tesztben:** egy ellenőrző lépés véletlenül még egyszer betöltötte a programot az oldalba, így minden esemény duplán futott. Az AI ezt a naplóból vette észre, és tiszta újratöltéssel megismételte a tesztet.
+
+## 2026-11-16 – A kocka saját szoftvere (Raspberry Pi + XIAO)
+
+**Példaprompt:**
+> „király! esetleg a nyákra is tudnál tervezni egy progit ami ezeket kezeli?”
+
+**Hogyan:** az AI a webes szimulátor logikáját átírta arra a két processzorra, ami a kockában lenne ([firmware/](firmware/README.md)):
+- **Raspberry Pi Zero 2 W, Python:** ez az „agy”. Viselkedés (bekapcsolás, viccek ismétlés nélkül, személyiségek, party, Ne zavarj, fordítás = adatvédelem, leskelődés, felvidítás, hívás), az arc a kerek kijelzőn (Pillow, 9 üzemmód), hangeffektek és party-zene kódból, és WebSocket-kapcsolat az apphoz **ugyanazzal a protokollal**, mint a webes szimulátor.
+- **Seeed XIAO RP2040, CircuitPython:** ezek a „reflexek”. LED-gyűrű és C-szalag, gombok, érintés, a mozgásérzékelőből dobás, rázás és fordítás felismerése, rezgés és kamera-jelzőfény.
+- **Hardver-absztrakció:** minden eszköznek van valódi (GC9A01 SPI-n, Voice Bonnet ALSA-n, OV5647 + OpenCV helyben, XIAO USB-n) és szimulált változata. PC-n `python -m ckocka --sim --demo` végigmegy a funkciókon, és a kijelző képeit PNG-be menti.
+
+**Ellenőrzés:** 11 automatikus teszt (protokoll, viccek sorrendje, mentés, a kijelző minden üzemmódja, bekapcsolás és vicc, fordítás, Ne zavarj, parancsok) – mind átment. A bemutató futtatása közben két hibát találtunk és javítottunk: a leskelődés nem szakadt meg Ne zavarj módban, a bemutató forgatókönyvében pedig rossz volt az időzítés.
+
+**Ami nincs benne:** valódi beszédfelismerés és AI-válasz, Bluetooth-zene és kihangosítás (csak a jelenet van meg), illetve az app-kapcsolat élő próbája (a `websockets` csomag nem volt telepítve). A Pi- és XIAO-kód hardveren nem volt kipróbálva, mert a kocka koncepció. A GC9A01 inicializálása a gyártói referenciakódból való.

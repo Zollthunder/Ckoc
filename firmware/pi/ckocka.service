@@ -1,0 +1,18 @@
+[Unit]
+Description=C-kocka – asztali AI-asszisztens
+After=sound.target network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/opt/ckocka
+ExecStart=/usr/bin/python3 -m ckocka
+Restart=always
+RestartSec=3
+# párosító kód az apphoz (ha üres, a helyi hálózaton bárki csatlakozhat)
+Environment=CKOCKA_TOKEN=
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
