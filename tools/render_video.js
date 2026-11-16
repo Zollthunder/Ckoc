@@ -2,6 +2,7 @@
 // Használat:
 //   node tools/render_video.js test 8,20,36.5      -> próbaképek: video/test/t_<idő>.jpg
 //   node tools/render_video.js full [kezdet] [vég]  -> video/c-kocka.mp4
+//   második videó: --page scene_jp.html --audio video/jp/audio_mix_jp.wav --out video/c-cube_japan.mp4
 const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process');
@@ -13,7 +14,9 @@ const PORT = 8090;
 const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe';
 
 (async () => {
-  const [mode = 'test', arg1, arg2] = process.argv.slice(2);
+  const argv = process.argv.slice(2), opt = k => { const i = argv.indexOf('--' + k); return i >= 0 ? argv.splice(i, 2)[1] : null; };
+  const PAGE = opt('page') || 'scene.html', AUDIO = opt('audio') || 'video/audio_mix.wav', OUT = opt('out');
+  const [mode = 'test', arg1, arg2] = argv;
   const server = spawn(process.execPath, [path.join(ROOT, 'serve.js')], { env: { ...process.env, PORT }, stdio: 'ignore' });
   await new Promise(r => setTimeout(r, 800));
   const browser = await puppeteer.launch({
@@ -25,7 +28,7 @@ const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
     const page = await browser.newPage();
     page.on('console', m => { if (m.type() === 'error') console.log('[oldal hiba]', m.text()); });
     page.on('pageerror', e => console.log('[oldal kivétel]', e.message));
-    await page.goto(`http://localhost:${PORT}/video/scene.html?render`, { waitUntil: 'load' });
+    await page.goto(`http://localhost:${PORT}/video/${PAGE}?render`, { waitUntil: 'load' });
     await page.waitForFunction('window.ready === true', { timeout: 120000 });
     const renderer = await page.evaluate(() => {
       const gl = document.createElement('canvas').getContext('webgl2');
@@ -45,9 +48,10 @@ const EDGE = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
     } else {
       const duration = await page.evaluate(() => window.duration);
       const fps = 30, t0 = +(arg1 || 0), t1 = +(arg2 || duration);
-      const outFile = path.join(ROOT, t0 === 0 && t1 === duration ? 'video/c-kocka.mp4' : `video/c-kocka_${t0}-${t1}.mp4`);
+      const base = OUT ? OUT.replace(/.mp4$/, '') : 'video/c-kocka';
+      const outFile = path.join(ROOT, t0 === 0 && t1 === duration ? base + '.mp4' : `${base}_${t0}-${t1}.mp4`);
       const ff = spawn(ffmpeg, ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(fps), '-c:v', 'mjpeg', '-i', '-',
-        '-ss', String(t0), '-t', String(t1 - t0), '-i', path.join(ROOT, 'video/audio_mix.wav'),
+        '-ss', String(t0), '-t', String(t1 - t0), '-i', path.join(ROOT, AUDIO),
         '-c:v', 'libx264', '-preset', 'medium', '-crf', '19', '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
         '-c:a', 'aac', '-b:a', '192k', '-shortest', outFile], { stdio: ['pipe', 'inherit', 'inherit'] });
       const frames = Math.round((t1 - t0) * fps), start = Date.now();

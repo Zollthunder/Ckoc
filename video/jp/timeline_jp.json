@@ -1,0 +1,56 @@
+{
+  "fps": 30,
+  "duration": 31.6,
+  "bpm": 150,
+  "cuts": [
+    {"id": "new",      "t": 0.0},
+    {"id": "name",     "t": 1.6},
+    {"id": "talk",     "t": 3.2},
+    {"id": "glow",     "t": 6.0},
+    {"id": "throw",    "t": 7.6},
+    {"id": "joke",     "t": 10.4},
+    {"id": "peek",     "t": 17.6},
+    {"id": "flip",     "t": 20.0},
+    {"id": "persona",  "t": 22.8},
+    {"id": "price",    "t": 24.8},
+    {"id": "end",      "t": 27.0}
+  ],
+  "voices": [
+    {"id": "J01", "t": 0.30, "src": "jp"},
+    {"id": "J02", "t": 1.70, "src": "jp"},
+    {"id": "J03", "t": 3.25, "src": "jp"},
+    {"id": "btn_gooo", "t": 4.35, "src": "cube"},
+    {"id": "J04", "t": 6.05, "src": "jp"},
+    {"id": "J05", "t": 7.95, "src": "jp"},
+    {"id": "J06", "t": 10.45, "src": "jp"},
+    {"id": "joke_9q", "t": 12.60, "src": "cube"},
+    {"id": "joke_9a", "t": 15.30, "src": "cube"},
+    {"id": "J07", "t": 17.70, "src": "jp"},
+    {"id": "J08", "t": 20.05, "src": "jp"},
+    {"id": "J09", "t": 22.85, "src": "jp"},
+    {"id": "J10", "t": 24.90, "src": "jp"},
+    {"id": "J11", "t": 27.10, "src": "jp"},
+    {"id": "J12", "t": 29.70, "src": "jp"}
+  ],
+  "sfx": [
+    {"id": "taiko", "t": 0.0}, {"id": "flash", "t": 0.0},
+    {"id": "sparkle", "t": 1.6}, {"id": "taiko1", "t": 1.6},
+    {"id": "pop", "t": 3.2}, {"id": "pop", "t": 4.4},
+    {"id": "sparkle", "t": 6.0}, {"id": "sweep", "t": 5.6},
+    {"id": "whoosh", "t": 7.6}, {"id": "boing", "t": 8.75}, {"id": "tweet", "t": 9.1},
+    {"id": "pop", "t": 10.4}, {"id": "badumtss", "t": 16.7},
+    {"id": "dundun", "t": 17.6}, {"id": "zip", "t": 19.35},
+    {"id": "whoosh", "t": 20.0}, {"id": "shutter", "t": 20.9},
+    {"id": "pop", "t": 22.8}, {"id": "pop", "t": 23.4}, {"id": "pop", "t": 24.0},
+    {"id": "drumroll", "t": 24.8}, {"id": "crash", "t": 26.0},
+    {"id": "taiko", "t": 27.0}, {"id": "chime", "t": 29.7}
+  ],
+  "music": [
+    {"from": 0.0, "to": 17.6, "part": "main"},
+    {"from": 17.6, "to": 20.0, "part": "stealth"},
+    {"from": 20.0, "to": 24.8, "part": "main"},
+    {"from": 24.8, "to": 26.0, "part": "roll"},
+    {"from": 26.0, "to": 27.0, "part": "main"},
+    {"from": 27.0, "to": 31.6, "part": "jingle"}
+  ]
+}

@@ -493,3 +493,28 @@ A szkripteket egy rövid próbaszövegen kipróbálta: mindkét mondat hibátlan
 **Eredmény:** a szimulátorban 21 böngészős ellenőrzés sikeres (ebből 5 kifejezetten a javított hibákra), a Pi-szoftver 18 tesztje (ebből 6 új visszaesési teszt) és az app-kapcsolat 12 élő ellenőrzése is sikeres. Konzolhiba nincs, telefonméretben is rendben van. Két apró eltérés maradt a két változat között, ezek szándékosak: a webes szimulátor nem menti a fényszínt és a fényerőt, és a „Let's gooo” gombnál a weben 🔥 látszik, a kocka kijelzőjén „GO!”.
 
 **Tanulság:** a független, „friss szemű” átnézés olyan hibákat talált (pl. a hangosodó hang), amiket a funkcionális tesztek nem fogtak meg. A kettő együtt adja a biztonságot.
+
+## 2026-11-16 – Bónusz: „japán reklám”
+
+**Példaprompt:**
+> „esetleg egy videót tudnál olyan típikus "japán" stílusban csinálni? ez csak olyan plusz lenne. szokásos gyors vágások, hanghatások, amire az ember gondolna egy virális japán reklámra gondolva.”
+
+**Eredmény:** egy 31 másodperces reklám ([video/c-cube_japan.mp4](video/c-cube_japan.mp4)), 11 vágással ütemre (150 BPM):
+- „新発売！” (Új!) taiko-dobütéssel;
+- beszél, világít, dobható, dad jokes-t mond, leskelődik, fejjel lefelé adatvédelmi módba vált, választható a személyisége;
+- „今なら…プライスレス！” (Most… megfizethetetlen!) dobpergéssel;
+- zárókép szlogennel és egy lábjegyzettel: „※コンセプト製品です” (koncepciótermék, nem kapható).
+
+A műfaj ismert elemeit használja (napsugaras hátterek, beugró feliratok vastag körvonallal, villanások, rázkódás, sebességvonalak), konkrét reklámot nem másol.
+
+**Hogyan:**
+- **Jelenet:** a fő videó „motorja” (a kocka 3D modellje, anyagai, fényei, élő arca) változatlanul maradt, csak a forgatókönyv és a képi elemek újak ([video/jp/scene_jp_part.js](video/jp/scene_jp_part.js), összerakva: [tools/build_jp_scene.js](tools/build_jp_scene.js)). A renderelő paraméterként kapja az oldalt, a hangsávot és a kimenetet.
+- **Japán narráció:** XTTS-v2 („Gracie Wise” stúdióhang, `language="ja"`). Az XTTS a japán szöveget csomagokkal alakítaná latin betűs kiejtéssé (cutlet/fugashi, kb. 50 MB-os szótárral). **Ehelyett az AI maga írta meg a kiejtést**, így nem kellett letöltés.
+- **Zene és hanghatások:** 150 BPM-es pörgős zene, taiko, csillámlás, rugózás, rimshot és a többi, mind kódból ([tools/jp_audio.js](tools/jp_audio.js)).
+
+**Elakadások:**
+- Az első próbán a szókezdő „h” elveszett („shinhatsubai” → „shinatsubai”). Kiderült, hogy a modell szóközzel tagolt romajin tanult, és a jövevényszavakat angolul várja („privacy mode” → プライバシーモード). Átírás után 12-ből 12 mondatot hall a Whisper (japánul) helyesen.
+- Japánul a Whisper egy jelöltnél „belepörgött”, és elfogyott a videókártya memóriája. Rövid mondatokhoz korlátozott dekódolás kell.
+- Az első képkockákon a kamera túl közel volt, a feliratok rálógtak a kockára. A próbaképek alapján hátrébb került.
+
+**Tanulság:** egy jól felépített renderelő-„motor” újrahasznosítható: a második videó a forgatókönyvtől a kész MP4-ig egy délután alatt elkészült, és maga a renderelés 89 másodperc volt.

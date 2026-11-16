@@ -18,13 +18,15 @@ def asr():
     return _asr
 
 
-def transcribe(wav, sr, lang='hungarian'):
+def transcribe(wav, sr, lang='hungarian', short=False):
     """Visszaadja a szöveget és a szavakat [(szó, kezdet, vég)] másodpercben."""
     if sr != 16000:
         import torchaudio.functional as AF
         wav = AF.resample(torch.from_numpy(wav), sr, 16000).numpy()
     r = asr()({'raw': wav.astype(np.float32), 'sampling_rate': 16000}, return_timestamps='word',
-              generate_kwargs={'language': lang, 'task': 'transcribe'})
+              generate_kwargs={'language': lang, 'task': 'transcribe',
+                               # rövid mondatoknál: ne „pörögjön bele” (ismétlődő kimenet -> elfogy a videókártya memóriája)
+                               **({'max_new_tokens': 60, 'num_beams': 1} if short else {})})
     words = [(c['text'].strip(), c['timestamp'][0], c['timestamp'][1]) for c in r.get('chunks', [])]
     return r['text'].strip(), words
 

@@ -1,0 +1,348 @@
+{
+ "J01": {
+  "ja": "新発売！",
+  "chosen": "J01_0.wav",
+  "score": 1.0,
+  "heard": "新発売",
+  "candidates": [
+   {
+    "file": "J01_0.wav",
+    "score": 1.0,
+    "heard": "新発売"
+   },
+   {
+    "file": "J01_1.wav",
+    "score": 1.0,
+    "heard": "新発売"
+   },
+   {
+    "file": "J01_2.wav",
+    "score": 1.0,
+    "heard": "新発売"
+   },
+   {
+    "file": "J01_3.wav",
+    "score": 1.0,
+    "heard": "新発売"
+   }
+  ]
+ },
+ "J02": {
+  "ja": "シーキューブ！",
+  "chosen": "J02_0.wav",
+  "score": 1.0,
+  "heard": "Cキューブ",
+  "candidates": [
+   {
+    "file": "J02_0.wav",
+    "score": 1.0,
+    "heard": "Cキューブ"
+   },
+   {
+    "file": "J02_1.wav",
+    "score": 1.0,
+    "heard": "Cキューブ"
+   },
+   {
+    "file": "J02_2.wav",
+    "score": 0.8,
+    "heard": "c キューブ"
+   },
+   {
+    "file": "J02_3.wav",
+    "score": 0.8,
+    "heard": "c キューブ"
+   }
+  ]
+ },
+ "J03": {
+  "ja": "おしゃべりできる！",
+  "chosen": "J03_0.wav",
+  "score": 1.0,
+  "heard": "おしゃべりできる。",
+  "candidates": [
+   {
+    "file": "J03_0.wav",
+    "score": 1.0,
+    "heard": "おしゃべりできる。"
+   },
+   {
+    "file": "J03_1.wav",
+    "score": 1.0,
+    "heard": "おしゃべりできる"
+   },
+   {
+    "file": "J03_2.wav",
+    "score": 1.0,
+    "heard": "おしゃべりできる"
+   },
+   {
+    "file": "J03_3.wav",
+    "score": 1.0,
+    "heard": "おしゃべりできる"
+   }
+  ]
+ },
+ "J04": {
+  "ja": "光る！",
+  "chosen": "J04_0.wav",
+  "score": 0.857,
+  "heard": "ヒカルー",
+  "candidates": [
+   {
+    "file": "J04_0.wav",
+    "score": 0.857,
+    "heard": "ヒカルー"
+   },
+   {
+    "file": "J04_1.wav",
+    "score": 0.0,
+    "heard": "よー"
+   },
+   {
+    "file": "J04_2.wav",
+    "score": 0.75,
+    "heard": "ヒーカルー"
+   },
+   {
+    "file": "J04_3.wav",
+    "score": 0.571,
+    "heard": "いかるー"
+   }
+  ]
+ },
+ "J05": {
+  "ja": "投げても大丈夫！",
+  "chosen": "J05_0.wav",
+  "score": 1.0,
+  "heard": "投げても大丈夫",
+  "candidates": [
+   {
+    "file": "J05_0.wav",
+    "score": 1.0,
+    "heard": "投げても大丈夫"
+   },
+   {
+    "file": "J05_1.wav",
+    "score": 1.0,
+    "heard": "投げても大丈夫。"
+   },
+   {
+    "file": "J05_2.wav",
+    "score": 1.0,
+    "heard": "投げても大丈夫"
+   },
+   {
+    "file": "J05_3.wav",
+    "score": 1.0,
+    "heard": "投げても大丈夫"
+   }
+  ]
+ },
+ "J06": {
+  "ja": "ダジャレも言う！",
+  "chosen": "J06_2.wav",
+  "score": 1.0,
+  "heard": "ダジャレも言う。",
+  "candidates": [
+   {
+    "file": "J06_0.wav",
+    "score": 0.857,
+    "heard": "だじゃれも言う"
+   },
+   {
+    "file": "J06_1.wav",
+    "score": 0.857,
+    "heard": "だじゃれも言う"
+   },
+   {
+    "file": "J06_2.wav",
+    "score": 1.0,
+    "heard": "ダジャレも言う。"
+   },
+   {
+    "file": "J06_3.wav",
+    "score": 0.857,
+    "heard": "だじゃれも言う"
+   }
+  ]
+ },
+ "J07": {
+  "ja": "こっそり見てる…？",
+  "chosen": "J07_0.wav",
+  "score": 1.0,
+  "heard": "こっそり見てる?",
+  "candidates": [
+   {
+    "file": "J07_0.wav",
+    "score": 1.0,
+    "heard": "こっそり見てる?"
+   },
+   {
+    "file": "J07_1.wav",
+    "score": 1.0,
+    "heard": "こっそり見てる"
+   },
+   {
+    "file": "J07_2.wav",
+    "score": 1.0,
+    "heard": "こっそり見てる?"
+   },
+   {
+    "file": "J07_3.wav",
+    "score": 1.0,
+    "heard": "こっそり見てる?"
+   }
+  ]
+ },
+ "J08": {
+  "ja": "ひっくり返すと、プライバシーモード！",
+  "chosen": "J08_0.wav",
+  "score": 1.0,
+  "heard": "ひっくり返すとプライバシーモード",
+  "candidates": [
+   {
+    "file": "J08_0.wav",
+    "score": 1.0,
+    "heard": "ひっくり返すとプライバシーモード"
+   },
+   {
+    "file": "J08_1.wav",
+    "score": 1.0,
+    "heard": "ひっくり返すとプライバシーモード"
+   },
+   {
+    "file": "J08_2.wav",
+    "score": 1.0,
+    "heard": "ひっくり返すとプライバシーモード"
+   },
+   {
+    "file": "J08_3.wav",
+    "score": 0.839,
+    "heard": "一振り返すとプライバシーモード"
+   }
+  ]
+ },
+ "J09": {
+  "ja": "性格も選べる！",
+  "chosen": "J09_0.wav",
+  "score": 1.0,
+  "heard": "性格も選べる",
+  "candidates": [
+   {
+    "file": "J09_0.wav",
+    "score": 1.0,
+    "heard": "性格も選べる"
+   },
+   {
+    "file": "J09_1.wav",
+    "score": 1.0,
+    "heard": "性格も選べる"
+   },
+   {
+    "file": "J09_2.wav",
+    "score": 1.0,
+    "heard": "性格も選べる"
+   },
+   {
+    "file": "J09_3.wav",
+    "score": 1.0,
+    "heard": "性格も選べる"
+   }
+  ]
+ },
+ "J10": {
+  "ja": "今なら…プライスレス！",
+  "chosen": "J10_0.wav",
+  "score": 1.0,
+  "heard": "今ならプライスレス",
+  "candidates": [
+   {
+    "file": "J10_0.wav",
+    "score": 1.0,
+    "heard": "今ならプライスレス"
+   },
+   {
+    "file": "J10_1.wav",
+    "score": 1.0,
+    "heard": "今ならプライスレス"
+   },
+   {
+    "file": "J10_2.wav",
+    "score": 1.0,
+    "heard": "今ならプライスレス"
+   },
+   {
+    "file": "J10_3.wav",
+    "score": 0.824,
+    "heard": "今のプライスレス"
+   },
+   {
+    "file": "J10_4.wav",
+    "score": 1.0,
+    "heard": "今ならプライスレス"
+   },
+   {
+    "file": "J10_5.wav",
+    "score": 1.0,
+    "heard": "今ならプライスレス"
+   }
+  ]
+ },
+ "J11": {
+  "ja": "あなたのデスクに、小さな友だち。",
+  "chosen": "J11_0.wav",
+  "score": 1.0,
+  "heard": "あなたのデスクに小さな友達",
+  "candidates": [
+   {
+    "file": "J11_0.wav",
+    "score": 1.0,
+    "heard": "あなたのデスクに小さな友達"
+   },
+   {
+    "file": "J11_1.wav",
+    "score": 1.0,
+    "heard": "あなたのデスクに小さな友達"
+   },
+   {
+    "file": "J11_2.wav",
+    "score": 1.0,
+    "heard": "あなたのデスクに小さな友達"
+   },
+   {
+    "file": "J11_3.wav",
+    "score": 1.0,
+    "heard": "あなたのデスクに小さな友達"
+   }
+  ]
+ },
+ "J12": {
+  "ja": "シーキューブ！",
+  "chosen": "J12_0.wav",
+  "score": 1.0,
+  "heard": "Cキューブ",
+  "candidates": [
+   {
+    "file": "J12_0.wav",
+    "score": 1.0,
+    "heard": "Cキューブ"
+   },
+   {
+    "file": "J12_1.wav",
+    "score": 1.0,
+    "heard": "Cキューブ"
+   },
+   {
+    "file": "J12_2.wav",
+    "score": 0.8,
+    "heard": "c キューブ"
+   },
+   {
+    "file": "J12_3.wav",
+    "score": 0.8,
+    "heard": "c キューブ"
+   }
+  ]
+ }
+}

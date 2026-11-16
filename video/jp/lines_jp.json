@@ -1,0 +1,14 @@
+[
+ {"id": "J01", "ja": "新発売！", "accept": ["新発売", "しんはつばい", "シンハツバイ"], "romaji": "Shin hatsubai!", "en": "NEW!"},
+ {"id": "J02", "ja": "シーキューブ！", "accept": ["シーキューブ", "Cキューブ", "しーきゅーぶ"], "romaji": "Shii kyuubu!", "en": "C-CUBE!"},
+ {"id": "J03", "ja": "おしゃべりできる！", "accept": ["おしゃべりできる", "お喋りできる", "おしゃべり出来る"], "romaji": "Oshaberi dekiru!", "en": "It talks!"},
+ {"id": "J04", "ja": "光る！", "accept": ["光る", "ひかる", "ヒカル"], "romaji": "Hikaru!", "en": "It glows!"},
+ {"id": "J05", "ja": "投げても大丈夫！", "accept": ["投げても大丈夫", "なげてもだいじょうぶ"], "romaji": "Nagete mo daijoubu!", "en": "You can even throw it!"},
+ {"id": "J06", "ja": "ダジャレも言う！", "accept": ["ダジャレも言う", "駄洒落も言う", "だじゃれもいう", "ダジャレもいう"], "romaji": "Dajare mo iu!", "en": "It tells dad jokes!"},
+ {"id": "J07", "ja": "こっそり見てる…？", "accept": ["こっそり見てる", "こっそりみてる"], "romaji": "Kossori miteru...?", "en": "Is it… watching you?"},
+ {"id": "J08", "ja": "ひっくり返すと、プライバシーモード！", "accept": ["ひっくり返すとプライバシーモード", "ひっくりかえすとプライバシーモード"], "romaji": "Hikkurikaesu to, privacy mode!", "en": "Flip it: privacy mode!"},
+ {"id": "J09", "ja": "性格も選べる！", "accept": ["性格も選べる", "せいかくもえらべる"], "romaji": "Seikaku mo eraberu!", "en": "Pick its personality!"},
+ {"id": "J10", "ja": "今なら…プライスレス！", "accept": ["今ならプライスレス", "いまならプライスレス"], "romaji": "Ima nara, puraisu resu!", "en": "Right now… priceless!"},
+ {"id": "J11", "ja": "あなたのデスクに、小さな友だち。", "accept": ["あなたのデスクに小さな友だち", "あなたのデスクに小さな友達", "あなたのデスクにちいさなともだち"], "romaji": "Anata no desk ni, chiisana tomodachi.", "en": "A little friend for your desk."},
+ {"id": "J12", "ja": "シーキューブ！", "accept": ["シーキューブ", "Cキューブ"], "romaji": "Shii kyuubu!", "en": "C-CUBE!"}
+]
