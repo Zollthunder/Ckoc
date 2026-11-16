@@ -19,6 +19,8 @@ class JokeBag:
         self.count, self.rng, self.bag, self.last = count, rng, [], 0
 
     def next(self):
+        if self.count < 1:
+            return 0
         if not self.bag:
             self.bag = list(range(1, self.count + 1))
             self.rng.shuffle(self.bag)
@@ -43,6 +45,10 @@ class Cube:
         self._party_wav, self._party_beats = None, []
         self._tasks = []
         self._say_token = 0
+        self._scene = 0
+        self._party_task = None
+        self._party_wanted = False
+        self._save_handle = None
         self._call = None
         self._last_cheer = 0.0
 
@@ -97,12 +103,40 @@ class Cube:
         if token == self._say_token:
             self.face.mouth = mouth_after
 
+    async def _guard(self, coro, name):
+        """A háttér-ciklusok egy kivételtől se álljanak le véglegesen (a napló megmondja, mi volt)."""
+        while True:
+            try:
+                return await coro()
+            except asyncio.CancelledError:
+                raise
+            except Exception:
+                log.exception('%s hibára futott – újraindul', name)
+                await asyncio.sleep(1)
+
     def show_text(self, text, sub='', color=None):
         self.face.mode, self.face.text, self.face.sub, self.face.text_color = 'text', text, sub, color
 
-    def back_to_face(self):
+    def new_scene(self):
+        self._scene += 1
+        return self._scene
+
+    def back_to_face(self, scene=None):
+        """Egy jelenet végén csak a LEGUTÓBBI jelenet állítja vissza az arcot – és mindig az aktuális állapot szerint."""
+        if scene is not None and scene != self._scene:
+            return
         s = self.s
-        self.face.mode = 'privacy' if s.upside_down else 'dnd' if s.dnd else 'eq' if s.party else 'face'
+        self.face.mode = 'off' if not s.on else 'privacy' if s.upside_down else 'dnd' if s.dnd else 'eq' if s.party else 'face'
+        self.face.text_color = None
+
+    def can_speak(self):
+        return self.s.on and not self.s.upside_down and not self.s.dnd
+
+    def save_soon(self):
+        """A beállítások mentése legfeljebb másodpercenként (a fényerő-csúszka húzása ne írja percenként tucatszor az SD-kártyát)."""
+        if self._save_handle:
+            self._save_handle.cancel()
+        self._save_handle = asyncio.get_running_loop().call_later(1.0, st_mod.save, self.s)
 
     async def _busy(self, coro):
         """Egy hosszabb jelenet (vicc, dobás…) közben a gombok nem vágnak bele."""
@@ -141,6 +175,8 @@ class Cube:
     def power_off(self):
         s = self.s
         s.on = s.party = False
+        self._call = None
+        self.new_scene()
         self.hw.audio.music(None)
         self.hw.audio.stop()
         self.face.mode = 'off'
@@ -153,11 +189,13 @@ class Cube:
         if kind == 'hello':
             log.info('XIAO firmware %s', ev.get('fw'))
             self.lights()
+            if 'upside' in ev:                       # a Pi a XIAO után indult: így sem késik le a tájolást
+                await self.flip(bool(ev['upside']))
             return
         if kind == 'imu' and ev.get('kind') == 'flip':
             return await self.flip(bool(ev.get('up')))
         if not self.s.on:
-            return await self.boot()                 # bármely gomb/mozdulat bekapcsolja
+            await self.boot()                        # bármely gomb/mozdulat bekapcsolja, és utána végre is hajtja
         if kind == 'button':
             await self.button(int(ev['id']))
         elif kind == 'touch':
@@ -177,8 +215,12 @@ class Cube:
         self.emit('event.button', id=n)
         if s.dnd:
             return self.buzz()
+        sc = self.new_scene()
         if n == 1:                                   # Andor: dad joke
             j = self.jokes.next()
+            if not j:
+                self.hw.audio.sfx(self._sfx['drum'])
+                return
 
             async def joke():
                 await self.say(f'joke_{j}q')
@@ -197,13 +239,15 @@ class Cube:
         elif snd == 'gooo':
             self.show_text('GO!')
             await self.say('btn_gooo')
-            self.back_to_face()
+            self.back_to_face(sc)
         elif snd == 'coffee':
             await self.say('btn_coffee')
+            if sc != self._scene or not self.can_speak():
+                return
             self.show_text('YES', 'Obviously.', (92, 242, 138))
             self.hw.audio.sfx(self._sfx['ding'])
             await asyncio.sleep(1.8)
-            self.back_to_face()
+            self.back_to_face(sc)
 
     async def touch(self):
         s = self.s
@@ -216,16 +260,22 @@ class Cube:
             return
         if s.dnd:
             return self.buzz()
+        if s.busy:
+            return
+        sc = self.new_scene()
         self.emit('event.touch', action='listen')
         self.face.mode, self.face.look = 'listen', [0.0, -0.7]
         await asyncio.sleep(1.6)                           # itt indulna a beszédfelismerés (helyben vagy felhőben – beállítás kérdése)
-        self.face.mode, self.face.look = 'face', [0.0, 0.0]
+        self.face.look = [0.0, 0.0]
+        if sc != self._scene:
+            return
+        self.back_to_face(sc)
         if random.random() < 0.5:
             now = time.strftime('%H:%M')
             self.show_text(now)
             await self.say('time', sub=f"It's {now}, {s.nick}.")
             await asyncio.sleep(0.9)
-            self.back_to_face()
+            self.back_to_face(sc)
         else:
             await self.say(f'idle_{s.base_persona()}_{random.randint(1, 3)}')
 
@@ -235,6 +285,8 @@ class Cube:
         self.emit('event.throw', count=s.throws)
         self.hw.audio.sfx(self._sfx['whoosh'])
 
+        sc = self.new_scene()
+
         async def scene():
             self.face.mode = 'dizzy'
             await asyncio.sleep(1.3)
@@ -243,19 +295,23 @@ class Cube:
             else:
                 await self.say('throw_n', sub=f"Ouch! Again? That's {s.throws} throws today. Okay, coffee break.")
             await asyncio.sleep(1.2)
-            self.back_to_face()
+            self.back_to_face(sc)
         await self._busy(scene())
 
     async def shake(self):
+        sc = self.new_scene()
+
         async def scene():
             self.show_text('...')
             await asyncio.sleep(0.9)
+            if sc != self._scene or not self.can_speak():
+                return self.back_to_face(sc)
             yes = random.random() < 0.5
             self.show_text('YES' if yes else 'NO', color=(92, 242, 138) if yes else (255, 107, 107))
             self.emit('event.shake', answer='YES' if yes else 'NO')
             self.hw.audio.sfx(self._sfx['ding'])
             await asyncio.sleep(2.2)
-            self.back_to_face()
+            self.back_to_face(sc)
         await self._busy(scene())
 
     async def flip(self, upside_down):
@@ -263,9 +319,8 @@ class Cube:
         s = self.s
         if upside_down == s.upside_down:
             return
-        if not s.on:
-            await self.boot()
-        s.upside_down = upside_down
+        s.upside_down = upside_down                  # kikapcsolt kockát a fordítás NEM kapcsol be
+        self.new_scene()
         self.hw.camera.enable(not upside_down)
         self.set_mic(not upside_down)
         if upside_down:
@@ -285,15 +340,21 @@ class Cube:
 
     def set_party(self, on):
         s = self.s
+        was = s.party
         s.party = bool(on and s.on and not s.upside_down and not s.dnd)
-        if s.party:
+        if s.party and not was:
             if self._party_wav is None:
                 x, self._party_beats = synth.party_loop()
                 self._party_wav = synth.to_wav_bytes(x)
             self.hw.audio.music(self._party_wav, loop=True)
-            self._tasks.append(asyncio.ensure_future(self._party_beats_task()))
-        else:
+            if not self._party_task or self._party_task.done():   # egyetlen ütem-task, akárhányszor kapcsolgatják
+                self._party_task = asyncio.ensure_future(self._party_beats_task())
+        elif not s.party:
             self.hw.audio.music(None)
+            if self._party_task:
+                self._party_task.cancel()
+                self._party_task = None
+        self.new_scene()
         self.back_to_face()
         self.lights()
 
@@ -308,18 +369,33 @@ class Cube:
 
     async def incoming_call(self, caller='BRO'):
         """Bluetooth HFP hívás érkezik (a telefonról) – a kocka kihangosítóként működik."""
-        if not self.s.on:
+        if not self.s.on or self.s.upside_down:
             return
         self.emit('event.call', **{'from': caller})
         if self.s.dnd:
             return self.buzz()
         self._call = {'from': caller, 'live': False}
+        sc = self.new_scene()
         self.face.mode, self.face.caller, self.face.call_live = 'call', caller, False
         self.hw.audio.sfx(self._sfx['ring'])
         await asyncio.sleep(4.5)
         if self._call and not self._call['live']:
-            self._call = None
-            self.back_to_face()
+            self._call = None                                # nem fogadott hívás
+            self.back_to_face(sc)
+        elif self._call and self._call.get('demo', True):
+            # Valódi hardveren a hívás végét a Bluetooth (HFP) jelzi és end_call()-t hív; a szimulációban – mint a webes
+            # változatban – a fogadott hívás pár másodperc múlva magától véget ér, különben a kijelző a hívás képén ragadna.
+            await asyncio.sleep(4.0)
+            self.end_call()
+
+    def end_call(self):
+        if not self._call:
+            return
+        self._call = None
+        self.face.call_live = False
+        self.emit('event.call_ended')
+        self.new_scene()
+        self.back_to_face()
 
     # ------------------------------------------------------------ kamera: leskelődés, felvidítás
     async def peek_loop(self):
@@ -384,24 +460,28 @@ class Cube:
                 s.hue = st_mod.PERSONA_HUE[d['name']]
             self.face.persona = s.base_persona()
             self.lights()
-            st_mod.save(s)
+            self.save_soon()
             self.broadcast_state()                   # az app azonnal frissüljön – a köszönés csak utána jön
             if s.on and not s.upside_down and not s.dnd:
                 while s.busy:
                     await asyncio.sleep(0.2)
-                await self.say('greet_' + s.base_persona())
+                if s.persona == d['name'] and self.can_speak():
+                    await self.say('greet_' + s.base_persona())
+            return
         elif type_ == 'persona.custom':
             s.sliders.update(d)
             self.face.persona = s.base_persona()
-        elif type_ == 'mode.party':
+        elif type_ == 'mode.party':                  # a legutolsó kérés számít (ha közben bekapcsol a kocka)
+            self._party_wanted = d['on']
             if d['on'] and not s.on:
                 await self.boot()
-            self.set_party(d['on'])
+            self.set_party(self._party_wanted)
         elif type_ == 'mode.dnd':
             s.dnd = d['on']
             if s.dnd:
                 self.set_party(False)
                 self.hw.audio.stop()
+            self.new_scene()
             self.back_to_face()
             self.lights()
         elif type_ == 'peek.set':
@@ -420,7 +500,7 @@ class Cube:
             s.nick = d['name'].strip() or 'Captain'
         elif type_ == 'button.assign':
             s.assign[int(d['button'])] = d['sound']
-        st_mod.save(s)
+        self.save_soon()
         self.broadcast_state()
 
     async def command_json(self, raw):
@@ -455,7 +535,7 @@ class Cube:
             asyncio.ensure_future(self.on_mcu(ev))
 
     def start(self):
-        self._tasks += [asyncio.ensure_future(c) for c in (self.face_loop(), self.mcu_loop(), self.peek_loop())]
+        self._tasks += [asyncio.ensure_future(self._guard(f, f.__name__)) for f in (self.face_loop, self.mcu_loop, self.peek_loop)]
         self.lights()
 
     def stop(self):

@@ -25,7 +25,7 @@ COMMANDS = {
     'peek.set': {'on': bool}, 'voice.set': {'on': bool},
     'led.color': {'hue': lambda v: isinstance(v, (int, float)) and 0 <= v < 360},
     'led.brightness': {'value': lambda v: isinstance(v, (int, float)) and 0 <= v <= 1},
-    'user.nickname': {'name': lambda v: isinstance(v, str) and 0 < len(v) <= 20},
+    'user.nickname': {'name': lambda v: isinstance(v, str) and len(v) <= 20},     # üres = vissza az alapértékre (Captain)
     'button.assign': {'button': lambda v: v in (2, 3, 4), 'sound': lambda v: v in SOUNDS},
     'state.request': {},
 }

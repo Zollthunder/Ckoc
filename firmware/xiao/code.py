@@ -106,8 +106,8 @@ def read_imu(now):
         IMU['shake'] = [t for t in IMU['shake'] if now - t < 1.0] + [now]
         if len(IMU['shake']) >= 4:
             send({'ev': 'imu', 'kind': 'shake'}); IMU['shake'] = []; IMU['cool'] = now + 1.2
-    # fordítás: a teteje lefelé néz (z < -0,8 g) legalább 0,5 s-ig; vissza: z > 0,5 g
-    down = az < -0.8
+    # fordítás hiszterézissel: fejjel lefelé, ha z < -0,8 g; vissza csak ha z > +0,5 g (oldalára fektetve marad, ami volt) – 0,5 s-ig tartósan
+    down = (az < -0.8) if not IMU['upside'] else not (az > 0.5)
     if down != IMU['upside']:
         IMU['down_since'] = IMU['down_since'] or now
         if now - IMU['down_since'] > 0.5:
@@ -145,7 +145,7 @@ def read_port():
 
 
 # ------------------------------------------------------------------ főciklus (~100 Hz)
-send({'ev': 'hello', 'fw': FW, 'imu': imu is not None, 'haptic': haptic is not None})
+send({'ev': 'hello', 'fw': FW, 'imu': imu is not None, 'haptic': haptic is not None, 'upside': IMU['upside']})
 last_hello = time.monotonic()
 while True:
     now = time.monotonic()
@@ -159,6 +159,6 @@ while True:
     read_imu(now)
     read_port()
     draw_leds(now)
-    if now - last_hello > 30:                         # életjel: ha a Pi újraindul, újra megkapja az állapotot
-        send({'ev': 'hello', 'fw': FW}); last_hello = now
+    if now - last_hello > 30:                         # életjel: ha a Pi újraindul, újra megkapja az állapotot (a tájolást is)
+        send({'ev': 'hello', 'fw': FW, 'upside': IMU['upside']}); last_hello = now
     time.sleep(0.01)

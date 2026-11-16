@@ -17,7 +17,10 @@ def _font(size):
             return ImageFont.truetype(name, size)
         except OSError:
             continue
-    return ImageFont.load_default()
+    try:
+        return ImageFont.load_default(size)          # Pillow >= 10.1: méretezhető, és ismeri az anchor-t
+    except TypeError:
+        return ImageFont.load_default()
 
 
 @dataclass

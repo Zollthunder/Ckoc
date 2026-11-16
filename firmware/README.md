@@ -46,7 +46,7 @@ cd firmware/pi
 pip install Pillow numpy websockets
 python -m ckocka --sim --demo --frames out      # bemutató: végigmegy a funkciókon, a kijelző képei az out/ mappába
 python -m ckocka --sim                           # interaktív: 1-4 gombok, t érintés, throw, shake, flip, call, q
-python -m unittest discover -s tests -v          # 11 teszt
+python -m unittest discover -s tests -v          # 18 teszt
 python tests/api_probe.py                        # élő app-kapcsolat próba: 12 ellenőrzés (párosító kód, parancsok, események, két app)
 ```
 

@@ -464,3 +464,32 @@ A szkripteket egy rövid próbaszövegen kipróbálta: mindkét mondat hibátlan
 **Ami nincs benne:** valódi beszédfelismerés és AI-válasz, Bluetooth-zene és kihangosítás (csak a jelenet van meg). A Pi- és XIAO-kód hardveren nem volt kipróbálva, mert a kocka koncepció. A GC9A01 inicializálása a gyártói referenciakódból való.
 
 **App-kapcsolat élőben (ugyanaznap):** Zollo engedélyével az AI telepítette a `websockets` csomagot, és írt egy próbaklienst ([firmware/pi/tests/api_probe.py](firmware/pi/tests/api_probe.py)), ami úgy viselkedik, mint a telefonos app. 12 ellenőrzés: párosító kód nélkül elutasít, kóddal állapotot küld, a parancsokat nyugtázza, a hibás és a nem JSON üzenetet visszautasítja (a kapcsolat közben él), a dobás és a fordítás eseményként megérkezik, két app egyszerre is szinkronban marad. **Lelet:** személyiségváltáskor az app csak a köszönés végén kapta meg az új állapotot (~3 s késés). Az AI javította: az állapot azonnal megy, a köszönés utána jön. Ezután 12/12 ellenőrzés és mind a 11 teszt sikeres.
+
+## 2026-11-16 – Teljes ellenőrzés: az apptól a firmware-ig
+
+**Példaprompt:**
+> „kérlek a mobilos apptól kezdve, egészen idáig ellenőrizz le mindent”
+
+**Hogyan:** az AI két irányból dolgozott párhuzamosan:
+1. **Független kódátnézés:** egy külön AI-ügynök, előzetes feltevések nélkül, csak olvasva nézte át a szimulátort, a Pi-szoftvert és a XIAO-firmware-t. 15 találatot adott, súlyosság szerint rangsorolva.
+2. **Élő tesztek:** a GitHub Pages-en futó valódi oldalon végigkattintotta mind a ~30 funkciót, összevetette a hangfájlokat és a protokollt a három helyen (81 mondat = 81 MP3, minden azonosító egyezik), átnézte a linkeket, és ellenőrizte, hogy cégnév vagy e-mail sehol ne legyen a repóban.
+
+**Mit talált, és mi lett javítva:**
+- **A szimulátor hangja minden mondattal hangosabb lett** (minden mondat egy újabb erősítőt kötött be párhuzamosan). Ezt a rövid tesztek nem fogták meg, csak hosszabb használatnál jött volna elő. Javítva: egyetlen, egyszer bekötött hangút.
+- **Egymást felülíró jelenetek:** egy korábbi jelenet (pl. a kávés gomb) időzítője később visszaírta az arcot, és felülírta a dobás szédült arcát vagy az adatvédelmi képet. Javítva: minden jelenet sorszámot kap, és csak a legutóbbi állíthatja vissza az arcot, mindig az aktuális állapot szerint (kikapcsolva, fejjel lefelé, Ne zavarj, party).
+- **A megszakított mondat utólag megszólalhatott** (fordítás vagy Ne zavarj közben, ha a hangfájl még töltődött). Javítva mindkét változatban.
+- **Party be/ki/be:** dupla zene és dupla ütem-task. Javítva: egyetlen időzítő, és a legutolsó kérés számít.
+- **Személyiségváltásnál az app lassan frissült** a szimulátorban is (a Pi-szoftverben már korábban javítva).
+- **A fordítás bekapcsolta a kockát**, ami így fejjel lefelé köszönt. Javítva: a fordítás nem kapcsol be.
+- **Pi-szoftver:**
+  - a fogadott hívás sosem ért véget;
+  - a soros port olvasása másodpercenként újranyitotta a portot;
+  - a beszéd leállítása lemaradhatott;
+  - a háttér-ciklusok egy kivételtől végleg leálltak volna;
+  - a fényerő-csúszka húzása tucatszor írta volna az SD-kártyát;
+  - az üres becenév nem állt vissza „Captain”-re.
+- **XIAO:** a fordítás-érzékelés hiszterézist kapott (oldalára fektetve nem billeg), és a tájolás az életjelben is megy, így a Pi újraindulás után sem kési le.
+
+**Eredmény:** a szimulátorban 21 böngészős ellenőrzés sikeres (ebből 5 kifejezetten a javított hibákra), a Pi-szoftver 18 tesztje (ebből 6 új visszaesési teszt) és az app-kapcsolat 12 élő ellenőrzése is sikeres. Konzolhiba nincs, telefonméretben is rendben van. Két apró eltérés maradt a két változat között, ezek szándékosak: a webes szimulátor nem menti a fényszínt és a fényerőt, és a „Let's gooo” gombnál a weben 🔥 látszik, a kocka kijelzőjén „GO!”.
+
+**Tanulság:** a független, „friss szemű” átnézés olyan hibákat talált (pl. a hangosodó hang), amiket a funkcionális tesztek nem fogtak meg. A kettő együtt adja a biztonságot.

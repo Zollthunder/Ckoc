@@ -71,18 +71,21 @@ class AlsaAudio(hal.Audio):
 
     def __init__(self, device='default', card='wm8960soundcard'):
         self.device, self.card = device, card
-        self._lvl, self._proc, self._music, self._lock = 0.0, None, None, threading.Lock()
+        self._lvl, self._proc, self._music, self._lock, self._gen = 0.0, None, None, threading.Lock(), 0
 
-    def _play_pcm(self, path, rate):
+    def _play_pcm(self, path, rate, gen):
         dec = subprocess.run(['mpg123', '-q', '-m', '-r', '24000', '-s', path], capture_output=True)
         pcm = np.frombuffer(dec.stdout, dtype='<i2')
         with self._lock:
+            if gen != self._gen:                         # dekódolás közben leállították
+                return
             self._proc = subprocess.Popen(['aplay', '-q', '-D', self.device, '-f', 'S16_LE', '-c', '1', '-r', str(int(24000 * rate))],
                                           stdin=subprocess.PIPE)
         proc, step = self._proc, int(24000 * rate * 0.05)
         try:
             for i in range(0, len(pcm), step):
-                if proc.poll() is not None:
+                if proc.poll() is not None or gen != self._gen:
+                    proc.kill()
                     break
                 chunk = pcm[i:i + step]
                 self._lvl = min(1.0, float(np.sqrt(np.mean(chunk.astype(np.float32) ** 2))) / 6000)
@@ -94,13 +97,17 @@ class AlsaAudio(hal.Audio):
             self._lvl = 0.0
 
     async def play_clip(self, path, rate=1.0):
-        await asyncio.get_running_loop().run_in_executor(None, self._play_pcm, path, rate)
+        with self._lock:
+            self._gen += 1
+            gen = self._gen
+        await asyncio.get_running_loop().run_in_executor(None, self._play_pcm, path, rate, gen)
 
     def level(self):
         return self._lvl
 
     def stop(self):
         with self._lock:
+            self._gen += 1                           # a folyamatban lévő (akár még dekódoló) mondat se szólaljon meg
             if self._proc and self._proc.poll() is None:
                 self._proc.kill()
 
@@ -156,18 +163,29 @@ class SerialMcu(hal.Mcu):
     def _reader(self):
         import serial
         while True:
+            ser = None
             try:
-                self.ser = serial.Serial(self.port, self.baud, timeout=1)
+                ser = serial.Serial(self.port, self.baud, timeout=1)
+                self.ser = ser
                 log.info('XIAO csatlakozva: %s', self.port)
-                for raw in self.ser:
-                    try:
-                        ev = json.loads(raw.decode('utf-8', 'replace'))
-                    except ValueError:
-                        continue
-                    self.loop.call_soon_threadsafe(self.events.put_nowait, ev)
+                buf = b''
+                while True:
+                    buf += ser.read(ser.in_waiting or 1)       # időtúllépéskor üres – a port nyitva marad
+                    while b'\n' in buf:
+                        raw, buf = buf.split(b'\n', 1)
+                        try:
+                            ev = json.loads(raw.decode('utf-8', 'replace'))
+                        except ValueError:
+                            continue
+                        self.loop.call_soon_threadsafe(self.events.put_nowait, ev)
             except Exception as e:                       # kihúzták, újraindult – pár másodperc múlva újra
                 log.warning('XIAO kapcsolat: %s', e)
                 self.ser = None
+                if ser:
+                    try:
+                        ser.close()
+                    except Exception:
+                        pass
                 time.sleep(2)
 
     def send(self, obj):

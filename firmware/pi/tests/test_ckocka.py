@@ -133,6 +133,79 @@ class CubeTest(unittest.TestCase):
             cube.stop()
         run(t())
 
+    def test_call_answered_then_ends(self):
+        async def t():
+            cube, hw = self.make()
+            got = []
+            cube.listeners.append(got.append)
+            await cube.boot()
+            call = asyncio.ensure_future(cube.incoming_call('BRO'))
+            await asyncio.sleep(0.1)
+            self.assertEqual(cube.face.mode, 'call')
+            await cube.on_mcu({'ev': 'touch'})                    # fogadás érintéssel
+            self.assertTrue(cube.face.call_live)
+            await call
+            types = [json.loads(m)['type'] for m in got]
+            self.assertIn('event.call_answered', types)
+            self.assertIn('event.call_ended', types)               # a hívás véget ér, nem ragad be
+            self.assertEqual(cube.face.mode, 'face')
+            cube.stop()
+        run(t())
+
+    # ---- a független kódátnézés leletei (2026-11-16) – visszaesési tesztek
+    def test_party_toggle_single_beat_task(self):
+        async def t():
+            cube, hw = self.make()
+            await cube.boot()
+            for on in (True, False, True, True, False, True):
+                await cube.command('mode.party', {'on': on})
+            await asyncio.sleep(0.05)
+            beats = [x for x in asyncio.all_tasks() if x.get_coro().__name__ == '_party_beats_task' and not x.done()]
+            self.assertEqual(len(beats), 1)                       # egyetlen ütem-task, akárhányszor kapcsolgatják
+            await cube.command('mode.party', {'on': False})
+            self.assertFalse(hw.audio.music_on)
+            cube.stop()
+        run(t())
+
+    def test_flip_when_off_does_not_boot(self):
+        async def t():
+            cube, hw = self.make()
+            await cube.on_mcu({'ev': 'imu', 'kind': 'flip', 'up': True})
+            self.assertFalse(cube.s.on)                           # fordítás nem kapcsol be
+            self.assertEqual(hw.audio.played, [])                 # és fejjel lefelé nem köszön
+            self.assertTrue(cube.s.upside_down)
+        run(t())
+
+    def test_scene_end_respects_power_off(self):
+        async def t():
+            cube, hw = self.make()
+            await cube.boot()
+            sh = asyncio.ensure_future(cube.shake())
+            await asyncio.sleep(0.1)
+            cube.power_off()
+            await sh
+            self.assertEqual(cube.face.mode, 'off')               # a jelenet vége nem rajzol arcot a kikapcsolt kijelzőre
+        run(t())
+
+    def test_empty_nickname_resets(self):
+        async def t():
+            cube, hw = self.make()
+            self.assertTrue((await cube.command_json('{"type":"user.nickname","data":{"name":""}}'))['ok'])
+            await asyncio.sleep(0.05)
+            self.assertEqual(cube.s.nick, 'Captain')
+        run(t())
+
+    def test_button_when_off_boots_and_runs(self):
+        async def t():
+            cube, hw = self.make()
+            await cube.on_mcu({'ev': 'button', 'id': 1})
+            self.assertTrue(cube.s.on)
+            self.assertTrue(any(p.startswith('joke_') for p in hw.audio.played))   # bekapcsol ÉS elmondja a viccet
+        run(t())
+
+    def test_empty_joke_bag(self):
+        self.assertEqual(JokeBag(0).next(), 0)
+
 
 if __name__ == '__main__':
     unittest.main()
