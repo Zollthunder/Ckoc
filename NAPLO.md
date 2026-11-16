@@ -374,3 +374,20 @@ A szkript előbb megszámolta a furatokat sugár szerint, és csak akkor módos�
 - Néhány kezdő mássalhangzót a Whisper továbbra is másnak hall. Hogy ez a modell kiejtése-e vagy a Whisper tévedése, az AI nem tudja eldönteni: **ezt csak emberi füllel lehet ellenőrizni.**
 
 **Tanulság:** egy második AI (a beszédfelismerő) „füllé” teheti az elsőt. Számszerűsíti a hibákat, és a jelöltek közül automatikusan választ. A végső ítélet viszont az emberé.
+
+## 2026-11-16 – Angol videó
+
+**Példaprompt:**
+> „ez még mindig nagyon rossz, inkább az egész legyen angolul, hang és a videó feliratai is. a viccet meg cseréld le vmi angol faviccre, oké?”
+
+**Döntés:** a magyar narráció a helyi modellekkel (F5-TTS magyar finomhangolás) nem lett elég jó. Különösen a mássalhangzóval kezdődő mondatok első hangja torzult. Ezért **az egész videó angol lett**.
+
+**Hogyan:**
+- **Narráció:** a 16 mondat angol fordítása az **XTTS-v2**-vel készült, ugyanazzal a „Ludvig Milivoj” stúdióhanggal ([tools/xtts_en_generate.py](tools/xtts_en_generate.py)). Mondatonként 4 jelölt készült, és a Whisper (angolul) választotta ki a legjobbat ([tools/pick_best.py](tools/pick_best.py)). **16-ból 16 mondatot hall szó szerint hibátlannak.** Angolul ez a modell láthatóan sokkal erősebb, mint a magyar F5.
+- **Feliratok:** a 3D jelenet mind a 64 magyar szövegét lefordította egy cseretáblával, ami ellenőrzi, hogy minden régi szöveg pontosan egyszer szerepel-e. A robbantott ábra címkéi az angol narráció szavaihoz igazodnak.
+- **Név:** angolul a termék **„C-Cube”**, mert a „C-kocka” szót egy angol hang torzítva mondaná ki. A repó és a weboldal neve marad.
+- **Vicc:** a magyar favicc („Tégla!”) helyett egy fához illő angol „dad joke” a fa Andor-gombhoz: *„What do you call a tree that fits in your hand?” – „A palm tree!”*
+
+**Elakadás:** az AI saját hibája: a magyar „Nos.” előtag felismerője az angol „Not” szót összekeverte vele, és levágta. Angolul ezt a lépést ki kellett kapcsolni.
+
+**Tanulság:** a helyi hangmodellek minősége nyelvenként nagyon eltér. Ahol a magyar kevés, ott az angol egy kész, jó megoldás lehet.

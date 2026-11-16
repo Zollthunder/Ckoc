@@ -19,69 +19,69 @@
  },
  {
   "id": "N01",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "narrator",
-  "text": "Ez a C-kocka. Egy tenyérnyi asztali AI-asszisztens. Beszélhetsz hozzá, és mindig jókedvű."
+  "text": "This is C-Cube. A palm-sized desktop AI assistant. You can talk to it, and it's always in a good mood."
  },
  {
   "id": "N02",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "narrator",
-  "text": "A kockát egy mesterséges intelligenciával együtt terveztem meg, pár nap alatt."
+  "text": "I designed the cube together with an AI, in just a few days."
  },
  {
   "id": "N03",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "narrator",
-  "text": "Az ötlettől a kész modellig mindent beszélgetésben raktunk össze."
+  "text": "From the first idea to the finished model, we built everything in conversation."
  },
  {
   "id": "N04",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "narrator",
-  "text": "A 3D modellt nem egérrel rajzoltam. Az AI egy programot írt, ami felépíti a Fusionben."
+  "text": "I didn't draw the 3D model with a mouse. The AI wrote a program that builds it in Fusion."
  },
  {
   "id": "N05",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "narrator",
-  "text": "Nem ment minden elsőre. A hibákat együtt találtuk meg, és javítottuk ki."
+  "text": "Not everything worked the first time. We found the bugs together, and fixed them."
  },
  {
   "id": "N06",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "narrator",
-  "text": "A végén az AI saját maga nézte át a modellt a Fusionben, és még színt is javasolt."
+  "text": "In the end, the AI reviewed the model in Fusion by itself, and even suggested colors."
  },
  {
   "id": "N07",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "narrator",
-  "text": "És minden lépés bekerült a naplóba."
+  "text": "And every step went into the log."
  },
  {
   "id": "N08",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "narrator",
-  "text": "Kerek kijelző. Kamera. Két mikrofon. Sztereó hangszórók. RGB fények. Akku. És narancs gumi sarkok. Hogy miért? Mindjárt kiderül."
+  "text": "Round display. Camera. Two microphones. Stereo speakers. RGB lights. Battery. And orange rubber corners. Why? You'll see in a moment."
  },
  {
   "id": "N09",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "narrator",
-  "text": "Zenére a fények is táncolnak."
+  "text": "With music, the lights dance too."
  },
  {
   "id": "J01",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "cube",
-  "text": "Mi az? Feldobod, repülve piros, ha leesik, fáj..."
+  "text": "What do you call a tree that fits in your hand?"
  },
  {
   "id": "J02",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "cube",
-  "text": "Tégla!"
+  "text": "A palm tree!"
  },
  {
   "id": "C05",
@@ -103,15 +103,15 @@
  },
  {
   "id": "N10",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "narrator",
-  "text": "Ha nem akarsz zavarást, csak finoman jelez."
+  "text": "If you don't want to be disturbed, it only gives a gentle buzz."
  },
  {
   "id": "N11",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "narrator",
-  "text": "Telefonhoz csatlakozik, és kihangosítóként is működik."
+  "text": "It connects to your phone, and works as a speakerphone too."
  },
  {
   "id": "C08",
@@ -121,9 +121,9 @@
  },
  {
   "id": "N12",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "narrator",
-  "text": "Fordítsd fejjel lefelé, és a mikrofon meg a kamera is kikapcsol."
+  "text": "Turn it upside down, and the microphone and camera switch off."
  },
  {
   "id": "C09",
@@ -151,15 +151,15 @@
  },
  {
   "id": "N13",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "narrator",
-  "text": "Vagy rakd össze a sajátodat."
+  "text": "Or build your own."
  },
  {
   "id": "N14",
-  "voice": "szabolcs",
+  "voice": "narrator_en",
   "style": "narrator",
-  "text": "C-kocka. Egy kis barát az asztalodra. És az első projektem, amit egy AI-jal együtt csináltam."
+  "text": "C-Cube. A little friend for your desk. And my first project made together with an AI."
  },
  {
   "id": "C13",

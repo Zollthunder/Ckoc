@@ -1,0 +1,450 @@
+{
+ "N01": {
+  "text": "This is C-Cube. A palm-sized desktop AI assistant. You can talk to it, and it's always in a good mood.",
+  "chosen": "N01_0.wav",
+  "score": 1.0,
+  "heard": "This is C -Cube, a palm -sized desktop AI assistant. You can talk to it, and it's always in a good mood.",
+  "candidates": [
+   {
+    "file": "N01_0.wav",
+    "score": 1.0,
+    "heard": "This is C -Cube, a palm -sized desktop AI assistant. You can talk to it, and it's always in a good mood."
+   },
+   {
+    "file": "N01_1.wav",
+    "score": 1.0,
+    "heard": "This is C -Cube, a palm -sized desktop AI assistant. You can talk to it, and it's always in a good mood."
+   },
+   {
+    "file": "N01_2.wav",
+    "score": 0.905,
+    "heard": "This is CQ Bataille, a Ponsai's desktop AI assistant. You can talk to it, and it's always in a good mood."
+   },
+   {
+    "file": "N01_3.wav",
+    "score": 0.969,
+    "heard": "This is CQ, a palm -sized desktop AI assistant. You can talk to it, and it's always in a good mood."
+   }
+  ]
+ },
+ "N02": {
+  "text": "I designed the cube together with an AI, in just a few days.",
+  "chosen": "N02_0.wav",
+  "score": 1.0,
+  "heard": "I designed the cube together with an AI, in just a few days.",
+  "candidates": [
+   {
+    "file": "N02_0.wav",
+    "score": 1.0,
+    "heard": "I designed the cube together with an AI, in just a few days."
+   },
+   {
+    "file": "N02_1.wav",
+    "score": 1.0,
+    "heard": "I designed the cube together with an AI in just a few days."
+   },
+   {
+    "file": "N02_2.wav",
+    "score": 1.0,
+    "heard": "I designed the cube together with an AI in just a few days."
+   },
+   {
+    "file": "N02_3.wav",
+    "score": 1.0,
+    "heard": "I designed the cube together with an AI in just a few days."
+   }
+  ]
+ },
+ "N03": {
+  "text": "From the first idea to the finished model, we built everything in conversation.",
+  "chosen": "N03_0.wav",
+  "score": 1.0,
+  "heard": "From the first idea to the finished model, we built everything in conversation.",
+  "candidates": [
+   {
+    "file": "N03_0.wav",
+    "score": 1.0,
+    "heard": "From the first idea to the finished model, we built everything in conversation."
+   },
+   {
+    "file": "N03_1.wav",
+    "score": 1.0,
+    "heard": "From the first idea to the finished model, we built everything in conversation."
+   },
+   {
+    "file": "N03_2.wav",
+    "score": 1.0,
+    "heard": "From the first idea to the finished model, we built everything in conversation."
+   },
+   {
+    "file": "N03_3.wav",
+    "score": 1.0,
+    "heard": "From the first idea to the finished model, we built everything in conversation."
+   }
+  ]
+ },
+ "N04": {
+  "text": "I didn't draw the 3D model with a mouse. The AI wrote a program that builds it in Fusion.",
+  "chosen": "N04_1.wav",
+  "score": 1.0,
+  "heard": "I didn't draw the 3D model with a mouse. The AI wrote a program that builds it in fusion.",
+  "candidates": [
+   {
+    "file": "N04_0.wav",
+    "score": 0.96,
+    "heard": "I didn't draw the three model with a mouse. The AI wrote a program that builds it in fusion."
+   },
+   {
+    "file": "N04_1.wav",
+    "score": 1.0,
+    "heard": "I didn't draw the 3D model with a mouse. The AI wrote a program that builds it in fusion."
+   },
+   {
+    "file": "N04_2.wav",
+    "score": 1.0,
+    "heard": "I didn't draw the 3D model with a mouse. The AI wrote a program that builds it in fusion."
+   },
+   {
+    "file": "N04_3.wav",
+    "score": 0.966,
+    "heard": "I didn't draw the threed model with a mouse. The AI wrote a program that builds it in fusion."
+   }
+  ]
+ },
+ "N05": {
+  "text": "Not everything worked the first time. We found the bugs together, and fixed them.",
+  "chosen": "N05_0.wav",
+  "score": 1.0,
+  "heard": "Not everything worked the first time. We found the bugs together and fixed them.",
+  "candidates": [
+   {
+    "file": "N05_0.wav",
+    "score": 1.0,
+    "heard": "Not everything worked the first time. We found the bugs together and fixed them."
+   },
+   {
+    "file": "N05_1.wav",
+    "score": 1.0,
+    "heard": "Not everything worked the first time. We found the bugs together and fixed them."
+   },
+   {
+    "file": "N05_2.wav",
+    "score": 1.0,
+    "heard": "Not everything worked the first time. We found the bugs together and fixed them."
+   },
+   {
+    "file": "N05_3.wav",
+    "score": 1.0,
+    "heard": "Not everything worked the first time. We found the bugs together and fixed them."
+   }
+  ]
+ },
+ "N06": {
+  "text": "In the end, the AI reviewed the model in Fusion by itself, and even suggested colors.",
+  "chosen": "N06_0.wav",
+  "score": 1.0,
+  "heard": "In the end, the AI reviewed the model in Fusion by itself, and even suggested colors.",
+  "candidates": [
+   {
+    "file": "N06_0.wav",
+    "score": 1.0,
+    "heard": "In the end, the AI reviewed the model in Fusion by itself, and even suggested colors."
+   },
+   {
+    "file": "N06_1.wav",
+    "score": 1.0,
+    "heard": "In the end, the AI reviewed the model in Fusion by itself, and even suggested colors."
+   },
+   {
+    "file": "N06_2.wav",
+    "score": 0.994,
+    "heard": "In the end, the AI reviewed the model infusion by itself, and even suggested colors."
+   },
+   {
+    "file": "N06_3.wav",
+    "score": 0.988,
+    "heard": "In the end, the A reviewed the model infusion by itself and even suggested colors."
+   }
+  ]
+ },
+ "N07": {
+  "text": "And every step went into the log.",
+  "chosen": "N07_0.wav",
+  "score": 1.0,
+  "heard": "And every step went into the log.",
+  "candidates": [
+   {
+    "file": "N07_0.wav",
+    "score": 1.0,
+    "heard": "And every step went into the log."
+   },
+   {
+    "file": "N07_1.wav",
+    "score": 1.0,
+    "heard": "And every step went into the log."
+   },
+   {
+    "file": "N07_2.wav",
+    "score": 1.0,
+    "heard": "And every step went into the log."
+   },
+   {
+    "file": "N07_3.wav",
+    "score": 1.0,
+    "heard": "And every step went into the log."
+   }
+  ]
+ },
+ "N08": {
+  "text": "Round display. Camera. Two microphones. Stereo speakers. RGB lights. Battery. And orange rubber corners. Why? You'll see in a moment.",
+  "chosen": "N08_2.wav",
+  "score": 1.0,
+  "heard": "Round display, camera, two microphones, stereo speakers, RGB, lights, battery, and orange rubber corners. Why? You'll see in a moment.",
+  "candidates": [
+   {
+    "file": "N08_0.wav",
+    "score": 0.861,
+    "heard": "Round display, camera, two microphone start, stereo speakers, RGB lights dust, battery, and orange rubber corners. Why? You'll see in a moment."
+   },
+   {
+    "file": "N08_1.wav",
+    "score": 0.75,
+    "heard": "Round display, camera, two microphones, stereo speakers, RGB lights or to a battery door and orange rubber corners. Why? You'll see in a moment."
+   },
+   {
+    "file": "N08_2.wav",
+    "score": 1.0,
+    "heard": "Round display, camera, two microphones, stereo speakers, RGB, lights, battery, and orange rubber corners. Why? You'll see in a moment."
+   },
+   {
+    "file": "N08_3.wav",
+    "score": 1.0,
+    "heard": "Round display, camera, two microphones, stereo speakers, RGB lights, battery, and orange rubber corners. Why? You'll see in a moment."
+   }
+  ]
+ },
+ "N09": {
+  "text": "With music, the lights dance too.",
+  "chosen": "N09_0.wav",
+  "score": 1.0,
+  "heard": "With music, the lights dance too.",
+  "candidates": [
+   {
+    "file": "N09_0.wav",
+    "score": 1.0,
+    "heard": "With music, the lights dance too."
+   },
+   {
+    "file": "N09_1.wav",
+    "score": 1.0,
+    "heard": "With music, the lights dance too."
+   },
+   {
+    "file": "N09_2.wav",
+    "score": 1.0,
+    "heard": "With music, the lights dance too."
+   },
+   {
+    "file": "N09_3.wav",
+    "score": 1.0,
+    "heard": "With music, the lights dance too."
+   }
+  ]
+ },
+ "J01": {
+  "text": "What do you call a tree that fits in your hand?",
+  "chosen": "J01_0.wav",
+  "score": 1.0,
+  "heard": "What do you call a tree that fits in your hand?",
+  "candidates": [
+   {
+    "file": "J01_0.wav",
+    "score": 1.0,
+    "heard": "What do you call a tree that fits in your hand?"
+   },
+   {
+    "file": "J01_1.wav",
+    "score": 1.0,
+    "heard": "What do you call a tree that fits in your hand?"
+   },
+   {
+    "file": "J01_2.wav",
+    "score": 1.0,
+    "heard": "What do you call a tree that fits in your hand?"
+   },
+   {
+    "file": "J01_3.wav",
+    "score": 1.0,
+    "heard": "What do you call a tree that fits in your hand?"
+   }
+  ]
+ },
+ "J02": {
+  "text": "A palm tree!",
+  "chosen": "J02_0.wav",
+  "score": 1.0,
+  "heard": "A palm tree.",
+  "candidates": [
+   {
+    "file": "J02_0.wav",
+    "score": 1.0,
+    "heard": "A palm tree."
+   },
+   {
+    "file": "J02_1.wav",
+    "score": 1.0,
+    "heard": "A palm tree."
+   },
+   {
+    "file": "J02_2.wav",
+    "score": 0.442,
+    "heard": "Armtree"
+   },
+   {
+    "file": "J02_3.wav",
+    "score": 1.0,
+    "heard": "A palm tree."
+   }
+  ]
+ },
+ "N10": {
+  "text": "If you don't want to be disturbed, it only gives a gentle buzz.",
+  "chosen": "N10_0.wav",
+  "score": 1.0,
+  "heard": "If you don't want to be disturbed, it only gives a gentle buzz.",
+  "candidates": [
+   {
+    "file": "N10_0.wav",
+    "score": 1.0,
+    "heard": "If you don't want to be disturbed, it only gives a gentle buzz."
+   },
+   {
+    "file": "N10_1.wav",
+    "score": 1.0,
+    "heard": "If you don't want to be disturbed, it only gives a gentle buzz."
+   },
+   {
+    "file": "N10_2.wav",
+    "score": 1.0,
+    "heard": "If you don't want to be disturbed, it only gives a gentle buzz."
+   },
+   {
+    "file": "N10_3.wav",
+    "score": 1.0,
+    "heard": "If you don't want to be disturbed, it only gives a gentle buzz."
+   }
+  ]
+ },
+ "N11": {
+  "text": "It connects to your phone, and works as a speakerphone too.",
+  "chosen": "N11_0.wav",
+  "score": 1.0,
+  "heard": "It connects to your phone and works as a speakerphone too.",
+  "candidates": [
+   {
+    "file": "N11_0.wav",
+    "score": 1.0,
+    "heard": "It connects to your phone and works as a speakerphone too."
+   },
+   {
+    "file": "N11_1.wav",
+    "score": 1.0,
+    "heard": "It connects to your phone and works as a speakerphone too."
+   },
+   {
+    "file": "N11_2.wav",
+    "score": 1.0,
+    "heard": "It connects to your phone and works as a speakerphone too."
+   },
+   {
+    "file": "N11_3.wav",
+    "score": 1.0,
+    "heard": "It connects to your phone and works as a speakerphone too."
+   }
+  ]
+ },
+ "N12": {
+  "text": "Turn it upside down, and the microphone and camera switch off.",
+  "chosen": "N12_0.wav",
+  "score": 1.0,
+  "heard": "Turn it upside down and the microphone and camera switch off.",
+  "candidates": [
+   {
+    "file": "N12_0.wav",
+    "score": 1.0,
+    "heard": "Turn it upside down and the microphone and camera switch off."
+   },
+   {
+    "file": "N12_1.wav",
+    "score": 1.0,
+    "heard": "Turn it upside down and the microphone and camera switch off."
+   },
+   {
+    "file": "N12_2.wav",
+    "score": 1.0,
+    "heard": "Turn it upside down, and the microphone and camera switch off."
+   },
+   {
+    "file": "N12_3.wav",
+    "score": 1.0,
+    "heard": "Turn it upside down, and the microphone and camera switch off."
+   }
+  ]
+ },
+ "N13": {
+  "text": "Or build your own.",
+  "chosen": "N13_0.wav",
+  "score": 1.0,
+  "heard": "Or build your own.",
+  "candidates": [
+   {
+    "file": "N13_0.wav",
+    "score": 1.0,
+    "heard": "Or build your own."
+   },
+   {
+    "file": "N13_1.wav",
+    "score": 1.0,
+    "heard": "Or build your own."
+   },
+   {
+    "file": "N13_2.wav",
+    "score": 1.0,
+    "heard": "Or build your own."
+   },
+   {
+    "file": "N13_3.wav",
+    "score": 1.0,
+    "heard": "Or build your own."
+   }
+  ]
+ },
+ "N14": {
+  "text": "C-Cube. A little friend for your desk. And my first project made together with an AI.",
+  "chosen": "N14_1.wav",
+  "score": 1.0,
+  "heard": "C -Cube, a little friend for your desk, and my first project made together with an AI.",
+  "candidates": [
+   {
+    "file": "N14_0.wav",
+    "score": 0.994,
+    "heard": "C -Cube, a little friend for your desk, and my first project made together with an AIY,"
+   },
+   {
+    "file": "N14_1.wav",
+    "score": 1.0,
+    "heard": "C -Cube, a little friend for your desk, and my first project made together with an AI."
+   },
+   {
+    "file": "N14_2.wav",
+    "score": 0.82,
+    "heard": "C. Cube, a little friend for your desk, and my first project made together with an A .I .U .I."
+   },
+   {
+    "file": "N14_3.wav",
+    "score": 0.994,
+    "heard": "C -Cube, a little friend for your desk, and my first project made together with an AIY."
+   }
+  ]
+ }
+}

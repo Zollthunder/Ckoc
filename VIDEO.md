@@ -1,5 +1,7 @@
 # C-kocka – videó forgatókönyv (v2)
 
+> **2026-11-16: a kész videó angol nyelvű.** A narráció és a feliratok angolok (a termék neve angolul „C-Cube”), a narrátor hangja XTTS-v2 („Ludvig Milivoj” stúdióhang), a favicc helyett angol „dad joke” szól: *„What do you call a tree that fits in your hand?” – „A palm tree!”* Az alábbi magyar forgatókönyv a tartalmi terv; a pontos angol szövegek: [video/lines.json](video/lines.json).
+
 **Hossz:** kb. 2:55 (a kihívás határa 3:00) · **Formátum:** 1920×1080, 30 fps · **Hangulat:** vidám, gyors vágások, egy kis önirónia
 
 **Hangok:**

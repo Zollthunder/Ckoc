@@ -38,7 +38,7 @@ const IMG = {
 const EX = (() => {
   const v = TL.voices.find(x => x.id === 'N08'), text = LINES.find(l => l.id === 'N08').text, d = DUR.N08;
   const word = w => v.t + d * Math.max(0, text.indexOf(w)) / text.length;
-  const a = v.t, c = Math.min(word('Hogy miért'), 67.0);
+  const a = v.t, c = Math.min(word('Why?'), 67.0);
   return { a, b: a + 1.7, c, d: Math.min(c + 1.4, 68.2), word };
 })();
 const voiceAt = t => {
@@ -361,12 +361,12 @@ function drawFace(s) {
   } else if (s.mode === 'dnd') {
     g.globalAlpha = b * 0.6; g.beginPath(); g.arc(0, 0, 70, 0, 7); g.fill();
     g.globalCompositeOperation = 'destination-out'; g.beginPath(); g.arc(34, -26, 64, 0, 7); g.fill();
-    g.globalCompositeOperation = 'source-over'; g.font = '600 40px "Segoe UI"'; g.textAlign = 'center'; g.fillText('Ne zavarj', 0, 140);
+    g.globalCompositeOperation = 'source-over'; g.font = '600 40px "Segoe UI"'; g.textAlign = 'center'; g.fillText('Do not disturb', 0, 140);
   } else if (s.mode === 'call') {
     const p = 1 + 0.08 * Math.sin(s.t * 8);
     g.save(); g.scale(p, p); g.lineWidth = 12; g.beginPath(); g.arc(0, -60, 70, 0, 7); g.stroke(); g.restore();
     g.font = '800 64px "Segoe UI"'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('BRO', 0, -58);
-    g.font = '600 40px "Segoe UI"'; g.fillText('Hívás…', 0, 62);
+    g.font = '600 40px "Segoe UI"'; g.fillText('Calling…', 0, 62);
     g.font = '600 34px "Segoe UI"'; g.globalAlpha = b * 0.75; g.fillText('📞 Bluetooth', 0, 122);
   }
   g.restore();
@@ -422,7 +422,7 @@ function subtitle(t) { // a kocka mondatai feliratként
   if (!v || v.line.style === 'narrator') return;
   const k = clamp(v.local / 0.15) * clamp((DUR[v.id] - v.local) / 0.15);
   ctx.save(); ctx.globalAlpha = k; ctx.font = `italic 600 40px ${FONT}`; ctx.textAlign = 'center';
-  const txt = '„' + v.line.text + '”', w = Math.min(1500, ctx.measureText(txt).width + 60);
+  const txt = '“' + v.line.text + '”', w = Math.min(1500, ctx.measureText(txt).width + 60);
   const lines = wrap(ctx, txt, 1440);
   const h = lines.length * 52 + 26, y = H - 70 - h;
   ctx.fillStyle = 'rgba(0,0,0,0.55)'; rr(ctx, W / 2 - w / 2, y, w, h, 14); ctx.fill();
@@ -443,7 +443,7 @@ function windowFrame(t, a, b, label, drawContent, x = 170, y = 90, w = 1580, h =
   ctx.restore();
 }
 function chat(t, a, b, msgs) {
-  windowFrame(t, a, b, 'Claude Code – beszélgetés', (x, y, w, h) => {
+  windowFrame(t, a, b, 'Claude Code – conversation', (x, y, w, h) => {
     ctx.fillStyle = '#15171c'; ctx.fillRect(x, y, w, h);
     let cy = y + 50;
     msgs.forEach((m, i) => {
@@ -707,51 +707,51 @@ function stateAt(t) {
 // ---------------------------------------------------------------- egy képkocka
 function overlays(t) {
   // 1.
-  title(t, 13.0, 15.5, 'C-kocka', 'asztali AI-asszisztens', 0.35);
+  title(t, 13.0, 15.5, 'C-Cube', 'desktop AI assistant', 0.35);
   // 2.
-  caption(t, 17.0, 23.6, '9 × 9 × 9 cm', 'hangvezérlés · RGB fények · mindig jókedvű');
+  caption(t, 17.0, 23.6, '9 × 9 × 9 cm', 'voice control · RGB lights · always cheerful');
   // 3.
   chat(t, 24.0, 29.2, [
-    { me: true, text: 'kaptam egy feladatot, ahhoz kellene segítség… van valami jó ötleted?' },
-    { me: false, text: 'Négy ötlet: … ⭐ C-kocka – asztali AI-asszisztens, egy világító C betűvel.' },
+    { me: true, text: 'I got a task and could use some help… any good ideas?' },
+    { me: false, text: 'Four ideas: … ⭐ C-Cube – a desktop AI assistant with a glowing letter C.' },
   ]);
   chat(t, 29.2, 33.3, [
-    { me: true, text: 'tetszik a C-kocka ötlet, viszont meg is kell terveznünk' },
-    { me: false, text: 'Megírtam a koncepciót és egy Fusion 360 szkriptet, ami felépíti a modellt.' },
+    { me: true, text: 'I like the C-Cube idea, but we also have to design it' },
+    { me: false, text: 'I wrote the concept and a Fusion 360 script that builds the model.' },
   ]);
-  windowFrame(t, 33.3, 40.5, 'Autodesk Fusion – CKocka.py fut', (x, y, w, h) => {
+  windowFrame(t, 33.3, 40.5, 'Autodesk Fusion – running CKocka.py', (x, y, w, h) => {
     const i = Math.min(50, Math.floor(seg(t, 33.7, 39.6) * 51));
     ctx.drawImage(IMG.build[i], x, y, w, h);
     ctx.fillStyle = 'rgba(0,0,0,0.6)'; rr(ctx, x + w - 330, y + h - 80, 300, 56, 12); ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.font = `700 28px ${FONT}`; ctx.textBaseline = 'middle'; ctx.fillText(`${i + 1} / 51 lépés`, x + w - 300, y + h - 52);
+    ctx.fillStyle = '#fff'; ctx.font = `700 28px ${FONT}`; ctx.textBaseline = 'middle'; ctx.fillText(`step ${i + 1} / 51`, x + w - 300, y + h - 52);
   });
-  caption(t, 34.0, 40.2, 'Kódból épített 3D modell', 'Fusion 360 · Python szkript · 51 lépés');
+  caption(t, 34.0, 40.2, 'A 3D model built from code', 'Fusion 360 · Python script · 51 steps');
   if (inR(t, 41.2, 43.6)) { // hibajelölés
     const k = ease(t, 41.2, 41.5);
     ctx.save(); ctx.strokeStyle = '#ff4d4d'; ctx.lineWidth = 10; ctx.globalAlpha = k;
     ctx.beginPath(); ctx.ellipse(1110, 470, 260 * k, 250 * k, 0, 0, 7); ctx.stroke(); ctx.restore();
   }
-  caption(t, 41.2, 43.6, 'Hiba: hiányzik a hangszórórács', 'az első verzióban az egész oldallap besüllyedt');
-  caption(t, 43.8, 46.0, 'Javítva ✓', 'a hibát együtt találtuk meg');
+  caption(t, 41.2, 43.6, 'Bug: the speaker grille is missing', 'in the first version the whole side panel sank in');
+  caption(t, 43.8, 46.0, 'Fixed ✓', 'we found the bug together');
   terminal(t, 46.2, 52.0, [
     '> fusion_mcp_read  document.open',
-    '  aktív dokumentum: C-kocka ✓',
+    '  active document: C-kocka ✓',
     '> fusion_mcp_execute  inspect_ckocka.py',
-    '  24 test · 51 idővonal-elem · 0 hiba ✓',
+    '  24 bodies · 51 timeline items · 0 errors ✓',
     '> fusion_mcp_read  screenshot iso-top-right',
-    '  javaslat: legyenek narancsok a sarkok 🟠',
+    '  suggestion: make the corners orange 🟠',
   ]);
-  caption(t, 49.6, 52.0, 'Fusion MCP', 'az AI saját maga nézi át a modellt');
-  windowFrame(t, 52.0, 55.5, 'NAPLO.md – a projekt naplója', (x, y, w, h) => {
+  caption(t, 49.6, 52.0, 'Fusion MCP', 'the AI reviews the model by itself');
+  windowFrame(t, 52.0, 55.5, 'NAPLO.md – the project log', (x, y, w, h) => {
     ctx.fillStyle = '#15171c'; ctx.fillRect(x, y, w, h);
     const rows = [
-      ['h1', '# Napló – AI Kihívás: C-kocka'],
-      ['h2', '## Indulás és témaválasztás'], ['p', 'Példaprompt: „kaptam egy feladatot, ahhoz kellene segítség…”'],
-      ['h2', '## Tervezés'], ['p', 'Elakadás #2: nincs Blender a gépen → kódból modellezünk'],
-      ['h2', '## Váltás Fusion 360-ra'], ['p', 'Elakadás #4: hiányzott a hangszórórács → addWithoutEdges'],
-      ['h2', '## A Fusion hivatalos MCP-je'], ['p', 'Tanulság: ha az AI azt mondja „nincs ilyen”, kérdezz rá, hol keresett'],
-      ['h2', '## A videó elkészítése'], ['p', 'Elakadás: a headless Edge nem indult a Bash-ből → PowerShell'],
-      ['h2', '## Ez a weboldal'], ['p', 'GitHub Pages · interaktív 3D kocka · letöltések'],
+      ['h1', '# Log – AI Challenge: C-Cube'],
+      ['h2', '## Kick-off and choosing a topic'], ['p', 'Example prompt: “I got a task and could use some help…”'],
+      ['h2', '## Design'], ['p', 'Stuck #2: no Blender on the PC → modelling from code'],
+      ['h2', '## Switching to Fusion 360'], ['p', 'Stuck #4: speaker grille missing → addWithoutEdges'],
+      ['h2', "## Fusion's official MCP"], ['p', 'Lesson: if the AI says “there is no such thing”, ask where it looked'],
+      ['h2', '## Making the video'], ['p', 'Stuck: headless Edge would not start from Bash → PowerShell'],
+      ['h2', '## This website'], ['p', 'GitHub Pages · interactive 3D cube · downloads'],
     ];
     const scroll = ease(t, 52.6, 55.2) * 260;
     rows.forEach(([k, txt], i) => {
@@ -762,50 +762,50 @@ function overlays(t) {
       ctx.textBaseline = 'middle'; ctx.fillText(txt, x + 70, yy);
     });
   });
-  caption(t, 52.4, 55.4, 'Napló', 'eszközök · példapromptok · elakadások és megoldások');
+  caption(t, 52.4, 55.4, 'Work log', 'tools · example prompts · where we got stuck and how we got out');
   // 4.
-  caption(t, 55.7, EX.a, 'Kerek LCD kijelző és világító C');
-  caption(t, EX.a + 0.2, EX.a + 2.8, 'Belülről', 'a gyártható, 90 mm-es modell', true);   // a robbantott ábra címkéi: insideLabels()
-  caption(t, EX.d + 0.1, 68.8, 'Narancs gumi sarkok', 'mindjárt kiderül, minek 😏');
+  caption(t, 55.7, EX.a, 'Round LCD display and glowing C');
+  caption(t, EX.a + 0.2, EX.a + 2.8, 'Inside', 'the manufacturable 90 mm model', true);   // a robbantott ábra címkéi: insideLabels()
+  caption(t, EX.d + 0.1, 68.8, 'Orange rubber corners', 'you will see why in a moment 😏');
   // 5.
-  title(t, 69.0, 70.6, 'SZÓRAKOZTAT');
-  caption(t, 71.6, 78.8, '🎵 Party mód', 'zenére a fények is táncolnak');
-  caption(t, 86.0, 88.9, '🌳 Andor, a favicc-gomb', '4 gomb · bármilyen hang · egy kizárólag faviccekre');
-  caption(t, 95.0, 97.4, '👀 Néha figyel.', 'Ha visszanézel, letagadja.');
-  caption(t, 103.5, 107.9, '🤾 Rossz napod van? Dobd el!', 'a narancs gumi sarkok miatt kibírja');
+  title(t, 69.0, 70.6, 'ENTERTAINS');
+  caption(t, 71.6, 78.8, '🎵 Party mode', 'the lights dance to the music');
+  caption(t, 86.0, 88.9, '🌳 Andor, the dad-joke button', '4 buttons · any sound · one just for (wooden) dad jokes');
+  caption(t, 95.0, 97.4, '👀 Sometimes it watches you.', 'Look back, and it denies everything.');
+  caption(t, 103.5, 107.9, '🤾 Bad day? Throw it!', 'the orange rubber corners can take it');
   if (inR(t, 108.2, 110.6)) {
     const k = ease(t, 108.2, 108.5) * (1 - ease(t, 110.3, 110.6));
     ctx.save(); ctx.globalAlpha = k; ctx.font = `700 54px ${FONT}`; ctx.textAlign = 'center';
-    const txt = '„Kérjek még egy kávét?”', w = ctx.measureText(txt).width + 80;
+    const txt = '“Should I get another coffee?”', w = ctx.measureText(txt).width + 80;
     ctx.fillStyle = 'rgba(58,42,28,0.92)'; rr(ctx, W / 2 - w / 2, 110, w, 100, 24); ctx.fill();
     ctx.fillStyle = '#fff'; ctx.fillText(txt, W / 2, 178); ctx.restore();
   }
-  caption(t, 114.0, 116.9, '🎱 Shake to Decide', 'rázd meg, és dönt helyetted');
+  caption(t, 114.0, 116.9, '🎱 Shake to Decide', 'shake it, and it decides for you');
   // 6.
-  title(t, 117.0, 118.6, 'SEGÍT');
-  caption(t, 119.0, 124.4, '📳 Ne zavarj mód', 'ilyenkor csak finoman rezeg');
+  title(t, 117.0, 118.6, 'HELPS');
+  caption(t, 119.0, 124.4, '📳 Do Not Disturb mode', 'it only vibrates gently');
   phone(t, 125.0, 132.3, (x, y, w, h) => {
     ctx.fillStyle = '#10261a'; rr(ctx, x, y, w, h, 36); ctx.fill();
-    ctx.textAlign = 'center'; ctx.fillStyle = '#9fe8b9'; ctx.font = `600 24px ${FONT}`; ctx.fillText('ᛒ  C-kocka csatlakoztatva', x + w / 2, y + 90);
+    ctx.textAlign = 'center'; ctx.fillStyle = '#9fe8b9'; ctx.font = `600 24px ${FONT}`; ctx.fillText('ᛒ  C-Cube connected', x + w / 2, y + 90);
     const p = 1 + 0.06 * Math.sin(t * 8);
     ctx.fillStyle = '#3ef07a'; ctx.beginPath(); ctx.arc(x + w / 2, y + 250, 80 * p, 0, 7); ctx.fill();
     ctx.fillStyle = '#062010'; ctx.font = `800 48px ${FONT}`; ctx.fillText('BRO', x + w / 2, y + 266);
     ctx.fillStyle = '#fff'; ctx.font = `700 40px ${FONT}`; ctx.fillText('BRO', x + w / 2, y + 400);
-    ctx.fillStyle = '#9fe8b9'; ctx.font = `500 26px ${FONT}`; ctx.fillText('hívás a kockán keresztül…', x + w / 2, y + 446);
+    ctx.fillStyle = '#9fe8b9'; ctx.font = `500 26px ${FONT}`; ctx.fillText('calling through the cube…', x + w / 2, y + 446);
     ctx.fillStyle = '#e04444'; ctx.beginPath(); ctx.arc(x + w / 2 - 80, y + h - 110, 42, 0, 7); ctx.fill();
     ctx.fillStyle = '#3ef07a'; ctx.beginPath(); ctx.arc(x + w / 2 + 80, y + h - 110, 42, 0, 7); ctx.fill();
     ctx.textAlign = 'left';
   });
-  caption(t, 125.4, 132.2, '📱 App · Bluetooth · kihangosító');
-  caption(t, 133.8, 137.8, '😊 Felvidít', 'ha rossz napod van, észreveszi');
+  caption(t, 125.4, 132.2, '📱 App · Bluetooth · speakerphone');
+  caption(t, 133.8, 137.8, '😊 Cheers you up', 'it notices when you are having a bad day');
   // 7.
-  title(t, 138.0, 139.6, 'VIGYÁZ RÁD');
-  caption(t, 142.4, 146.8, '🔒 Adatvédelem egy mozdulattal', 'fejjel lefelé: mikrofon és kamera ki · a kép nem megy a felhőbe');
+  title(t, 138.0, 139.6, 'LOOKS AFTER YOU');
+  caption(t, 142.4, 146.8, '🔒 Privacy in one move', 'upside down: microphone and camera off · no images go to the cloud');
   // 8.
   if (inR(t, 147.0, 160)) {
     const k = ease(t, 147.0, 147.4) * (1 - ease(t, 159.6, 160));
     ctx.save(); ctx.globalAlpha = k; ctx.font = `700 46px ${FONT}`; ctx.textAlign = 'center'; ctx.fillStyle = '#fff';
-    ctx.fillText('Válassz személyiséget – vagy építs sajátot', W / 2, 110); ctx.restore();
+    ctx.fillText('Pick a personality – or build your own', W / 2, 110); ctx.restore();
   }
   const pers = [[147.0, 149.8, '☀️ Sunny'], [149.8, 153.4, '🧘 Chill'], [153.4, 154.9, '🔥 Hype'], [154.9, 157.5, '😏 Sarcastic']];
   for (const [a, b, n] of pers) if (inR(t, a, b)) {
@@ -814,9 +814,9 @@ function overlays(t) {
   }
   phone(t, 157.4, 160.0, (x, y, w, h) => {
     ctx.fillStyle = '#16191f'; rr(ctx, x, y, w, h, 36); ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.font = `700 30px ${FONT}`; ctx.fillText('C-kocka app', x + 30, y + 90);
-    ctx.fillStyle = ACC; ctx.font = `600 22px ${FONT}`; ctx.fillText('Személyiség: Saját ✨', x + 30, y + 130);
-    const sl = [['Humor', 0.8, 0.95], ['Energia', 0.5, 0.75], ['Beszédesség', 0.6, 0.4], ['Szarkazmus', 0.2, 0.65], ['Kedvesség', 0.9, 0.85]];
+    ctx.fillStyle = '#fff'; ctx.font = `700 30px ${FONT}`; ctx.fillText('C-Cube app', x + 30, y + 90);
+    ctx.fillStyle = ACC; ctx.font = `600 22px ${FONT}`; ctx.fillText('Personality: Custom ✨', x + 30, y + 130);
+    const sl = [['Humor', 0.8, 0.95], ['Energy', 0.5, 0.75], ['Chattiness', 0.6, 0.4], ['Sarcasm', 0.2, 0.65], ['Kindness', 0.9, 0.85]];
     sl.forEach(([n, a, b], i) => {
       const v = lerp(a, b, ease(t, 157.8 + i * 0.25, 158.8 + i * 0.25)), yy = y + 200 + i * 86;
       ctx.fillStyle = '#c9ccd1'; ctx.font = `500 22px ${FONT}`; ctx.fillText(n, x + 30, yy);
@@ -824,17 +824,17 @@ function overlays(t) {
       ctx.fillStyle = ACC; rr(ctx, x + 30, yy + 18, (w - 60) * v, 10, 5); ctx.fill();
       ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x + 30 + (w - 60) * v, yy + 23, 14, 0, 7); ctx.fill();
     });
-    ctx.fillStyle = '#c9ccd1'; ctx.font = `500 22px ${FONT}`; ctx.fillText('Megszólítás: „Captain”', x + 30, y + h - 60);
+    ctx.fillStyle = '#c9ccd1'; ctx.font = `500 22px ${FONT}`; ctx.fillText('Nickname: “Captain”', x + 30, y + h - 60);
   });
   // 9.
   if (inR(t, 165.0, 176)) {
     const k = ease(t, 165, 166) * (1 - ease(t, 174, 176));
     ctx.save(); ctx.globalAlpha = k; ctx.textAlign = 'left'; ctx.shadowColor = '#000'; ctx.shadowBlur = 24;
-    ctx.fillStyle = '#fff'; ctx.font = `800 110px ${FONT}`; ctx.fillText('C-kocka', 110, 330);
+    ctx.fillStyle = '#fff'; ctx.font = `800 110px ${FONT}`; ctx.fillText('C-Cube', 110, 330);
     ctx.fillStyle = ACC; ctx.fillRect(114, 360, 300 * ease(t, 165.3, 166.3), 8);
-    ctx.fillStyle = '#e8e6e3'; ctx.font = `500 44px ${FONT}`; ctx.fillText('Egy kis barát az asztalodra.', 112, 440);
-    ctx.fillStyle = '#c9ccd1'; ctx.font = `500 32px ${FONT}`; ctx.fillText('Tervezte: Zollo & C (Claude)', 112, 520);
-    ctx.fillText('AI Kihívás · 2026', 112, 566);
+    ctx.fillStyle = '#e8e6e3'; ctx.font = `500 44px ${FONT}`; ctx.fillText('A little friend for your desk.', 112, 440);
+    ctx.fillStyle = '#c9ccd1'; ctx.font = `500 32px ${FONT}`; ctx.fillText('Designed by Zollo & C (Claude)', 112, 520);
+    ctx.fillText('AI Challenge · 2026', 112, 566);
     ctx.restore();
   }
   subtitle(t);
@@ -842,14 +842,14 @@ function overlays(t) {
 
 // robbantott ábra feliratai: [cím, alcím, alkatrész, a narráció szava, ami előhívja (+ késleltetés)]
 const INSIDE_LABELS = [
-  ['Kerek kijelző', '1,28" · 240 × 240', /Kerek kijelzo/, 'Kerek kijelző', 0],
-  ['Kamera', 'OV5647 · a C nyílásában', /Mini kamera/, 'Kamera', 0, [0, 120]],
-  ['Két mikrofon', 'Voice Bonnet · sztereó hang', /Voice Bonnet/, 'Két mikrofon', 0],
-  ['Raspberry Pi Zero 2 W', 'Wi-Fi · Bluetooth · Linux', /Raspberry/, 'Két mikrofon', 0.7],
-  ['Sztereó hangszórók', '2 × 40 mm', /Hangszoro jobb – test/, 'Sztereó', 0],
-  ['RGB fények', '24 LED-es gyűrű + világító C', /NeoPixel/, 'RGB', 0],
-  ['Akku', '18650 · USB-C töltés', /UPS/, 'Akku', 0, [0, -90], [-1.1, -0.3, 1.2], 1],
-  ['Narancs gumisarkok', 'TPU · dobálható', /Gumi sarok 6/, 'narancs', 0],
+  ['Round display', '1.28" · 240 × 240', /Kerek kijelzo/, 'Round display', 0],
+  ['Camera', 'OV5647 · inside the C opening', /Mini kamera/, 'Camera', 0, [0, 120]],
+  ['Two microphones', 'Voice Bonnet · stereo audio', /Voice Bonnet/, 'Two microphones', 0],
+  ['Raspberry Pi Zero 2 W', 'Wi-Fi · Bluetooth · Linux', /Raspberry/, 'Two microphones', 0.7],
+  ['Stereo speakers', '2 × 36 mm', /Hangszoro jobb – test/, 'Stereo', 0],
+  ['RGB lights', '24-LED ring + glowing C', /NeoPixel/, 'RGB', 0],
+  ['Battery', '18650 · USB-C charging', /UPS/, 'Battery', 0, [0, -90], [-1.1, -0.3, 1.2], 1],
+  ['Orange rubber corners', 'TPU · throwable', /Gumi sarok 6/, 'orange', 0],
 ];
 function insideLabels(t, s) {
   const v = new THREE.Vector3();
@@ -939,7 +939,7 @@ if (!RENDER) {
   let playing = false;
   seek.value = start; audio.currentTime = start;
   const fmt = x => `${Math.floor(x / 60)}:${(x % 60).toFixed(1).padStart(4, '0')}`;
-  play.onclick = () => { playing = !playing; play.textContent = playing ? '⏸ Szünet' : '▶ Lejátszás'; if (playing) audio.play(); else audio.pause(); };
+  play.onclick = () => { playing = !playing; play.textContent = playing ? '⏸ Pause' : '▶ Play'; if (playing) audio.play(); else audio.pause(); };
   seek.oninput = () => { audio.currentTime = +seek.value; if (!playing) { renderAt(+seek.value); time.textContent = fmt(+seek.value); } };
   (function loop() {
     if (playing) { seek.value = audio.currentTime; renderAt(audio.currentTime); time.textContent = fmt(audio.currentTime); }

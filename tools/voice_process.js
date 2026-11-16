@@ -45,8 +45,9 @@ function wavInfo(file) {
 // VOICE_SRC=szabolcs -> Windows beépített hang (video/voice_raw), VOICE_SRC=f5anna -> F5 a régi, szintetikus Anna-referenciával
 // a FreeTTS ingyenes hangja reklámot mond be a felvételbe, ezért NEM használjuk (VOICE_SRC=freetts csak összehasonlításhoz)
 const FREETTS = path.join(ROOT, 'video/voice_raw_freetts');
-const VSRC = process.env.VOICE_SRC || 'ludvig';
-const F5 = path.join(ROOT, VSRC === 'f5anna' ? 'video/voice_raw_f5' : 'video/voice_raw_f5_ludvig');
+// 2026-11-16 délután: a videó angol lett – alapból az XTTS-v2 angol narráció (Ludvig Milivoj, Whisperrel válogatva)
+const VSRC = process.env.VOICE_SRC || 'en';
+const F5 = path.join(ROOT, VSRC === 'f5anna' ? 'video/voice_raw_f5' : VSRC === 'ludvig' ? 'video/voice_raw_f5_ludvig' : 'video/voice_raw_en');
 const durations = {};
 for (const l of lines) {
   let src = path.join(RAW, l.id + '.wav');
