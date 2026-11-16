@@ -393,3 +393,19 @@ A szkript előbb megszámolta a furatokat sugár szerint, és csak akkor módos�
 **Tanulság:** a helyi hangmodellek minősége nyelvenként nagyon eltér. Ahol a magyar kevés, ott az angol egy kész, jó megoldás lehet.
 
 **Javítás (ugyanaznap):** Zollo 2:43-nál „szünetet a szóban” hallott. Az AI a hullámformából találta meg az okot: az XTTS a sorokat **pontonként külön** generálta, és közéjük fix 0,42 s **teljes digitális csendet** tett. Így a „C-Cube.” egy elnyújtott, magában álló mini-mondat lett, utána hirtelen némasággal. Egy első javítási kísérlet, ami a Whisper szóidőpontjaiból próbálta mérni a szón belüli csendet, téves eredményt adott (a Whisper a szavak közti szünetet is a szóhoz számolja), ezért az AI visszavonta. A valódi megoldás: a sorok **egyben** készülnek (`split_sentences=False`). Mind a 16 mondat újra 1,00-s pontszámot kapott, és egyikben sincs már belső digitális csend.
+
+## 2026-11-16 – Az AI megtanítja saját magát: „video-narration” skill
+
+**Példaprompt:**
+> „esetleg legközelebb a hanghoz vmi skillt nem lenne érdemes letölteni? vagy amiket lehúztál már azok voltak?”
+
+**Mi derült ki:** amit a nap során letöltöttünk (F5-TTS, XTTS-v2, Whisper, PyTorch), azok **modellek és programok**, nem skillek. A skill becsomagolt utasításgyűjtemény Claude-nak. Az AI átnézte a katalógust: videónarrációhoz nincs kész skill.
+
+**Hogyan:** az AI a beépített **skill-creator** skill-lel saját skillt írt a nap tapasztalataiból:
+- `SKILL.md`: mikor kell használni, melyik nyelvre melyik modell, etika és licenc, a teljes folyamat (több jelölt, Whisper-válogatás, vágás, emberi meghallgatás, idővonalba illesztés);
+- két általános szkript (generálás és kiválasztás);
+- két háttéranyag: a gép beállítása (GPU, CUDA 11.8, környezetek), és **a nap összes buktatója** okkal és megoldással.
+
+A szkripteket egy rövid próbaszövegen kipróbálta: mindkét mondat hibátlan lett. Telepítette Claude Code-hoz, és `.skill` csomagként is átadta.
+
+**Tanulság:** ami egyszer órákig tartó próbálkozás volt, az a skillnek köszönhetően legközelebb az első próbálkozásra jó lehet. Az AI a saját hibáiból tanuló „receptkönyvet” írt magának.
