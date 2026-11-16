@@ -17,34 +17,27 @@ const S = {
   party: false, dnd: false, peek: true, voice: true, hue: 28, bright: 0.8, nick: store.get('nick', 'Captain'),
   assign: { 2: 'horn', 3: 'gooo', 4: 'coffee' }, flipped: false, throws: 0, busy: false, call: null,
 };
+// A kocka mondatai előre generált hangfájlok (XTTS-v2, Whisperrel ellenőrizve): web/voice/<id>.mp3, szövegük: web/voice/lines.json.
+// A böngésző beépített hangja magyar Windowson gyakran magyarul olvasta fel az angol szöveget – ezért nem arra támaszkodunk.
+// rate: lejátszási sebesség (kicsit a hangmagasságot is emeli) – személyiségenként más
 const PERSONAS = {
-  sunny: { hue: 45, eye: '#8fe8ff', rate: 1.05, pitch: 1.25, greet: n => `Good morning, sunshine! Ready for a great day, ${n}?`,
-    idle: ['You are doing great today!', 'Have you had some water? Hydration is happiness!', 'I like your energy today!'] },
-  chill: { hue: 187, eye: '#9fd9ff', rate: 0.85, pitch: 0.95, greet: () => 'Breathe in... The emails can wait.',
-    idle: ['Nice and easy.', 'Maybe a short walk?', 'One thing at a time.'] },
-  hype: { hue: 330, eye: '#ff9bd2', rate: 1.2, pitch: 1.35, greet: n => `LET'S GOOOO, ${n}! Today we crush it!`,
-    idle: ['You are UNSTOPPABLE!', 'Big energy only!', 'Who is the best? YOU are the best!'] },
-  sarcastic: { hue: 250, eye: '#b3a8ff', rate: 0.95, pitch: 0.9, greet: () => 'Oh great. Monday. Again.',
-    idle: ['Wow. Another meeting. Thrilling.', 'I am not saying you are slow, but the coffee went cold.', 'Sure. Let us pretend that was the plan.'] },
-  pro: { hue: 28, eye: '#8fe8ff', rate: 1.0, pitch: 1.0, greet: () => 'Good morning. You have three meetings today. The first one starts in forty minutes.',
-    idle: ['Reminder: stand up and stretch.', 'Your focus timer ends in ten minutes.', 'Inbox zero is closer than you think.'] },
+  sunny: { key: 'sunny', hue: 45, eye: '#8fe8ff', rate: 1.04 },
+  chill: { key: 'chill', hue: 187, eye: '#9fd9ff', rate: 0.94 },
+  hype: { key: 'hype', hue: 330, eye: '#ff9bd2', rate: 1.09 },
+  sarcastic: { key: 'sarcastic', hue: 250, eye: '#b3a8ff', rate: 0.97 },
+  pro: { key: 'pro', hue: 28, eye: '#8fe8ff', rate: 1.0 },
 };
 function persona() {
   if (S.persona !== 'custom') return PERSONAS[S.persona];
   const s = S.sliders, base = s.sarcasm > 60 ? PERSONAS.sarcastic : s.energy > 70 ? PERSONAS.hype : s.energy < 30 ? PERSONAS.chill : PERSONAS.sunny;
-  return { ...base, hue: S.hue, rate: 0.85 + s.energy / 250, pitch: 0.9 + s.energy / 250 + s.kind / 500 };
+  return { ...base, hue: S.hue, rate: 0.94 + s.energy / 666 };
 }
-const JOKES = [
-  ['What do you call a tree that fits in your hand?', 'A palm tree!'],
-  ['Why did the pine tree get in trouble?', 'Because it was being knotty!'],
-  ['What did the tree say to the wind?', 'Leaf me alone!'],
-  ['How do trees get online?', 'They just log in!'],
-  ['I used to be a tree.', 'But now I am just board.'],
-  ['Why did the scarecrow win an award?', 'Because he was outstanding in his field!'],
-  ['I am reading a book about anti-gravity.', 'It is impossible to put down!'],
-  ['What do you call a fake noodle?', 'An impasta!'],
-];
-let jokeIdx = Math.floor(Math.random() * JOKES.length);
+const JOKE_COUNT = 8;
+let jokeIdx = Math.floor(Math.random() * JOKE_COUNT);
+const nextJoke = () => (jokeIdx++ % JOKE_COUNT) + 1;
+const pick = n => 1 + Math.floor(Math.random() * n);
+let LINES = {};
+const linesReady = fetch('web/voice/lines.json').then(r => r.json()).then(a => { for (const l of a) LINES[l.id] = l.text; }).catch(() => {});
 
 // ------------------------------------------------------------------ protokollnapló
 function log(dir, type, data) {
@@ -121,24 +114,54 @@ function pickVoice() {
 }
 if ('speechSynthesis' in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
 let subTimer = null;
-function say(text, { mouthAfter = 'smile' } = {}) {
-  return new Promise(res => {
-    if (S.flipped || !S.on) return res();
-    if (S.dnd) { subtitle('📳 (Ne zavarj: csak finoman rezeg)'); vibrate(); return res(); }
-    log('kocka', 'speech.say', { text });
-    subtitle('“' + text + '”');
-    F.talking = true;
-    const p = persona();
-    const done = () => { F.talking = false; F.mouth = mouthAfter; res(); };
-    if (S.voice && 'speechSynthesis' in window) {
+let sayToken = 0;
+const clips = {};                 // id -> AudioBuffer (első használatkor töltjük be)
+let voiceSrc = null, voiceAn = null;
+async function clip(id) {
+  if (clips[id] !== undefined) return clips[id];
+  try {
+    const r = await fetch(`web/voice/${id}.mp3`);
+    if (!r.ok) throw new Error(r.status);
+    clips[id] = await audio.decodeAudioData(await r.arrayBuffer());
+  } catch { clips[id] = null; }
+  return clips[id];
+}
+function stopVoice() { try { voiceSrc?.stop(); } catch { /* már leállt */ } voiceSrc = null; speechSynthesis?.cancel(); F.talking = false; }
+// say(id): a kocka kimondja a lines.json adott mondatát; a feliratban a "Captain" helyére a beállított megszólítás kerül
+async function say(id, { mouthAfter = 'smile', sub = null } = {}) {
+  if (S.flipped || !S.on) return;
+  if (S.dnd) { subtitle('📳 (Ne zavarj: csak finoman rezeg)'); vibrate(); return; }
+  await linesReady;
+  const text = LINES[id] || id;
+  log('kocka', 'speech.say', { id, text });
+  subtitle(sub || '“' + text.replace(/Captain/g, S.nick) + '”');
+  ensureAudio(); stopVoice();
+  F.talking = true;
+  const token = ++sayToken;          // ha egy újabb mondat megszakítja ezt, a régi vége ne zárja be az új száját
+  const p = persona();
+  const buf = S.voice ? await clip(id) : null;
+  if (token !== sayToken) return;
+  await new Promise(res => {
+    let fin = false;
+    const done = () => { if (fin) return; fin = true; if (token === sayToken) { F.talking = false; F.mouth = mouthAfter; voiceSrc = null; } res(); };
+    if (buf) {
+      voiceAn = voiceAn || Object.assign(audio.createAnalyser(), { fftSize: 256 });
+      const src = audio.createBufferSource(), gn = audio.createGain();
+      src.buffer = buf; src.playbackRate.value = p.rate; gn.gain.value = 1.6;
+      src.connect(voiceAn); voiceAn.connect(gn); gn.connect(master);
+      src.onended = done; voiceSrc = src; src.start();
+    } else if (S.voice && enVoice && 'speechSynthesis' in window) {   // tartalék: csak valódi angol hanggal
       const u = new SpeechSynthesisUtterance(text);
-      if (enVoice) u.voice = enVoice;
-      u.lang = 'en-US'; u.rate = p.rate; u.pitch = p.pitch;
-      u.onend = done; u.onerror = done;
-      speechSynthesis.cancel(); speechSynthesis.speak(u);
-      setTimeout(() => { if (F.talking && !speechSynthesis.speaking) done(); }, 400 + text.length * 120);   // ha nincs hang a gépen
-    } else setTimeout(done, 600 + text.length * 55);
+      u.voice = enVoice; u.lang = enVoice.lang; u.rate = p.rate;
+      u.onend = done; u.onerror = done; speechSynthesis.speak(u);
+    } else setTimeout(done, 600 + text.length * 55);   // hang nélkül: csak felirat
   });
+}
+function voiceLevel() {   // a száj nyitása a hang valódi hangereje szerint
+  if (!voiceAn || !voiceSrc) return null;
+  const d = new Uint8Array(voiceAn.fftSize); voiceAn.getByteTimeDomainData(d);
+  let s = 0; for (const v of d) s += (v - 128) ** 2;
+  return Math.min(1, Math.sqrt(s / d.length) / 40);
 }
 function subtitle(txt, ms = 4200) {
   const el = $('#subtitle'); el.textContent = txt; el.classList.add('on');
@@ -190,7 +213,7 @@ function drawFace(dt, now) {
     const my = c + 48 + ey * 0.4, mx = c + ex * 0.4;
     g.lineWidth = 10;
     if (F.talking) {
-      const a = 8 + Math.abs(Math.sin(now * 17) * Math.sin(now * 7.3)) * 22;
+      const lv = voiceLevel(), a = 6 + (lv == null ? Math.abs(Math.sin(now * 17) * Math.sin(now * 7.3)) : lv) * 30;
       g.beginPath(); g.ellipse(mx, my, 26, a / 2, 0, 0, Math.PI * 2); g.fill();
     } else if (F.mouth === 'grin') {
       g.beginPath(); g.arc(mx, my - 14, 40, 0.15 * Math.PI, 0.85 * Math.PI); g.closePath(); g.fill();
@@ -286,7 +309,7 @@ cubeEl?.addEventListener('pointerenter', async () => {
   if (!F.peeking) return;
   F.peeking = false; F.lookAway = true; F.snap = true; F.target = { x: 1, y: -0.6 }; $('#camLed').classList.remove('on');
   emit('event.caught_peeking', {});
-  await say(S.persona === 'sarcastic' ? 'I was NOT looking. Obviously.' : 'I wasn\'t looking! Promise.');
+  await say(S.persona === 'sarcastic' ? 'peek_2' : 'peek_1');
   await sleep(500); F.lookAway = false; F.snap = false; F.target = F.pointer ? { ...F.pointer } : { x: 0, y: 0 };
 });
 
@@ -298,7 +321,7 @@ async function boot() {
   SFX.boot(); F.mode = 'face'; F.mouth = 'smile';
   S.busy = true;
   await sleep(600);
-  await say('Coffee loaded. Brain booting. Let\'s do this.');
+  await say('boot1');
   const lastSeen = store.get('lastSeen', null), nowMs = Date.now();
   store.set('lastSeen', nowMs);
   let since = '14 hours, 3 minutes and 12 seconds';
@@ -306,13 +329,14 @@ async function boot() {
     const s = Math.max(1, Math.round((nowMs - lastSeen) / 1000)), h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
     since = (h ? `${h} hours, ` : '') + (m ? `${m} minutes and ` : '') + `${sec} seconds`;
   }
-  await say(`Welcome back, ${S.nick}! I haven't seen you for ${since}.`);
-  await sleep(200); await say('Not that I was counting.', { mouthAfter: 'grin' });
+  emit('event.welcome', { lastSeenAgo: since });
+  await say('boot2', { sub: `“Welcome back, ${S.nick}! I haven't seen you for ${since}.”` });
+  await sleep(200); await say('boot3', { mouthAfter: 'grin' });
   await sleep(700); F.mouth = 'smile';
   S.busy = false; schedulePeek(); broadcastState();
 }
 function powerOff() {
-  S.on = false; S.party = false; partyStop(); speechSynthesis?.cancel(); F.mode = 'off'; F.talking = false;
+  S.on = false; S.party = false; partyStop(); stopVoice(); F.mode = 'off';
   cubeEl.classList.add('off'); $('#power').textContent = '⏻ Bekapcsolás'; $('#party').checked = false;
   log('kocka', 'power.off', {}); broadcastState();
 }
@@ -324,15 +348,15 @@ async function pressButton(n) {
   emit('event.button', { id: n });
   if (S.dnd) return vibrate();
   if (n === 1) {   // Andor: dad joke
-    const [q, a] = JOKES[jokeIdx++ % JOKES.length];
-    S.busy = true; await say(q); await sleep(700); await say(a, { mouthAfter: 'grin' }); SFX.drum(); await sleep(1200); F.mouth = 'smile'; S.busy = false;
+    const j = nextJoke();
+    S.busy = true; await say(`joke_${j}q`); await sleep(700); await say(`joke_${j}a`, { mouthAfter: 'grin' }); SFX.drum(); await sleep(1200); F.mouth = 'smile'; S.busy = false;
     return;
   }
   const snd = S.assign[n];
   if (snd === 'horn') { SFX.horn(); F.mouth = 'o'; setTimeout(() => F.mouth = 'smile', 600); }
   else if (snd === 'drum') { SFX.drum(); F.mouth = 'grin'; setTimeout(() => F.mouth = 'smile', 900); }
-  else if (snd === 'gooo') { F.mode = 'text'; F.text = '🔥'; F.textSize = 120; F.sub = ''; await say('Let\'s goooooo!'); F.mode = 'face'; }
-  else if (snd === 'coffee') { await say(`Coffee break, ${S.nick}?`); F.mode = 'text'; F.text = 'YES'; F.sub = 'Obviously.'; F.textSize = 96; F.textColor = '#5cf28a'; SFX.ding(); await sleep(1800); F.mode = 'face'; F.textColor = null; }
+  else if (snd === 'gooo') { F.mode = 'text'; F.text = '🔥'; F.textSize = 120; F.sub = ''; await say('btn_gooo'); F.mode = 'face'; }
+  else if (snd === 'coffee') { await say('btn_coffee'); F.mode = 'text'; F.text = 'YES'; F.sub = 'Obviously.'; F.textSize = 96; F.textColor = '#5cf28a'; SFX.ding(); await sleep(1800); F.mode = 'face'; F.textColor = null; }
 }
 async function throwCube() {
   if (!(await needOn())) return;
@@ -340,7 +364,7 @@ async function throwCube() {
   cubeEl.classList.remove('throw'); void cubeEl.offsetWidth; cubeEl.classList.add('throw');
   SFX.whoosh(); F.mode = 'dizzy'; S.busy = true;
   await sleep(1300);
-  if (!S.dnd) await say(S.throws === 1 ? 'Ouch! Okay. That was fun. I think.' : `Ouch! That's ${S.throws} throws today. Coffee break?`);
+  if (!S.dnd) await say(S.throws === 1 ? 'throw_1' : 'throw_n', { sub: S.throws === 1 ? null : `“Ouch! Again? That's ${S.throws} throws today. Okay, coffee break.”` });
   await sleep(1200); F.mode = S.party ? 'eq' : 'face'; S.busy = false;
 }
 async function shakeCube() {
@@ -357,7 +381,7 @@ async function flipCube() {
   S.flipped = !S.flipped; cubeEl.classList.toggle('flipped', S.flipped); $('#flip').classList.toggle('on', S.flipped);
   emit('event.orientation', { upsideDown: S.flipped, microphone: !S.flipped, camera: !S.flipped });
   if (S.flipped) {
-    speechSynthesis?.cancel(); F.talking = false; if (S.party) setParty(false);
+    stopVoice(); if (S.party) setParty(false);
     F.mode = 'privacy'; $('#camLed').classList.remove('on'); subtitle('🔒 Fejjel lefelé: mikrofon és kamera kikapcsolva', 3000);
   } else { F.mode = S.dnd ? 'dnd' : 'face'; subtitle('Mikrofon és kamera újra bekapcsolva', 2200); }
   broadcastState();
@@ -366,10 +390,10 @@ async function tired() {
   if (!(await needOn())) return;
   $('#camLed').classList.add('on'); emit('event.camera', { face: 'tired' });
   F.mouth = 'worried'; S.busy = true; await sleep(800);
-  await say(`Hey ${S.nick}, you look tired. Want to hear a terrible joke?`);
+  await say('tired');
   $('#camLed').classList.remove('on');
-  const [q, a] = JOKES[jokeIdx++ % JOKES.length];
-  await sleep(400); await say(q); await sleep(700); await say(a, { mouthAfter: 'grin' }); SFX.drum();
+  const j = nextJoke();
+  await sleep(400); await say(`joke_${j}q`); await sleep(700); await say(`joke_${j}a`, { mouthAfter: 'grin' }); SFX.drum();
   await sleep(1200); F.mouth = 'smile'; S.busy = false;
 }
 async function incomingCall() {
@@ -392,7 +416,8 @@ async function touch() {
   await sleep(1600);
   $('#touch').classList.remove('listening'); F.mode = 'face'; F.target = F.pointer ? { ...F.pointer } : { x: 0, y: 0 };
   const p = persona(), time = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-  await say(Math.random() < 0.5 ? `It's ${time}, ${S.nick}. ${p.idle[Math.floor(Math.random() * p.idle.length)]}` : p.idle[Math.floor(Math.random() * p.idle.length)]);
+  if (Math.random() < 0.5) { F.mode = 'text'; F.text = time; F.sub = ''; F.textSize = 84; F.textColor = null; await say('time', { sub: `“It's ${time}, ${S.nick}.”` }); await sleep(900); F.mode = 'face'; }
+  else await say(`idle_${p.key}_${pick(3)}`);
 }
 function setParty(on) {
   S.party = on; $('#party').checked = on; cubeEl.classList.toggle('party', on);
@@ -404,13 +429,13 @@ function setParty(on) {
 async function handle(type, d) {
   switch (type) {
     case 'persona.set': S.persona = d.name; store.set('persona', d.name); if (d.name !== 'custom') S.hue = PERSONAS[d.name].hue;
-      if (S.on && !S.flipped && !S.dnd) { while (S.busy) await sleep(200); const p = persona(); await say(p.greet(S.nick)); } break;
+      if (S.on && !S.flipped && !S.dnd) { while (S.busy) await sleep(200); await say('greet_' + persona().key); } break;
     case 'persona.custom': S.sliders = { ...S.sliders, ...d }; store.set('sliders', S.sliders); break;
     case 'mode.party': if (!S.on && d.on) await boot(); setParty(d.on); break;
-    case 'mode.dnd': S.dnd = d.on; if (d.on) { setParty(false); speechSynthesis?.cancel(); F.talking = false; if (S.on && !S.flipped) F.mode = 'dnd'; }
+    case 'mode.dnd': S.dnd = d.on; if (d.on) { setParty(false); stopVoice(); if (S.on && !S.flipped) F.mode = 'dnd'; }
       else if (S.on && !S.flipped) F.mode = 'face'; break;
     case 'peek.set': S.peek = d.on; break;
-    case 'voice.set': S.voice = d.on; if (!d.on) speechSynthesis?.cancel(); break;
+    case 'voice.set': S.voice = d.on; if (!d.on) stopVoice(); break;
     case 'led.color': S.hue = d.hue; break;
     case 'led.brightness': S.bright = d.value; break;
     case 'user.nickname': S.nick = d.name || 'Captain'; store.set('nick', S.nick); break;
