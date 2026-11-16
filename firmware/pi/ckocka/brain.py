@@ -384,6 +384,8 @@ class Cube:
                 s.hue = st_mod.PERSONA_HUE[d['name']]
             self.face.persona = s.base_persona()
             self.lights()
+            st_mod.save(s)
+            self.broadcast_state()                   # az app azonnal frissüljön – a köszönés csak utána jön
             if s.on and not s.upside_down and not s.dnd:
                 while s.busy:
                     await asyncio.sleep(0.2)
