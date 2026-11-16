@@ -422,3 +422,25 @@ A szkripteket egy rövid próbaszövegen kipróbálta: mindkét mondat hibátlan
 **Közben:** a C-kocka dokumentum egyszer bezárult a Fusionben. Az AI ezt észrevette, és nem váltott át magától egy másik nyitott dokumentumra, mert az Zollo munkája is lehetett. A mentett modellt új dokumentumként nyitotta meg.
 
 **Tanulság:** ha ugyanaz a művelet ugyanannál a testnél másodszor is lefagy, az már nem véletlen. Ilyenkor nem érdemes harmadszor is próbálkozni: meg kell kerülni, és dokumentálni.
+
+## 2026-11-16 – Webes szimulátor és vezérlőapp
+
+**Példaprompt:**
+> „esetleg egy programot tudnál írni hozzá? ami vezérli a c kockát”
+
+**Döntés:** a kocka csak elméletben létezik, ezért az AI megkérdezte, milyen programra van szükség. Zollo a **böngészős szimulátort és a telefonos appot** választotta, hogy bárki kipróbálhassa. Kész skillt kerestünk hozzá, de nem volt; nem is kellett, mert a feladat sima HTML/JavaScript.
+
+**Mit tud** ([sim.html](sim.html), [web/sim.js](web/sim.js)):
+- **A virtuális kocka:** élő arc, ami követi az egeret és pislog. Néha titokban „leskelődik” (közben ég a kamera jelzőfénye), és ha az egérrel „visszanézel”, elkapja a tekintetét: *„I wasn't looking!”*
+- **Gombok és mozdulatok:**
+  - a fa Andor-gomb angol dad jokes-okat mond, ba-dum-tss-szel; a többi gombhoz hang rendelhető;
+  - az érintőfelületre megmondja a pontos időt;
+  - dobás után szédül, és számolja a dobásokat;
+  - rázásra YES/NO választ ad;
+  - fejjel lefelé fordítva elnémul (mikrofon és kamera ki);
+  - van „fáradt vagyok” felvidítás és bejövő hívás kihangosítással.
+- **Bekapcsoláskor** megmondja, mennyi ideje nem látott (a böngészőben tárolva).
+- **Az app:** személyiségek (Sunny, Chill, Hype, Sarcastic, Pro, Saját csúszkákkal), party mód saját szintetizált zenével (a fények ütemre villognak, a kijelzőn hangszínkép), Ne zavarj, fényszín és fényerő, megszólítás, a gombok hangjai. Külön ablakban is megnyitható, és onnan is vezérli a kockát (BroadcastChannel).
+- **Protokollnapló:** minden app → kocka parancs és kocka → app esemény látszik (pl. `persona.set`, `led.color`, `event.throw`). Így a vezérlés logikája is bemutatható.
+
+**Ellenőrzés:** az AI a beépített böngészőben végigkattintotta a funkciókat (bekapcsolás, rázás, party, fordítás, külön ablakos app), és telefonméretben is megnézte. Két hibát talált és javított: a „Saját” csúszkák akkor is látszottak, ha nem az volt kiválasztva, a party-hangszínkép pedig kilógott a kerek kijelzőből.

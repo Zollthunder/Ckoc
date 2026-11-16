@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C-kocka szimulátor</title>
+<meta name="description" content="Próbáld ki a C-kockát a böngészőben: élő arc, fények, gombok, személyiségek, party mód – és a telefonos vezérlőapp.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='6' width='52' height='52' rx='12' fill='%2330333a'/%3E%3Cpath d='M44 22a14 14 0 1 0 0 20' fill='none' stroke='%23ff9a3c' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="web/sim.css">
+</head>
+<body>
+
+<header class="nav">
+  <a class="brand" href="index.html"><span class="brand-c">C</span>-kocka</a>
+  <nav>
+    <a href="index.html#video">Videó</a>
+    <a href="index.html#funkciok">Funkciók</a>
+    <a href="sim.html" aria-current="page">Szimulátor</a>
+    <a href="index.html#letoltes">Letöltés</a>
+  </nav>
+</header>
+
+<main class="sim" id="sim">
+  <!-- ===== a virtuális kocka ===== -->
+  <section class="stage" id="stage" aria-label="A virtuális C-kocka">
+    <div class="stage-head">
+      <div>
+        <p class="eyebrow">Szimulátor</p>
+        <h1>Próbáld ki a C-kockát</h1>
+        <p class="lead">Nyomd meg a gombjait, dobd el, rázd meg, fordítsd fejjel lefelé – vagy vezéreld a telefonos appból. Hangot is ad, ha engeded.</p>
+      </div>
+      <button class="btn primary" id="power">⏻ Bekapcsolás</button>
+    </div>
+
+    <div class="cube-area">
+      <div class="subtitle" id="subtitle" aria-live="polite"></div>
+      <div class="cube-wrap" id="cubeWrap">
+        <div class="cube" id="cube">
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+          <svg class="c-glow" viewBox="0 0 200 200" aria-hidden="true">
+            <path d="M154 58 A72 72 0 1 0 154 142" fill="none" stroke-linecap="round" stroke-width="16"/>
+          </svg>
+          <div class="display"><canvas id="face" width="320" height="320" aria-label="A kocka arca"></canvas></div>
+          <span class="cam" id="cam" title="Kamera"></span>
+          <span class="cam-led" id="camLed" title="Kamera-jelzőfény"></span>
+        </div>
+        <div class="ring" id="ring"></div>
+      </div>
+
+      <div class="top-panel" aria-label="A kocka teteje">
+        <p class="panel-title">A kocka teteje</p>
+        <div class="buttons">
+          <button class="cap andor" data-btn="1" title="Andor – a fa dad-joke gomb">🌳<small>Andor</small></button>
+          <button class="cap cyan" data-btn="2" title="Türkiz gomb"><small>2</small></button>
+          <button class="cap mint" data-btn="3" title="Menta gomb"><small>3</small></button>
+          <button class="cap pink" data-btn="4" title="Rózsaszín gomb"><small>4</small></button>
+          <button class="touch" id="touch" title="Érintőfelület (beszéd indítása)"><small>érintés</small></button>
+        </div>
+      </div>
+
+      <div class="actions" aria-label="Fizikai mozdulatok">
+        <button class="act" id="throw">🤾 Dobd el</button>
+        <button class="act" id="shake">🎱 Rázd meg</button>
+        <button class="act" id="flip">🙃 Fordítsd meg</button>
+        <button class="act" id="tired">😮‍💨 Fáradt vagyok</button>
+        <button class="act" id="call">📞 Bejövő hívás</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== telefonos vezérlőapp ===== -->
+  <aside class="phone-col">
+    <div class="phone" id="phone">
+      <div class="phone-notch"></div>
+      <div class="app">
+        <div class="app-head">
+          <b>C-kocka app</b>
+          <span class="bt" id="bt">ᛒ csatlakoztatva</span>
+        </div>
+
+        <label class="app-label">Személyiség</label>
+        <div class="persona-grid" id="persona">
+          <button data-p="sunny">☀️<span>Sunny</span></button>
+          <button data-p="chill">🧘<span>Chill</span></button>
+          <button data-p="hype">🔥<span>Hype</span></button>
+          <button data-p="sarcastic">😏<span>Sarcastic</span></button>
+          <button data-p="pro">💼<span>Pro</span></button>
+          <button data-p="custom">✨<span>Saját</span></button>
+        </div>
+        <div class="sliders" id="sliders" hidden>
+          <label>Humor <input type="range" min="0" max="100" value="80" data-s="humor"></label>
+          <label>Energia <input type="range" min="0" max="100" value="60" data-s="energy"></label>
+          <label>Beszédesség <input type="range" min="0" max="100" value="50" data-s="chatty"></label>
+          <label>Szarkazmus <input type="range" min="0" max="100" value="30" data-s="sarcasm"></label>
+          <label>Kedvesség <input type="range" min="0" max="100" value="90" data-s="kind"></label>
+        </div>
+
+        <div class="toggles">
+          <label class="tg"><input type="checkbox" id="party"><span>🎵 Party mód</span></label>
+          <label class="tg"><input type="checkbox" id="dnd"><span>📳 Ne zavarj</span></label>
+          <label class="tg"><input type="checkbox" id="peek" checked><span>👀 Leskelődés</span></label>
+          <label class="tg"><input type="checkbox" id="voice" checked><span>🔊 Beszéd</span></label>
+        </div>
+
+        <label class="app-label">Fény</label>
+        <div class="row">
+          <div class="swatches" id="swatches">
+            <button style="--c:#ff8a1f" data-h="28" title="Narancs"></button>
+            <button style="--c:#35d6e8" data-h="187" title="Türkiz"></button>
+            <button style="--c:#4ef0a0" data-h="150" title="Menta"></button>
+            <button style="--c:#ff5fae" data-h="330" title="Rózsaszín"></button>
+            <button style="--c:#8a7dff" data-h="250" title="Lila"></button>
+          </div>
+          <input type="range" id="bright" min="10" max="100" value="80" title="Fényerő">
+        </div>
+
+        <label class="app-label" for="nick">Megszólítás</label>
+        <input class="text" id="nick" value="Captain" maxlength="20">
+
+        <label class="app-label">Gombok hangja</label>
+        <div class="assign">
+          <span>2</span><select data-a="2"><option value="horn">📯 Duda</option><option value="gooo">🔥 Let's gooo!</option><option value="drum">🥁 Ba-dum-tss</option><option value="coffee">☕ Kávészünet?</option></select>
+          <span>3</span><select data-a="3"><option value="gooo">🔥 Let's gooo!</option><option value="horn">📯 Duda</option><option value="drum">🥁 Ba-dum-tss</option><option value="coffee">☕ Kávészünet?</option></select>
+          <span>4</span><select data-a="4"><option value="coffee">☕ Kávészünet?</option><option value="horn">📯 Duda</option><option value="gooo">🔥 Let's gooo!</option><option value="drum">🥁 Ba-dum-tss</option></select>
+        </div>
+
+        <button class="btn ghost small" id="popout">↗ App megnyitása külön ablakban</button>
+      </div>
+    </div>
+
+    <details class="log" open>
+      <summary>Protokoll: app ⇄ kocka</summary>
+      <ol id="log"></ol>
+    </details>
+  </aside>
+</main>
+
+<footer class="foot">
+  <p>A C-kocka koncepció, a szimulátor azt mutatja meg, hogyan működne. A kocka a böngésző beépített hangján beszél angolul. · <a href="index.html">Vissza a főoldalra</a></p>
+</footer>
+
+<script type="module" src="web/sim.js"></script>
+</body>
+</html>
