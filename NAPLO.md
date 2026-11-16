@@ -409,3 +409,16 @@ A szkript előbb megszámolta a furatokat sugár szerint, és csak akkor módos�
 A szkripteket egy rövid próbaszövegen kipróbálta: mindkét mondat hibátlan lett. Telepítette Claude Code-hoz, és `.skill` csomagként is átadta.
 
 **Tanulság:** ami egyszer órákig tartó próbálkozás volt, az a skillnek köszönhetően legközelebb az első próbálkozásra jó lehet. Az AI a saját hibáiból tanuló „receptkönyvet” írt magának.
+
+## 2026-11-16 – A nézetenkénti DXF-ek frissítése alkatrészenként
+
+**Példaprompt:**
+> „legyen alkatrészenként”
+
+**Hogyan:** az AI a régi, az összes testet egyszerre exportáló szkriptből egy egy-alkatrészes változatot írt ([tools/export_dxf_part.py](tools/export_dxf_part.py)). Csak a 4 megváltozott testet futtatta, egyesével, testenként 3 perces felső korláttal. A tetőlap és a fénygyűrű-diffúzor 1 s alatt elkészült.
+
+**Hol akadtunk el:** az **alsó tálcánál a Fusion ugyanúgy lefagyott, mint pénteken**. Ezúttal az AI a 3 perces korlát után azonnal szólt, ellenőrizte a folyamatot („nem válaszol”, alig használ processzort, tehát beakadt, nem számol), és javasolta a leállítást. Zollo bezárta a Fusiont. A tálcát és a házat kihagytuk; egy megjegyzés jelzi, hogy ezeknek a nézeti rajzai régi méretűek ([dxf/MEGJEGYZES.txt](dxf/MEGJEGYZES.txt)). A hiteles méretek a STEP-ben és a vágási DXF-ekben vannak.
+
+**Közben:** a C-kocka dokumentum egyszer bezárult a Fusionben. Az AI ezt észrevette, és nem váltott át magától egy másik nyitott dokumentumra, mert az Zollo munkája is lehetett. A mentett modellt új dokumentumként nyitotta meg.
+
+**Tanulság:** ha ugyanaz a művelet ugyanannál a testnél másodszor is lefagy, az már nem véletlen. Ilyenkor nem érdemes harmadszor is próbálkozni: meg kell kerülni, és dokumentálni.

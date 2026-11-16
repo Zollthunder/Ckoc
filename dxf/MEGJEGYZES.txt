@@ -1,0 +1,9 @@
+Nézetenkénti DXF-ek (dxf/<alkatrész>/: elöl, felül, oldal, metszet) – állapot 2026-11-16
+
+A 2026-11-16-i M2 -> M2,5 átállás (menetes betét Ø3,6, csavarfurat Ø2,8, süllyesztés Ø5,0) és a Ø36 mm-es hangszórógyűrű:
+- frissítve:  tetolap, rgb_fenygyuru
+- RÉGI méretekkel maradt: also_talca_(szan_alap), haz_(sls)
+  (ennél a két testnél a Fusion „összes él vetítése” exportja kétszer is lefagyott, ezért kihagytuk)
+
+Hiteles méretek: a 3D modell (3d/c-kocka.step / .f3d), a nyomtatási STL-ek (3d/nyomtatas/) és a vágási DXF-ek (dxf/vagas/).
+A nézetenkénti DXF-ek csak tájékoztató rajzok, gyártáshoz nem ezek kellenek.
