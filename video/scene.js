@@ -847,7 +847,7 @@ const INSIDE_LABELS = [
   ['Two microphones', 'Voice Bonnet · stereo audio', /Voice Bonnet/, 'Two microphones', 0],
   ['Raspberry Pi Zero 2 W', 'Wi-Fi · Bluetooth · Linux', /Raspberry/, 'Two microphones', 0.7],
   ['Stereo speakers', '2 × 36 mm', /Hangszoro jobb – test/, 'Stereo', 0],
-  ['RGB lights', '24-LED ring + glowing C', /NeoPixel/, 'RGB', 0],
+  ['RGB lights', '24-LED ring + glowing C', /NeoPixel/, 'RGB', 0, [0, 0], [0, 0, 0], 1],   // fix jobb oldal: a gyűrű a kép közepén van, különben a címke ide-oda ugrálna
   ['Battery', '18650 · USB-C charging', /UPS/, 'Battery', 0, [0, -90], [-1.1, -0.3, 1.2], 1],
   ['Orange rubber corners', 'TPU · throwable', /Gumi sarok 6/, 'orange', 0],
 ];
