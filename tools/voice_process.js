@@ -58,7 +58,8 @@ for (const l of lines) {
   else info = wavInfo(src);
   const [pitch, tempo, vol] = STYLE[l.style] || STYLE.narrator;
   const filters = [
-    ...(src.endsWith('.mp3') || src.startsWith(F5) ? ['silenceremove=stop_periods=-1:stop_duration=0.3:stop_threshold=-40dB:stop_silence=0.25'] : []),
+    // csak a hosszú (0,6 s feletti), valóban csendes szüneteket rövidítjük – a -40 dB-es küszöb a halk szóvégeket is levágta
+    ...(src.endsWith('.mp3') || src.startsWith(F5) ? ['silenceremove=stop_periods=-1:stop_duration=0.6:stop_threshold=-55dB:stop_silence=0.35'] : []),
     `asetrate=${Math.round(info.sr * pitch)}`, 'aresample=48000', `atempo=${(tempo / pitch * pitch).toFixed(3)}`,
     'silenceremove=start_periods=1:start_threshold=-50dB', 'areverse',
     'silenceremove=start_periods=1:start_threshold=-50dB', 'areverse',

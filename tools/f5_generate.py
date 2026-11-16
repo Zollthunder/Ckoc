@@ -22,8 +22,9 @@ sys.path.insert(0, MODEL)
 from hungarian_preprocessing import normalize_hungarian_text
 from f5_tts.api import F5TTS
 
-DEFAULT_REF = os.path.join(ROOT, 'video', 'samples', '2_narrator_Anna.wav')
-DEFAULT_REF_TEXT = 'Ez a C-kocka. Egy tenyérnyi asztali AI-asszisztens. Beszélhetsz hozzá, és mindig jókedvű.'
+DEFAULT_REF = os.path.join(ROOT, 'video', 'voice_ref', 'ludvig_milivoj_xtts.wav')  # XTTS-v2 stúdióhang (CPML)
+DEFAULT_REF_TEXT = ('Ez a cé-kocka, egy tenyérnyi asztali asszisztens. A kockát egy mesterséges intelligenciával '
+                    'együtt terveztem meg, pár nap alatt, és mindig jókedvű.')
 
 
 def speakable(t):
@@ -51,8 +52,10 @@ def main():
     ap.add_argument('--ref', default=DEFAULT_REF)
     ap.add_argument('--ref_text', default=DEFAULT_REF_TEXT)
     ap.add_argument('--only', default='')
-    ap.add_argument('--out', default=os.path.join(ROOT, 'video', 'voice_raw_f5'))
-    ap.add_argument('--nfe', type=int, default=32)
+    ap.add_argument('--out', default=os.path.join(ROOT, 'video', 'voice_raw_f5_ludvig'))
+    ap.add_argument('--nfe', type=int, default=64)
+    ap.add_argument('--speed', type=float, default=0.9, help='0,9: lassabb, tisztább szóvégek (Zollo választása 2026-11-16)')
+    ap.add_argument('--tail', default=' ...', help='szöveg végi ráhagyás, hogy az F5 ne harapja le az utolsó szót')
     ap.add_argument('--device', default='auto', help='auto | cuda | cpu (auto: RTX 2060, ha a GPU-s környezetből fut)')
     a = ap.parse_args()
     os.makedirs(a.out, exist_ok=True)
@@ -67,9 +70,10 @@ def main():
     print('modell betöltve %.1f s alatt (%s)' % (time.time() - t0, torch.cuda.get_device_name(0) if dev == 'cuda' else 'CPU'), flush=True)
     for l in todo:
         t1 = time.time()
-        text = speakable(l['text'])
-        wav, sr, _ = tts.infer(ref_file=a.ref, ref_text=speakable(a.ref_text), gen_text=text, nfe_step=a.nfe, remove_silence=False)
+        text = speakable(l['text']) + a.tail
+        wav, sr, _ = tts.infer(ref_file=a.ref, ref_text=speakable(a.ref_text), gen_text=text, nfe_step=a.nfe, speed=a.speed, remove_silence=False)
         wav = trim_start(np.asarray(wav, dtype=np.float32), sr)
+        wav = np.concatenate([wav, np.zeros(int(sr * 0.3), np.float32)])  # 0,3 s csend a végére
         sf.write(os.path.join(a.out, l['id'] + '.wav'), wav, sr)
         print('%s  %.1f s hang, %.1f s alatt  | %s' % (l['id'], len(wav) / sr, time.time() - t1, text), flush=True)
     print('KÉSZ, összesen %.1f perc' % ((time.time() - t0) / 60))

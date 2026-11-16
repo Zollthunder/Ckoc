@@ -342,3 +342,16 @@ Az ajánlatkérések átnézése után a következő döntések születtek, és 
 A szkript előbb megszámolta a furatokat sugár szerint, és csak akkor módosított, ha minden darabszám stimmelt. Az ütközésvizsgálat után csak a korábbi, szándékos érintkezések maradtak. Az újraexportált fájlok: f3d, STEP, STL, 19 nyomtatási STL és 6 vágási DXF.
 
 **Elakadás:** a Fusion indításakor véletlenül az alapmodell szkriptje futott le, és **felülírta** a mentett modellt egy régi változattal. Az AI ezt a fájlok időbélyegéből és méretéből vette észre, és a gitből visszaállította a jó változatot. **Tanulság:** a verziókezelés (git) itt mentette meg a pénteki munkát.
+
+## 2026-11-16 – A narráció hibáinak javítása
+
+**Példaprompt:**
+> „ennek nagyon rossz a minősége. a kocka helyett koka-t mond, és mintha leharapná a szavak végét. lehet ezzel valamit kezdeni?”
+
+**Hogyan:** az AI külön meghallgatásra adta a nyers F5-kimenetet, az utófeldolgozott változatot és hat új próbaváltozatot ([tools/f5_variants.py](tools/f5_variants.py)): más tempóval, a mondat végén kis ráhagyással, a „kocka” szó más írásmódjaival és több számítási lépéssel. Zollo szerint a nyers és az utófeldolgozott is rossz volt, az új változatok viszont jók. **A hiba tehát a generálásban volt**, és a 10%-kal lassabb tempó a szöveg végi ráhagyással megoldotta.
+
+**Az új beállítások:** tempó 0,9, a szöveg végén „ ...”, 64 számítási lépés, és 0,3 s csend a végén. Az utófeldolgozás csendvágása is szelídebb lett: csak a 0,6 s-nál hosszabb, −55 dB alatti szüneteket rövidíti.
+
+**Elakadások:**
+- A lassabb mondatok közül kettő nem fért a helyére. Gyorsítás helyett az AI az N04–N08 szakaszt 0,4–0,9 s-mal arrébb tolta, mert ott volt hely.
+- A legrövidebb mondatból („Tégla!”) az F5 lassítva **teljesen néma** fájlt adott. Az AI ezt a hangerő méréséből vette észre, és ezt az egy mondatot normál tempóval generálta újra. **Tanulság:** a nagyon rövid szövegekkel az F5 bizonytalan, ezért minden kimenetet érdemes legalább hangerőre ellenőrizni.
