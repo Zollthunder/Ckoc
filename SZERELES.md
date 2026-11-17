@@ -20,7 +20,7 @@ A kocka **négy egységből** áll, amiket külön lehet összerakni és kiprób
 |---|---|---|
 | 25 | **M2,5 menetes betét** (beolvasztós, Ø3,6-os furatba, 4 mm hosszú) | tetőtartó 4, ház elöl 4, ház a tálcához 4, ház a hangszórókhoz 6, tálca a diffúzorhoz 3, szán lábai 4 |
 | 4 | M2,5×8 süllyesztett fejű (ISO 10642 / DIN 7991) | tetőlap → tetőtartó |
-| 4 | M2,5×6 hengeres fejű (ISO 7380 / DIN 912) | előlapi tartó → ház |
+| 4 | M2,5×6 hengeres fejű (ISO 4762 / DIN 912) | előlapi tartó → ház |
 | 6 | M2,5×6 hengeres fejű | hangszóró-rögzítő gyűrűk → ház |
 | 4 | M2,5×14 hengeres fejű | tálca → ház (alulról) |
 | 3 | M2,5×6 süllyesztett fejű | diffúzor → tálca |

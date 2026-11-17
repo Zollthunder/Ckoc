@@ -1,6 +1,6 @@
 # C-kocka – költségoptimalizálás (v0.1, megbeszélésre)
 
-> **Gyakorló anyag az AI-kihíváshoz.** Semmit nem rendeltem, ajánlatkérést nem küldtem. Az árak tájékoztató **becslések** (2026-11-17), a kiindulás az [AJANLATKERESEK.md](AJANLATKERESEK.md) 3 db-os költségbecslése (**139 137 Ft/db nettó**, 10% tartalékkal).
+> **Gyakorló anyag az AI-kihíváshoz.** Semmit nem rendeltem, ajánlatkérést nem küldtem. Az árak tájékoztató **becslések** (2026-11-17), a kiindulás az [AJANLATKERESEK.md](AJANLATKERESEK.md) 3 db-os költségbecslése (**140 044 Ft/db nettó**, 10% tartalékkal; a Pi Zero 2 WH felárával együtt, lásd 7. fejezet).
 > Ez a [TERVEZESI_ELVEK.md](TERVEZESI_ELVEK.md) 2. pontjában „külön költségoptimalizálási lépésként” későbbre hagyott kör.
 
 ## Hogyan olvasd
@@ -16,12 +16,12 @@
 
 | # | Jelenlegi | Javasolt | Megtakarítás/db (3 db → sorozat) | Kockázat | Elvek |
 |---|---|---|---|---|---|
-| **E1** | Pi Zero 2 W a Hestore-tól, 12 133 Ft | Ugyanaz EU-s webboltból (welectron 16,72 € ≈ 6 521 Ft), sorozatnál hivatalos disztribútortól | **−5 600** → −5 000 | alacsony: készlet („hamarosan raktáron”) | ✅ |
+| **E1** | Pi Zero 2 W a Hestore-tól (12 133 Ft) + WH felár (975 Ft) | **Pi Zero 2 WH** EU-s webboltból (pl. Botland 16,99 € nettó ≈ 6 626 Ft [K]; a fej nélküli W a welectronnál 16,72 €), sorozatnál hivatalos disztribútortól | **−6 500** → −5 000 | alacsony: készlet (a boltok kevés darabot mutatnak, több helyről kell ajánlat) | ✅ (gyárilag forrasztott tüskesor) |
 | **E2** | AT42QT1010 érintőpanel (2 005 Ft) + vezetékek | A XIAO RP2040 maga érzékeli az érintést (CircuitPython `touchio`), csak egy 1 MΩ-os lehúzó ellenállás kell | **−2 000** → −1 700; egy modullal és egy kábellel kevesebb | közepes: az alu tetőlap közelsége ronthatja az érzékenységet → prototípuson kipróbálni; tartalék: az AT42QT1010 visszatehető | ⚠️ enyhén: az ellenállást forrasztani kell. A gomboknak úgyis van forrasztott prototípus-lapja, ezért oda kerül, külön forrasztási lépés nem kell |
 | **E3** | DRV2605L haptikus vezérlő (3 654 Ft) + rezgőmotor (800 Ft) + 1 Qwiic kábel | Kész rezgőmotor-modul (motor + tranzisztor egy kis panelen, 3 tűs, ~1 € ≈ 400 Ft), a XIAO PWM-kimenetéről hajtva | **−4 400** → −3 000 | alacsony–közepes: elvész a DRV2605L hatáskönyvtára. A „Ne zavarj” jelzéshez a PWM-mel adagolt rezgés elég | ✅ kész modul, tüskesoros csatlakozóval (Dupont/JST), forrasztás nélkül |
 | **E4** | Adafruit 4218 USB-C panelhosszabbító, 30 cm (5 168 Ft) | Általános, rövid (10–15 cm), panelbe szerelhető USB-C hosszabbító (~2 € ≈ 800 Ft), ugyanúgy a tálca peremén | **−4 400** | alacsony: a fül és a furatkép más lehet → a tálca peremén ellenőrizni, hogy meglegyen a **3 mm** hely | ✅ |
-| **E5** | Pi-Ener-lite UPS (35 USD ≈ 11 900 Ft) + kínai szállítás és importÁFA (≈ 2 360 Ft/db) + CR1220 elem | Kész 18650-es töltő-/feszültségnövelő modul USB-C-vel (~2,5–3 €) + **MAX17048** töltöttségmérő **STEMMA QT** panel (~6 €) a meglévő Qwiic láncon + 18650-es tartó. Óra (RTC) helyett idő NTP-ről, Wi-Fin | **−10 900** → −8 500 (2000 db-nál a saját panelbe olvad, lásd S1) | **közepes–magas:** a powerbank-chipek kis terhelésnél lekapcsolhatnak, töltő bedugásakor tápletörés jöhet, és nincs vezérelt leállás (SD-kártya-sérülés veszélye). **Egy kockán prototípusként ki kell próbálni**, és ha nem válik be, marad a Pi-Ener-lite | ✅ kész modulok. Ellenőrizni: az akku alulról kivehető maradjon, a szán polcát át kell rajzolni, és meg kell maradnia a 3 mm helynek |
-| **E6** | Adafruit Voice Bonnet (8 997 Ft, **kifutott**) + 2 hangszóró | **Seeed ReSpeaker 2-Mics Pi HAT** (~10 € ≈ 3 900 Ft, szintén WM8960) **+ 1 hangszóró** (mono). A második rács maradhat díszként | **−7 400** (mi: −500) → −6 000 | közepes: más a mikrofonok helye (a tetőlap 2 hasznos furata és a DXF változik), ellenőrizni kell a magasságot, és mono lesz a hang | ⚠️ **ütközik a 2026-11-16-i döntéssel** („a Voice Bonnet marad”) és a sztereó kimenettel. Érv mellette: 90 mm-es hangszórótávolságnál a sztereó hatás gyakorlatilag nem hallható, sorozatban pedig a Bonnet úgysem kapható |
+| **E5** | Pi-Ener-lite UPS (35 USD ≈ 11 900 Ft) + kínai szállítás és importÁFA (≈ 2 360 Ft/db) + CR1220 elem | Kész 18650-es töltő-/feszültségnövelő modul USB-C-vel (~2,5–3 €) + **Adafruit MAX17048** (#5580) töltöttségmérő **STEMMA QT** panel (DigiKey: ~5,1 € nettó [K]) a meglévő Qwiic láncon + 18650-es tartó. Óra (RTC) helyett idő NTP-ről, Wi-Fin | **−11 000** → −8 500 (2000 db-nál a saját panelbe olvad, lásd S1) | **magas:** (1) a powerbank-chipek kis terhelésnél lekapcsolhatnak, töltő bedugásakor tápletörés jöhet, és nincs vezérelt leállás (SD-kártya-sérülés veszélye); (2) **töltőáram:** a hőkezelési vizsgálat (HOKEZELES.md, a thermal ágon) **0,5 A-es töltést** javasol, az IP5306-os modulok viszont alapból ~2,1 A-rel, a TP4056-osok 1 A-rel töltenek, és az állításhoz SMD-ellenállást kell cserélni (forrasztás). Csak gyárilag ≤ 0,5–1 A-es modul jöhet szóba, ilyet még nem találtam. **Egy kockán ki kell próbálni**, és ha nem válik be, marad a Pi-Ener-lite | ✅ kész modulok. Ellenőrizni: az akku alulról kivehető maradjon, a szán polcát át kell rajzolni, és meg kell maradnia a 3 mm helynek |
+| **E6** | Adafruit Voice Bonnet (8 997 Ft, **kifutott**) + 2 hangszóró | **Seeed ReSpeaker 2-Mics Pi HAT** (~10 € ≈ 3 900 Ft, szintén WM8960) **+ 1 hangszóró** (mono). A második rács maradhat díszként | **−7 400** (mi: −500) → −6 000 | közepes–magas: (1) a **v1 több boltban már kifutott** (SparkFun, Core Electronics), a Seeed kiadott egy **v2**-t, ennek a kodekjét és a méreteit újra ellenőrizni kell; (2) a JST hangszórókimenet **egy csatlakozó** (1 W, 8 Ω), hogy mono vagy híd, azt a kapcsolási rajzból kell megnézni; (3) más a mikrofonok helye (a tetőlap 2 hasznos furata és a DXF változik), ellenőrizni kell a magasságot | ⚠️ **ütközik a 2026-11-16-i döntéssel** („a Voice Bonnet marad”) és a sztereó kimenettel. Érv mellette: 90 mm-es hangszórótávolságnál a sztereó hatás gyakorlatilag nem hallható, sorozatban pedig a Bonnet úgysem kapható |
 | **E7** | Kerek GC9A01 kijelző (~3 400 Ft) és OV5647 mini kamera (~5 000 Ft) EU-s boltból | 100 db-tól közvetlenül ázsiai gyártótól/nagykertől (kijelző ~3,5 €, kamera ~6 €) | 3 db-nál nem éri meg → −2 000 (100) / −4 000 (500, 2000) | közepes: minőségszórás, eltérő lábkiosztású változatok → bejövő ellenőrzés kell (ez munkaidő) | ✅ |
 | **E8** | Adafruit LSM6DS3TR-C IMU (3 338 Ft) | Más gyártó Qwiic/STEMMA QT csatlakozós LSM6DS3 (vagy hasonló) panelje | 3 db-nál nem éri meg → −1 800 (500-tól) | alacsony | ✅ csak Qwiic csatlakozós panel jöhet szóba. A tüskesoros, forrasztandó olcsó panelek **ütköznek** a „csatlakozó forrasztás helyett” elvvel, ezért nem javaslom őket |
 | **E9** | S-alakú LED-szalag 5 m-es tekercsben (7 500 Ft) | 1 m-es kiszerelés (~2 500 Ft), 3 kockához 0,33 m kell | **−1 700** → 0 | alacsony | ✅ |
@@ -50,7 +50,8 @@
 | **M10** | Hangszóró-rögzítő gyűrű 3 csavarral, oldalanként | Bajonettzáras gyűrű, a SLS házba nyomtatott fogakkal (ha E6 miatt csak 1 hangszóró marad, akkor csak egy) | **−500** (mi: −700) | közepes: hangos zenénél zöröghet → rugalmas TPU alátét | ✅ (nem ragasztás); szervizben is bontható |
 
 **Az elvek miatt drágább, de így marad:**
-- **Pi Zero 2 WH (gyárilag beforrasztott tüskesorral)** a fej nélküli Pi + 150 Ft-os tüskesor helyett. Az AJANLATKERESEK.md 2. tétele forrasztást feltételez, ez ütközne a „csatlakozók forrasztás helyett” elvvel. Kb. +1 €/db, de így tiszta.
+- **Pi Zero 2 WH (gyárilag beforrasztott tüskesorral)** a fej nélküli Pi + 150 Ft-os tüskesor helyett: kb. +2,5 €/db nettó. **Átvezetve** az AJANLATKERESEK.md-be (2026-11-17). E1-gyel együtt a WH így is olcsóbb, mint a mostani Hestore-ár.
+- **Hűtőborda a Pi SoC-ján** (~1 €/db) és **0,5 A-es töltés:** a hőkezelési vizsgálat (HOKEZELES.md, a thermal ágon, még nincs a main-en) javasolja. A borda +400 Ft/db, még nincs benne az AJANLATKERESEK.md-ben. A 0,5 A-es töltés E5-nél szűkíti a választható modulokat.
 - **Fröccsöntött ház:** 5000 db felett olcsóbb, de **ütközik** a „nincs drága szerszám” elvvel. 2000 db-ig a házon belüli SLS marad.
 - **Teljes alumínium ház:** nehéz (~330 g, dobálva veszélyes) és drága, a 2026-11-13-i döntés szerint nem jön szóba.
 
@@ -83,13 +84,14 @@
 ### 5.1 Prototípus (3 db)
 | | Ft/db (nettó) |
 |---|---|
-| Kiindulás (AJANLATKERESEK.md, 10% tartalékkal) | 139 137 |
-| Az elvekkel összhangban lévő javaslatok anyagmegtakarítása (E1, E2, E3, E4, E5, E9, M1, M4, M5, M6, M8, B1, B2) | **kb. −45 000** |
+| Kiindulás (AJANLATKERESEK.md, 10% tartalékkal, WH-felárral) | 140 044 |
+| Az elvekkel összhangban lévő, alacsony–közepes kockázatú javaslatok anyagmegtakarítása (E1, E2, E3, E4, E9, M1, M4, M5, M6, M8, B1, B2) | **kb. −35 000** |
+| + E5 (töltőmodul; elvileg rendben, de magas kockázat) | kb. −11 000 |
 | + a jóváhagyást igénylő javaslatok (E6, M2) | kb. −8 000 |
 | Munkaidő-megtakarítás (M2, M3, M6, M7, kevesebb modul bekötése) | kb. −30–35 perc, ≈ −5 500 |
-| **Optimalizált prototípus, anyag (a 10% tartalékkal együtt)** | **kb. 90 000 Ft/db** (a jóváhagyást igénylőkkel kb. 81 000) |
+| **Optimalizált prototípus, anyag (a 10% tartalékkal együtt)** | **kb. 102 000 Ft/db** E5 nélkül · **kb. 90 000** E5-tel · kb. 81 000 a jóváhagyást igénylőkkel is |
 
-A legnagyobb tétel (E5) a legkockázatosabb is: ha nem válik be, a megtakarítás kb. 11 000 Ft-tal kisebb. A pontos számokhoz a valódi ajánlatok kellenek (lásd AJANLATKERESEK.md).
+A hőkezelés miatti hűtőborda (+400 Ft/db) ebben még nincs benne. A pontos számokhoz a valódi ajánlatok kellenek (lásd AJANLATKERESEK.md).
 
 ### 5.2 Elektronika 100 db-nál, optimalizálva (becslés)
 | Tétel | Ft/db |
@@ -126,11 +128,13 @@ A PIACI_TANULMANY.md 100 db-ra **~120 €** elektronikával és **~185 €** ön
 
 A sorrend a **megtakarítás × megvalósíthatóság × elvekkel való összhang** alapján. Elvvel ütköző javaslat nincs a top 5-ben.
 
-1. **E5 – UPS panel helyett kész töltőmodul + Qwiic töltöttségmérő:** kb. **−10 900 Ft/db**, és kiesik a kínai import is. A legnagyobb tétel, de a legkockázatosabb: **egy prototípus-kockán** ki kell próbálni (alvó terhelés, töltő bedugása, leállás). Ha nem válik be, marad a Pi-Ener-lite.
-2. **E1 + B1 + B2 – beszerzési csomag:** a Pi máshonnan, összevont EU-s rendelés, alu maradékból: kb. **−11 700 Ft/db**. Nincs tervezési változás, kockázat gyakorlatilag nincs.
-3. **E2 + E3 – két modul kevesebb** (érintés a XIAO-n, egyszerű rezgőmodul): kb. **−6 400 Ft/db**, két modullal és egy kábellel kevesebb, rövidebb bekötés. Az érintést M4-gyel együtt kell kipróbálni a fém tetőlap alatt.
-4. **M6 – mártásos színezés festés helyett:** kb. **−5 500 Ft/db** anyagban és munkaidőben. Ráadásul a festékréteg nem rontja el a 0,1 mm-es illesztéseket. Dobáspróbával ellenőrizni az élek kopását.
-5. **E4 – általános USB-C hosszabbító:** **−4 400 Ft/db**, gyakorlatilag kockázat nélkül, csak a tálca peremén a furatképet kell igazítani.
+*(2026-11-17-i frissítés: a webes ellenőrzés után E5 kockázata magasra nőtt a töltőáram miatt, ezért az 1. helyről az 5.-re került.)*
+
+1. **E1 + B1 + B2 – beszerzési csomag:** Pi Zero 2 WH EU-s boltból, összevont EU-s rendelés, alu maradékból: kb. **−12 600 Ft/db**. Nincs tervezési változás, kockázat gyakorlatilag nincs.
+2. **E2 + E3 – két modul kevesebb** (érintés a XIAO-n, egyszerű rezgőmodul): kb. **−6 400 Ft/db**, két modullal és egy kábellel kevesebb, rövidebb bekötés. Az érintést M4-gyel együtt kell kipróbálni a fém tetőlap alatt.
+3. **M6 – mártásos színezés festés helyett:** kb. **−5 500 Ft/db** anyagban és munkaidőben. Ráadásul a festékréteg nem rontja el a 0,1 mm-es illesztéseket. Dobáspróbával ellenőrizni az élek kopását.
+4. **E4 – általános USB-C hosszabbító:** **−4 400 Ft/db**, gyakorlatilag kockázat nélkül, csak a tálca peremén a furatképet kell igazítani.
+5. **E5 – UPS panel helyett kész töltőmodul + Qwiic töltöttségmérő:** kb. **−11 000 Ft/db**, és kiesik a kínai import is. A legnagyobb tétel, de a legkockázatosabb: olyan modul kell, amely gyárilag legfeljebb 0,5–1 A-rel tölt (hőkezelés), és **egy prototípus-kockán** ki kell próbálni (alvó terhelés, töltő bedugása, leállás). Ha nem válik be, marad a Pi-Ener-lite.
 
 **A top 5 után, döntést igényel:**
 - **M8 eloxálás** (prototípusnál csatolás más munkához, kb. −5 000 Ft/db; sorozatban előeloxált lemez, natúr éllel – a kinézet miatt egyeztetni).
@@ -139,7 +143,17 @@ A sorrend a **megtakarítás × megvalósíthatóság × elvekkel való összhan
 
 ---
 
-## 7. Észrevételek más dokumentumokban (nem javítottam, csak jelzem)
-- **SZERELES.md:** a hengeres fejű csavaroknál „ISO 7380 / DIN 912” szerepel, de az ISO 7380 lencsefejű, a DIN 912 hengeres fejű (imbusz). Az AJANLATKERESEK.md DIN 912-t (ISO 4762) kér. Egyet kell választani; a lencsefejű alacsonyabb és általában olcsóbb is.
-- **AJANLATKERESEK.md, 2. tétel:** a fej nélküli Pi + tüskesor forrasztást jelent → helyette a Pi Zero 2 WH (lásd a 2. fejezet végét).
-- **ELEKTRONIKA.md:** a modultáblázat E2, E3, E4, E5 és E6 elfogadása esetén módosul; a tetőlap mikrofonfuratai E6 esetén a DXF-ben is.
+## 7. Javítások más dokumentumokban
+**Javítva (2026-11-17):**
+- **SZERELES.md:** a hengeres fejű csavaroknál „ISO 7380 / DIN 912” szerepelt, de az ISO 7380 lencsefejű, a DIN 912 hengeres fejű (imbusz). Most „ISO 4762 / DIN 912”, egyezően az AJANLATKERESEK.md-vel. *(Ha a lencsefejű kell, mert alacsonyabb és olcsóbb, az döntés, lásd lent.)*
+- **AJANLATKERESEK.md, 2. tétel:** a fej nélküli Pi + tüskesor forrasztást jelentett → helyette a **Pi Zero 2 WH** felára (+2 925 Ft / 3 db), és az e-mail-tervezetben is a WH szerepel. Az összesítő újraszámolva: **420 133 Ft nettó / 3 db (140 044 Ft/db)**.
+
+**Döntés után módosul:**
+- **ELEKTRONIKA.md:** a modultáblázat E2, E3, E4, E5 és E6 elfogadása esetén; a tetőlap mikrofonfuratai E6 esetén a DXF-ben is.
+- **3D modell és DXF-ek:** M1 (furatmélységek), M3 (sarokfuratok), M4 (3 mm-es betét), M7 (R1 sarok), M10 (bajonett). A Fusion MCP most nem érhető el, és a DXF-eket a dxf-step munkamenet exportálja újra, ezért ezekhez nem nyúltam.
+
+## Források (webes ellenőrzés, 2026-11-17, [K])
+- Pi Zero 2 WH árak: [Botland](https://botland.store/rpi-zero-modules-and-kits/25407-raspberry-pi-zero-2-wh-512mb-ram-wifi-bt-42-with-header-5056561800011.html), [BerryBase](https://www.berrybase.de/en/raspberry-pi-zero-2-wh), [welectron (W)](https://www.welectron.com/RPi-Pico/PC/Raspberry-Pi-Zero-2-W_1)
+- MAX17048: [DigiKey 5580](https://www.digikey.hu/en/products/detail/adafruit-industries-llc/5580/16719287), [The Pi Hut](https://thepihut.com/products/adafruit-max17048-lipoly-liion-fuel-gauge-and-battery-monitor-stemma-jst-ph-qt-qwiic)
+- ReSpeaker 2-Mics Pi HAT: [Seeed wiki](https://wiki.seeedstudio.com/ReSpeaker_2_Mics_Pi_HAT/), [SparkFun (kivezetve)](https://www.sparkfun.com/seeed-studio-respeaker-2-mics-pi-hat.html)
+- Töltőmodulok töltőárama: [IP5306 (done.land)](https://done.land/components/power/powersupplies/battery/chargers/charge-discharge/ip5306/pb0a/), [TP4056 + boost (Electropeak)](https://electropeak.com/tp4056-18650-li-ion-usb-type-c-battery-charger-discharger-module-with-boost-converter)

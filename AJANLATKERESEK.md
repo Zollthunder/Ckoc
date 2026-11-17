@@ -22,7 +22,7 @@ Alapok: [ELEKTRONIKA.md](ELEKTRONIKA.md) (modulok), [GYARTASI_TERV.md](GYARTASI_
 | # | Tétel | Db/kocka | Rendelt db | Egységár (nettó) | Összesen (nettó) | Forrás / beszállító | Forrás dátuma |
 |---|---|---|---|---|---|---|---|
 | 1 | Raspberry Pi Zero 2 W (RPI-ZERO2-W) | 1 | 3 | 12 133 Ft | 36 399 Ft | Hestore.hu, cikkszám 100.471.77 [O]; *alternatíva:* welectron.com 16,72 € nettó (≈ 6 521 Ft), de „hamarosan raktáron” | 2026-11-16 |
-| 2 | 2×20-as tüskesor a Pi-hez (ha fej nélküli Pi jön) | 1 | 3 | 150 Ft | 450 Ft | **becslés** [B] | – |
+| 2 | **Pi Zero 2 WH felár** (gyárilag forrasztott tüskesor; a fej nélküli Pi + saját forrasztás ütközne a „csatlakozók forrasztás helyett” elvvel) | 1 | 3 | ~2,5 € ≈ 975 Ft | 2 925 Ft | EU-s boltokban a WH kb. 3 € bruttóval drágább a W-nél (pl. Botland 16,99 € nettó) [K] | 2026-11-17 |
 | 3 | Adafruit Voice Bonnet (#4757, WM8960, 2 mikrofon, sztereó hangszórókimenet) | 1 | 3 | 23,07 € ≈ 8 997 Ft | 26 991 Ft | BerryBase.de, 27,45 € bruttó [O] – **jelenleg nem szállítható**; a DigiKey „Obsolete”-nek, a Botland „Discontinued”-nak jelöli [K]. **Döntés (2026-11-16): marad**, mert a termék elméleti, nem kerül gyártásba | 2026-11-16 |
 | 4 | UPS panel Pi Zeróhoz: Pi-Ener-lite (USB-C, töltöttségmérő, RTC) | 1 | 3 | 35 USD ≈ 11 900 Ft | 35 700 Ft | Tindie (gyártó, Kínából szállít; „6 left in stock”) [O] | 2026-11-16 |
 | 5 | 18650 Li-ion cella, védett, 3000 mAh (KEEPPOWER ICR18650-3000P) | 1 | 3 | 4 932 Ft | 14 796 Ft | Hestore.hu, 100.442.96 [O] | 2026-11-16 |
@@ -43,7 +43,7 @@ Alapok: [ELEKTRONIKA.md](ELEKTRONIKA.md) (modulok), [GYARTASI_TERV.md](GYARTASI_
 | 20 | CR1220 gombelem (a UPS panel RTC-jéhez, nincs a dobozban) | 1 | 3 | 300 Ft | 900 Ft | **becslés** [B] | – |
 | 21 | M2,5 távtartó-készlet (11 mm) + csavarok a Pi/Bonnet stackhez | – | 1 készlet | 3 000 Ft | 3 000 Ft | **becslés** [B] | – |
 | 22 | Kábelek, JST-SH/JST-PH csatlakozók, vezeték, prototípus-lap a gomboknak, öntapadós rézfólia | – | 3 készlet | 4 000 Ft | 12 000 Ft | **becslés** [B] | – |
-| | **Elektronika összesen** | | | | **249 704 Ft** | | |
+| | **Elektronika összesen** | | | | **252 179 Ft** | | |
 
 ### 1.2 Kötőelemek (kívülről)
 A [SZERELES.md](SZERELES.md) szerint kockánként: 25 db M2,5 menetes betét, 4 db M2,5×8 süllyesztett fejű (DIN 7991), 7 db M2,5×6 süllyesztett fejű, 10 db M2,5×6 hengeres fejű (DIN 912), 4 db M2,5×14 hengeres fejű.
@@ -94,16 +94,16 @@ A [SZERELES.md](SZERELES.md) szerint kockánként: 25 db M2,5 menetes betét, 4 
 ### 1.6 Végösszeg
 | | 3 db-ra | Kockánként |
 |---|---|---|
-| Elektronika | 249 704 Ft | 83 235 Ft |
+| Elektronika | 252 179 Ft | 84 060 Ft |
 | Kötőelemek | 11 478 Ft | 3 826 Ft |
 | Külső szolgáltatás és alapanyag | 56 182 Ft | 18 727 Ft |
 | Házon belüli anyag | 25 350 Ft | 8 450 Ft |
 | Szállítás | 36 750 Ft | 12 250 Ft |
-| **Részösszeg (nettó)** | **379 464 Ft** | **126 488 Ft** |
-| Tartalék, 10% (árfolyam, hiányzó apróságok, selejt) | 37 946 Ft | 12 649 Ft |
-| **Összesen nettó** | **417 410 Ft** | **139 137 Ft** |
-| ÁFA 27% | 112 701 Ft | 37 567 Ft |
-| **Összesen bruttó** | **530 111 Ft** | **176 704 Ft** |
+| **Részösszeg (nettó)** | **381 939 Ft** | **127 313 Ft** |
+| Tartalék, 10% (árfolyam, hiányzó apróságok, selejt) | 38 194 Ft | 12 731 Ft |
+| **Összesen nettó** | **420 133 Ft** | **140 044 Ft** |
+| ÁFA 27% | 113 436 Ft | 37 812 Ft |
+| **Összesen bruttó** | **533 569 Ft** | **177 856 Ft** |
 
 **Az ÁFA kezelése:**
 - A hazai boltok (Hestore) nettó árat mutatnak, erre jön a **27%-os ÁFA**.
@@ -134,7 +134,7 @@ Egy asztali eszköz 3 db-os prototípus-sorozatához kérünk árajánlatot az a
 
 | # | Tétel | Műszaki adat | Mennyiség |
 |---|---|---|---|
-| 1 | Raspberry Pi Zero 2 W (RPI-ZERO2-W) | 1 GHz, 512 MB RAM, Wi-Fi, BT 4.2; tüskesor nélkül vagy forrasztott tüskesorral (kérjük, mindkettőt árazza) | 3 db |
+| 1 | Raspberry Pi Zero 2 W (RPI-ZERO2-W) | 1 GHz, 512 MB RAM, Wi-Fi, BT 4.2; **gyárilag forrasztott tüskesorral (Zero 2 WH)** | 3 db |
 | 2 | 18650 Li-ion cella, **védett** | ~3000 mAh, pl. ICR18650-3000P vagy egyenértékű, gomb- vagy laposfejű (kérjük, jelezze) | 3 db |
 | 3 | WS2812 LED-gyűrű | 24 LED, külső átmérő **66 mm** (pl. WS2812-RING24/66) | 3 db |
 | 4 | Hangszóró | kerek, **Ø36 mm**, 8 Ω, 2 W, legfeljebb 16 mm mély (VISATON K 36 WP vagy egyenértékű) | 6 db |
