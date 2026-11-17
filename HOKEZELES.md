@@ -1,4 +1,4 @@
-# C-kocka – hőkezelés (v0.1)
+# C-kocka – hőkezelés (v0.2)
 
 > Bírja-e hővel a 90 mm-es kocka a terhelést? Teljesítménymérleg üzemmódonként és egyszerű hőellenállás-modell 25 °C-os és 35 °C-os szobára.
 > A számítást a [tools/hokezeles.py](tools/hokezeles.py) végzi (csak szabványos Python), a méreteket a `3d/c-kocka.step` fájlból olvassa. Minden szám ellenőrizhető és újraszámolható:
@@ -16,6 +16,7 @@
 3. **A ház anyaga alig számít.** A szűk keresztmetszet a belső levegő és a fal közti hőátadás, nem maga a fal. Egy alumínium zártszelvény ház csak ~1 K-nel lenne hűvösebb, a hővezető pad az alu tetőlaphoz pedig 0,3 K-t hoz. Ez nem éri meg.
 4. **A javasolt csomag (D)** túlnyomórészt szoftveres, ezért ingyenes. Elemei: LED-korlát, a kamera csak pillantáskor fut, takarékos hallgatás, a Pi korlátja party alatt, töltés közben takarékmód. Ehhez jön 2 × 300 mm² szellőzőrés a ház hátoldalán (az SLS-nyomtatásban ingyen van), egy kész hűtőborda a SoC-on (~1 €), és 0,5 A-es töltés. Ezzel 25 °C-on a hétköznapi üzemmódok a határon belül maradnak.
 5. **A töltés a kényes pont.** 35 °C-os szobában a cella egy zárt dobozban a töltés 45 °C-os határa fölé kerül. 25 °C-on ez akkor fordul elő, ha töltés közben party mód megy. Ezért **kötelező a hőmérséklet szerint leálló töltés** (NTC a cellán, JEITA-logika). Ez a UPS-panel kiválasztási feltétele (lásd [7.4](#74-töltés-a-cella-védelme)).
+6. **Frissítés (v0.2): a Pi-Ener-lite fix 1 A-rel tölt**, nem állítható, így a D csomag 0,5 A-es töltése nem valósul meg. 1 A-rel a D csomag 25 °C-on a Pi-t határon belül tartja (≤ 71 °C), de a cellát nem. Hallgatás közben töltve a cella ~47 °C, party közben töltve ~53 °C, a határ 45 °C. **A legolcsóbb javítás: töltés közben a kocka alszik** (szoftver), és a szellőzőrés 2 × 600 mm²-re nő (az SLS-nyomtatásban ingyen van). Ezzel 25 °C-on a cella ~41 °C. Egy legfeljebb ~15 perces ébredés belefér. 35 °C-on így is ~51 °C a cella, ezért a hőmérséklet szerinti töltésleállítás továbbra is kell (lásd [7.5](#75-frissítés-fix-1-a-es-töltés-pi-ener-lite)).
 
 ## Fontos eltérés a feladat leírásától
 
@@ -233,11 +234,57 @@ Kéményhatás kell: **alul be, felül ki**, a lehető legnagyobb magasságkül�
 ### 7.4 Töltés: a cella védelme
 
 1. **Kötelező: hőmérséklet szerint leálló töltés.** A UPS-panel töltője figyelje a cellát NTC-vel, és 45 °C fölött álljon le (JEITA). **Ez beszerzési feltétel:** a Pi-Ener-lite és a Geekworm X306 adatlapján ellenőrizni kell, hogy van-e NTC-bemenete. Ezt most nem tudtam ellenőrizni. Ha nincs, másik panelt kell választani. A védett 18650-es cella védőáramköre csak túláram és túl alacsony vagy magas feszültség ellen véd, hőmérséklet ellen nem.
-2. **0,5 A-es töltőáram**, ha a panelen beállítható. Ez töltés közben ~4 K-t hoz a cellán. A töltés így ~6 óra, ami éjszakai vagy asztali töltéshez elég.
+2. ~~0,5 A-es töltőáram~~: a Pi-Ener-lite-on nem állítható, fix 1 A (lásd [7.5](#75-frissítés-fix-1-a-es-töltés-pi-ener-lite)).
 3. **Hőmérő a cellán** (ajánlott, olcsó):
    - Egy kész STEMMA QT / Qwiic hőmérőpanel, például TMP117 vagy MCP9808, a meglévő I2C láncra fűzve, a TPU bölcsőhöz szorítva.
    - Ezzel a Pi látja a cella hőmérsékletét: 43 °C fölött takarékmódba kapcsol, és az appban jelzi, hogy „túl meleg a töltéshez”.
    - Tartalékként az IMU (LSM6DS3TR-C) beépített hőmérője is használható, de az pontatlan, és lent ül, a cellától távol.
+
+### 7.5 Frissítés: fix 1 A-es töltés (Pi-Ener-lite)
+
+**Új adatok (2026-11-17):**
+- A Pi-Ener-lite kézikönyve (User Manual V1.0) szerint a töltőáram **fix 1 A @ 5 V**, a kimenet 2,5 A @ 5,1 V, és a lap töltés közben is táplál.
+- A LED-ek fényerőkorlátja ≤ 30 %, a számításban ezért 0,30 szerepel a 0,25 helyett.
+- A kockában 1 hangszóró maradt. A számítás konzervatívan a régi hangszóróteljesítménnyel fut; a különbség csak party közben számít, és kicsi.
+- A USB-C a hátfalba került, ezért az alsó beszívó rések a hátfal aljára és a tálca sarkaiba kerülnek. A kéményhatáshoz csak a be- és kimenet közti magasság számít, ez nem változik.
+
+A számítás: `tools/hokezeles.py`, 9. szakasz, valamint az E és F változat a 2. szakaszban. A táblázatban a cella hőmérséklete áll °C-ban, zárójelben a Pi-é. A határ töltéskor 45 °C, a cél 40 °C.
+
+| változat | 25 °C: alvás + töltés | hallgatás + töltés | party + töltés | 35 °C: alvás + töltés | hallgatás + töltés |
+|---|---|---|---|---|---|
+| D – 0,5 A (a Pi-Ener-lite-tal nem lehet) | 37,7 ✅ (47) | 42,2 ⚠️ (56) | 48,6 ❌ (69) | 47,6 ❌ (57) | 52,1 ❌ (65) |
+| **E – D, de 1 A, LED ≤ 0,30** | 42,1 ⚠️ (49) | **46,6 ❌** (57) | **52,9 ❌** (71) | 52,0 ❌ (59) | 56,5 ❌ (67) |
+| E + töltéskor a Pi ≤ 1,0 W party alatt | 42,1 ⚠️ (49) | 46,6 ❌ (57) | 49,2 ❌ (60) | 52,0 ❌ (59) | 56,5 ❌ (67) |
+| E + szellőző 2 × 600 mm² | 40,9 ⚠️ (48) | 44,8 ⚠️ (55) | 50,1 ❌ (68) | 50,8 ❌ (58) | 54,7 ❌ (65) |
+| E + szellőző 2 × 900 mm² | 39,9 ✅ (47) | 43,4 ⚠️ (54) | 48,2 ❌ (66) | 49,9 ❌ (57) | 53,4 ❌ (64) |
+| E + töltés közben alszik | 42,1 ⚠️ (49) | 42,1 ⚠️ (49) | 42,1 ⚠️ (49) | 52,0 ❌ (59) | 52,0 ❌ (59) |
+| **F – E + 2 × 600 mm² + töltés közben alszik** | **40,9 ⚠️** (48) | **40,9 ⚠️** (48) | **40,9 ⚠️** (48) | 50,8 ❌ (58) | 50,8 ❌ (58) |
+
+**Miért a cella a gond, és nem a Pi?** 1 A-es töltésnél a töltő vesztesége (~0,43 W) közvetlenül a cella alatt keletkezik, a cella saját Joule-hője pedig ~0,08 W. Ez a belső levegőhöz képest ~+4,5 K-t ad a cellán. A Pi 1 A-rel is ≤ 71 °C marad, mert a töltés közbeni takarékmód (LED ≤ 0,08, a kamera szünetel) a többlethő nagy részét ellensúlyozza.
+
+**A legolcsóbb, a tervezési elvekkel összhangban lévő javítás (F):**
+1. **Töltés közben alszik a kocka.** Ez szoftveres változtatás, ingyenes. A kijelző és a LED kikapcsol, a kamera leáll, a Pi alvó módba vált, az ébresztőszóra viszont felébred. Az ébresztés nem gond: a kocka hőidőállandója ~38 perc, ezért egy rövid ébredés alig melegít. 25 °C-on:
+
+   | party töltés közben | cella |
+   |---|---|
+   | 5 perc | ~42 °C |
+   | 15 perc | ~44 °C |
+   | 30 perc | ~46 °C |
+
+   A szoftver ezért 15 perc után, vagy ha a cellahőmérő 43 °C-ot mér, visszaküldi alvó módba. A töltés ~3 óra (2,6 Ah, 1 A), éjszaka vagy asztalon alvás közben ez kényelmesen lefut.
+2. **2 × 600 mm² szellőzőrés 2 × 300 helyett.** Az SLS-nyomtatásban ez is ingyenes, és nem kell hozzá ragasztás.
+   - **Kimenet:** 20 db 25 × 1,2 mm-es rés a hátfal tetején, 2 sorban. A második hangszóró helyén maradt rács ebbe beszámítható.
+   - **Bemenet:** a hátfal alján rések, valamint a tálca 4 sarkában 6–6 db Ø3,5 mm-es furat. A furatok összesen ~230 mm²-t adnak, a maradékot a rések adják.
+   - A hétköznapi (nem töltés közbeni) üzemmódokban ez 2 K-t hoz.
+3. **Önmagában egyik lépés sem elég, de együtt igen.**
+   - A szigorúbb CPU-korlát (Pi ≤ 1,0 W) csak party közben segít, ott is csak 3–4 K-t.
+   - Önmagában a nagyobb szellőző sem elég: még 2 × 900 mm²-rel is 48 °C a cella party + töltés közben, és ekkora rés a 90 mm-es kocka hátfalán már a merevséget és a megjelenést rontja.
+
+**35 °C-os szobában egyik szoftveres megoldás sem elég:** a cella alvás közben töltve is ~51 °C. Ezért a [7.4](#74-töltés-a-cella-védelme) 1. pontja (hőmérséklet szerint leálló töltés) továbbra is kötelező. Ha a Pi-Ener-lite-nak nincs NTC-bemenete, a cellahőmérő (TMP117 vagy MCP9808, ~5 €) alapján a szoftver csak a terhelést tudja csökkenteni, a fix 1 A-es töltést leállítani nem. Ilyenkor két lehetőség van:
+- a USB-C táp útjába kész, kapcsolható terheléskapcsoló-modul kerül, amelyet a XIAO vezérel;
+- vagy egyszerűen nincs töltés nagy melegben: az app szól, hogy „túl meleg a töltéshez, húzd ki”.
+
+Ezt a döntést a beszerzés előtt meg kell hozni.
 
 ## 8. Mérés a prototípuson
 
@@ -258,6 +305,6 @@ Minden paraméter forrással vagy indoklással a [tools/hokezeles.py](tools/hoke
 - Emissziós tényező: PA12 0,9, eloxált alu 0,85
 - Belső hőátadás: 5 W/m²K
 - WS2812: 12 mA/csatorna (legrosszabb esetben 20), sötétben 0,8 mA/LED
-- UPS feszültségnövelő hatásfoka 88 %, töltő hatásfoka 90 %, töltőáram 1 A (D: 0,5 A)
+- UPS feszültségnövelő hatásfoka 88 %, töltő hatásfoka 90 %, töltőáram 1 A (D: 0,5 A; a Pi-Ener-lite-on fix 1 A, ezért E és F 1 A-rel számol)
 - Pi: 0,75 / 1,3 / 1,9 / 3,0 W (alvás / hallgatás / party / csúcs)
 - Cella határai: töltés 0–45 °C, kisütés −20…60 °C (tipikus 18650-es adatlap)

@@ -325,13 +325,24 @@ VALTOZATOK = {
     'C': dict(nev='C – csak szoftver (zárt ház): LED ≤ 0,25; kamera csak pillantáskor; takarékos hallgatás (Pi 1,0 W); '
                   'party alatt Pi ≤ 1,5 W; töltés közben LED ≤ 0,08, kamera szünetel',
               haz='SLS', szell=0, fenyero=0.25, borda=False, pi_party=1.5, takarek=True, pi_hallg=1.0, kamera=0.05),
-    'D': dict(nev='D – JAVASOLT: C + 2×300 mm² szellőző (alul be, hátul felül ki) + hűtőborda a SoC-on + 0,5 A-es töltés',
+    'D': dict(nev='D – (eredeti javaslat) C + 2×300 mm² szellőző (alul be, hátul felül ki) + hűtőborda a SoC-on + 0,5 A-es töltés',
               haz='SLS', szell=300, fenyero=0.25, borda=True, pi_party=1.5, takarek=True, pi_hallg=1.0, kamera=0.05,
               i_tolt=0.5),
+    # 2026-11-17: a Pi-Ener-lite kézikönyve szerint a töltőáram fix 1 A (nem állítható) → a D 0,5 A-es töltése nem
+    # valósul meg. A LED-korlát a kompatibilitás-ellenőrzés szerint ≤ 30 % (a 31 LED tápja közvetlenül a UPS-ről).
+    'E': dict(nev='E – D a Pi-Ener-lite-tal: fix 1 A-es töltés, LED ≤ 0,30 (szoftver + 2×300 mm² + borda)',
+              haz='SLS', szell=300, fenyero=0.30, borda=True, pi_party=1.5, takarek=True, pi_hallg=1.0, kamera=0.05,
+              i_tolt=1.0),
+    'F': dict(nev='F – JAVASOLT a Pi-Ener-lite-hoz: E + 2×600 mm² szellőző + töltés közben alszik a kocka '
+                  '(kijelző, LED ki; ébresztőszóra felébred)',
+              haz='SLS', szell=600, fenyero=0.30, borda=True, pi_party=1.5, takarek=True, pi_hallg=1.0, kamera=0.05,
+              i_tolt=1.0, tolt_alvas=True),
 }
 
 
 def kiertekel(v, mod, ta):
+    if v.get('tolt_alvas') and mod in ('hallgatas_tolt', 'party_tolt'):
+        mod = 'alvas_tolt'       # töltés közben a szoftver alvó módba teszi a kockát (rövid ébredés: lásd 9. pont)
     p5, ho, felvett, pi_w, cella_w, ups_w = teljesitmeny(mod, v['fenyero'], v.get('pi_party'), v.get('takarek', False),
                                                          v.get('pi_hallg'), v.get('kamera'), v.get('i_tolt'))
     t_be = belso_homerseklet(ho, ta, v['haz'], v['szell'])
@@ -483,6 +494,36 @@ def main():
             r = kiertekel(v, m, 25)
             cellak.append(f'{r["t_be"]:.0f} / {r["t_pi"]:.0f} / {r["t_cella"]:.0f}')
         print(f'| {cimke} | ' + ' | '.join(cellak) + ' |')
+
+    # --- töltés fix 1 A-rel (Pi-Ener-lite)
+    print('\n## 9. Töltés fix 1 A-rel (Pi-Ener-lite): mi tartja a cellát 45 °C alatt? (cella °C; Pi °C zárójelben)')
+    E = VALTOZATOK['E']
+    opciok = [('D – 0,5 A (a Pi-Ener-lite-tal nem lehet)', VALTOZATOK['D']),
+              ('E – D, de 1 A, LED ≤ 0,30', E),
+              ('E + töltéskor Pi ≤ 1,0 W party alatt', dict(E, pi_party=1.0)),
+              ('E + szellőző 2×600 mm²', dict(E, szell=600)),
+              ('E + szellőző 2×900 mm²', dict(E, szell=900)),
+              ('E + töltés közben alszik', dict(E, tolt_alvas=True)),
+              ('F – E + 2×600 mm² + töltés közben alszik', VALTOZATOK['F'])]
+    print('| változat | 25 °C: alvás+töltés | hallgatás+töltés | party+töltés | 35 °C: alvás+töltés | hallgatás+töltés |')
+    print('|---|---|---|---|---|---|')
+    for cimke, v in opciok:
+        cellak = []
+        for ta, modok in ((25, ('alvas_tolt', 'hallgatas_tolt', 'party_tolt')), (35, ('alvas_tolt', 'hallgatas_tolt'))):
+            for m in modok:
+                r = kiertekel(v, m, ta)
+                cellak.append(f'{r["t_cella"]:.1f} {jel(r["t_cella"], CELLA_CEL, CELLA_TOLT)} ({r["t_pi"]:.0f})')
+        print(f'| {cimke} | ' + ' | '.join(cellak) + ' |')
+    # Mennyit melegít egy rövid ébredés alvó töltés közben? (τ-modell: a levegő késik, a cella követi)
+    F = VALTOZATOK['F']
+    r0 = kiertekel(F, 'alvas_tolt', 25)
+    r1 = kiertekel(dict(F, tolt_alvas=False), 'party_tolt', 25)
+    tau = (r1['t_be'] - 25) / r1['ho'] * C_TH
+    for perc in (5, 15, 30):
+        d = (r1['t_cella'] - r0['t_cella']) * (1 - math.exp(-perc * 60 / tau))
+        print(f'  F, 25 °C: {perc:2d} perc party töltés közben → cella ≈ {r0["t_cella"] + d:.1f} °C '
+              f'(alvásból {r0["t_cella"]:.1f}, végérték {r1["t_cella"]:.1f}; τ ≈ {tau / 60:.0f} perc)')
+    print(f'  töltési idő: ~2,6 Ah-s cella, 1 A → ~3 óra (a CV-szakasszal együtt)')
 
 
 if __name__ == '__main__':
