@@ -1,4 +1,4 @@
-"""Táp: Pi-Ener-lite UPS (18650 cella) – külső táp figyelése, töltöttség, biztonságos leállás, takarékmód töltés közben.
+"""Táp: Pi-Ener-lite UPS (18650 cella) – külső táp figyelése, töltöttség, biztonságos leállás, alvás töltés közben.
 
   GPIO4        a UPS jelzése: ALACSONY = van külső táp (a panel kapcsolójával leválasztható)
   CW2015 0x62  töltöttségmérő (I2C-1): SOC a 0x04 (egész %) és 0x05 (1/256 %) regiszterben, VCELL 0x02–0x03
@@ -8,9 +8,10 @@ Szabályok (PowerPolicy, hardver nélkül tesztelve):
   * külső táp nélkül, SHUTDOWN_SOC (5 %) alatt – CONFIRM egymás utáni mérésen át, hogy egy zajos minta ne állítsa
     le – a kocka elköszön és leállítja a Pi-t (sudo -n /usr/sbin/shutdown -h now; a jogot az install.sh adja meg)
   * WARN_SOC (15 %) alatt egyszer figyelmeztet (napló + az app felé 'battery' esemény)
-  * töltés közben (van külső táp és a cella nincs tele) TAKARÉKMÓD: a Pi-Ener-lite töltőárama fix 1 A, ami melegíti a
-    kockát, ezért ilyenkor kevesebb LED-fény, halványabb kijelző, kisebb képfrissítés. Az ECO értékeit a hőkezelési
-    vizsgálat még pontosítja – ez az EGYETLEN hely, ahol szerepelnek.
+  * külső tápon (GPIO4 alacsony) ALSZIK a kocka (HOKEZELES.md 7.5, F változat): a Pi-Ener-lite töltőárama fix 1 A, a
+    töltő vesztesége közvetlenül a cella alatt keletkezik. Alvás: az arc kialszik, a LED-ek összesen ≤ 8 %, a kamera
+    szünetel; az ébresztőszó, gomb, érintés, mozdulat vagy az app felébreszti, de töltés közben legfeljebb
+    CHARGE_AWAKE (15 perc) ébrenlét után visszaalszik (brain.Cube.charge_loop). A számok egy helyen: lent.
 
 FIGYELEM: valódi panel nélkül készült. A CW2015 pontos SOC-értékéhez a gyártó cellaprofilt is tölthet be (CONFIG
 regiszter); profil nélkül a mérő a saját alapprofiljával becsül – az első élesztésnél össze kell vetni a cella
@@ -24,28 +25,27 @@ EXT_POWER_GPIO = 4
 CW2015_ADDR = 0x62
 SHUTDOWN_SOC = 5.0
 WARN_SOC = 15.0
-FULL_SOC = 99.0
 CONFIRM = 3                    # ennyi egymás utáni mérés kell a leállításhoz
 INTERVAL = 10.0                # másodperc két mérés között
-ECO = {'led': 0.5, 'backlight': 0.6, 'fps': 10}     # takarékmód töltés közben (a hőkezelési munkamenet pontosítja)
+CHARGE_AWAKE = 15 * 60         # töltés közben legfeljebb ennyi másodperc ébrenlét (HOKEZELES.md 7.5)
+SLEEP_LED_BUDGET = 0.08        # alvás közben a 31 LED összes fényereje legfeljebb ennyi (a XIAO-n: reflex.SLEEP_BUDGET)
 SHUTDOWN_CMD = ['sudo', '-n', '/usr/sbin/shutdown', '-h', 'now']
 
 
 class PowerPolicy:
     """Bemenet: van-e külső táp, töltöttség % (None: nem olvasható). Kimenet: teendők listája."""
 
-    def __init__(self, shutdown_soc=SHUTDOWN_SOC, warn_soc=WARN_SOC, confirm=CONFIRM, full_soc=FULL_SOC):
-        self.shutdown_soc, self.warn_soc, self.confirm, self.full_soc = shutdown_soc, warn_soc, confirm, full_soc
-        self.low_count, self.warned, self.eco, self.done = 0, False, False, False
+    def __init__(self, shutdown_soc=SHUTDOWN_SOC, warn_soc=WARN_SOC, confirm=CONFIRM):
+        self.shutdown_soc, self.warn_soc, self.confirm = shutdown_soc, warn_soc, confirm
+        self.low_count, self.warned, self.charging, self.done = 0, False, False, False
 
     def update(self, ext_power, soc):
         acts = []
         if self.done:
             return acts
-        eco = bool(ext_power) and (soc is None or soc < self.full_soc)     # tölt (vagy nem tudjuk: óvatosan)
-        if eco != self.eco:
-            self.eco = eco
-            acts.append('eco_on' if eco else 'eco_off')
+        if ext_power is not None and bool(ext_power) != self.charging:     # külső táp = töltés (a cella tele is lehet)
+            self.charging = bool(ext_power)
+            acts.append('charge_on' if self.charging else 'charge_off')
         if ext_power or soc is None:              # külső tápon (vagy mérés nélkül) soha nem állít le
             self.low_count = 0
             if ext_power:
@@ -129,9 +129,9 @@ async def guard(cube, monitor, policy=None, shutdown=default_shutdown, interval=
     while True:
         ext, soc, volt = await loop.run_in_executor(None, monitor.read)
         for act in policy.update(ext, soc):
-            if act in ('eco_on', 'eco_off'):
-                log.info('takarékmód %s (töltés: %s, %s %%)', 'BE' if act == 'eco_on' else 'KI', ext, soc)
-                cube.set_eco(act == 'eco_on')
+            if act in ('charge_on', 'charge_off'):
+                log.info('külső táp %s (%s %%)', 'BE – töltés közben alszik' if act == 'charge_on' else 'KI', soc)
+                cube.set_charging(act == 'charge_on')
             elif act == 'warn':
                 log.warning('akkumulátor: %.0f %% (%.2f V) – tedd töltőre', soc, volt or 0)
                 cube.emit('battery', soc=round(soc), low=True)

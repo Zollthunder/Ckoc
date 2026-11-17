@@ -1,7 +1,8 @@
 #!/bin/sh
 # A C-kocka szoftverének telepítése egy friss Raspberry Pi OS (Bookworm, 64 bit) rendszerre, a repó gyökeréből futtatva:
 #   sudo sh firmware/pi/install.sh
-# Az SPI-t, az I2C-t, a kijelzőt (mipi-dbi-spi), a UPS óráját és a hangpanelt ez a szkript kapcsolja be (config.txt);
+# Az I2C-t, a UPS óráját és a hangpanelt ez a szkript kapcsolja be (config.txt). A kijelzőt a XIAO hajtja (USB-n jön),
+# a Pi-n nincs hozzá meghajtó;
 # a kamera az OV5647 automatikus felismerésével megy. A hangpanel (Seeed ReSpeaker 2-Mics Pi HAT) meghajtóját
 # ez a szkript teszi fel; a változatot magától felismeri, vagy megadható: sudo RESPEAKER=v1 sh firmware/pi/install.sh
 #   v2 (alapértelmezett, ma ez kapható): TLV320AIC3104 kodek – „v2.0” felirat a gomb mellett
@@ -11,7 +12,7 @@ set -e
 REPO=$(cd "$(dirname "$0")/../.." && pwd)
 
 apt-get update
-apt-get install -y python3-pil python3-numpy python3-spidev python3-gpiozero python3-serial \
+apt-get install -y python3-pil python3-numpy python3-gpiozero python3-serial \
                    python3-picamera2 python3-opencv python3-websockets python3-venv mpg123 alsa-utils avahi-daemon curl \
                    git make device-tree-compiler i2c-tools python3-smbus
 
@@ -31,6 +32,14 @@ config_block() {              # a config.txt "# ckocka-<név> begin/end" közöt
     REBOOT=1
   fi
   rm -f "$tmp"
+}
+config_unblock() {            # a "# ckocka-<név> begin/end" blokk törlése (ha egy korábbi telepítés beírta)
+  grep -q "^# ckocka-$1 begin\$" "$CONFIG" || return 0
+  tmp=$(mktemp)
+  awk -v b="# ckocka-$1 begin" -v e="# ckocka-$1 end" '$0==b{skip=1;next} $0==e{skip=0;next} !skip' "$CONFIG" > "$tmp"
+  cat "$tmp" > "$CONFIG"
+  rm -f "$tmp"
+  REBOOT=1
 }
 detect_respeaker() {          # a már betöltött meghajtóból, különben az I2C-címből (v2: 0x18, v1: 0x1a)
   if grep -q tlv320aic3x /proc/asound/pcm 2>/dev/null; then echo v2; return; fi
@@ -67,34 +76,16 @@ if ! grep -q "^dtoverlay=$OVL\$" "$CONFIG"; then
   REBOOT=1
 fi
 
-# --- kijelző: GC9A01 a mipi-dbi-spi meghajtóval (SPI0 CE0 GPIO8, DC GPIO25, RST GPIO27, háttérfény GPIO22).
-#     A gyári gc9a01 overlay NEM jó: a háttérfényt a GPIO18-ra tenné, ami a ReSpeaker I2S órajele. Lásd ckocka/panel.py.
-#     A panel init-sorozata firmware-fájlként: /lib/firmware/gc9a01.bin (a panel.py állítja elő).
-#     A ReSpeaker APA102 LED-jei ugyanezen az SPI0-n vannak – ellenőrzés: python3 -m ckocka.diag spi-leds
-sed -i '/^dtoverlay=gc9a01/d' "$CONFIG"
-python3 "$REPO/firmware/pi/ckocka/panel.py" --firmware /lib/firmware/gc9a01.bin
-config_block display <<EOF
-$(python3 "$REPO/firmware/pi/ckocka/panel.py" --config)
-EOF
+# --- kijelző: a XIAO hajtja. Egy korábbi telepítés kijelző- és UART-beállítását (mipi-dbi-spi, enable_uart) kivesszük.
+config_unblock display
+config_unblock uart
 
 # --- táp: Pi-Ener-lite – CW2015 töltöttségmérő (0x62) és DS1307 óra (0x68) az I2C-1-en, külső táp jelzése a GPIO4-en
 config_block ups <<EOF
 dtparam=i2c_arm=on
 dtoverlay=i2c-rtc,ds1307
 EOF
-# --- XIAO: soros vonal (UART) a GPIO14/15-ön. Pi Zero 2 W-n ez a mini UART (/dev/serial0 -> ttyS0; a PL011 a Bluetooth-é).
-#     enable_uart=1 (a mini UART órája így stabil), a Linux soros konzolja ki, hogy ne írjon a XIAO-ra.
-config_block uart <<EOF
-enable_uart=1
-EOF
-CMDLINE=$(dirname "$CONFIG")/cmdline.txt
-if grep -Eq 'console=(serial0|ttyS0|ttyAMA0),[0-9]+ ?' "$CMDLINE" 2>/dev/null; then
-  cp "$CMDLINE" "$CMDLINE.ckocka.bak"
-  sed -i -E 's/console=(serial0|ttyS0|ttyAMA0),[0-9]+ ?//g' "$CMDLINE"
-  REBOOT=1
-fi
-systemctl disable --now serial-getty@ttyS0.service 2>/dev/null || true
-usermod -aG dialout pi                      # a szolgáltatás (pi) olvashassa a /dev/serial0-t
+usermod -aG dialout pi                      # a szolgáltatás (pi) olvashassa a XIAO USB-s soros portját (/dev/ttyACM*)
 
 # biztonságos leállás: a szolgáltatás (pi felhasználó) jelszó nélkül csak ezt az egy parancsot futtathatja rootként
 SUDOERS=/etc/sudoers.d/ckocka
@@ -145,7 +136,7 @@ systemctl daemon-reload
 systemctl enable --now ckocka
 echo "Kész. Napló: journalctl -u ckocka -f"
 if [ "$REBOOT" = 1 ]; then
-  echo "A hangpanel, a kijelző és az óra meghajtója újraindítás után töltődik be: sudo reboot"
-  echo "  utána: aplay -l → seeed2micvoicec;  cd /opt/ckocka && python3 -m ckocka.diag spi-leds   (és: … diag power)"
+  echo "A hangpanel és az óra meghajtója újraindítás után töltődik be: sudo reboot"
+  echo "  utána: aplay -l → seeed2micvoicec;  cd /opt/ckocka && python3 -m ckocka.diag power"
 fi
 echo "Beszélgetéshez: sudo nano /etc/ckocka.env  (ANTHROPIC_API_KEY=...), majd: sudo systemctl restart ckocka"

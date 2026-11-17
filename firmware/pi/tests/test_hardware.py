@@ -117,7 +117,7 @@ class _Stop(Exception):
 
 
 class FakeXiao:
-    """Hamis CircuitPython-modulok (board, touchio, pwmio, busio.UART, seesaw, …); a code.py végtelen ciklusát a hamis
+    """Hamis CircuitPython-modulok (board, touchio, pwmio, usb_cdc, seesaw, displayio, …); a code.py végtelen ciklusát a hamis
     time.sleep állítja meg, és minden körben lefuttat egy „forgatókönyv”-lépést."""
 
     def __init__(self, touch_raw, script, pulldown=True, steps=400, imu_g=None):
@@ -127,7 +127,9 @@ class FakeXiao:
         self.touch_raw, self.script, self.pulldown = touch_raw, script, pulldown
         self.out, self.inbox, self.duty_log, self.pwm = [], b'', [], None
         self.strip, self.led_out, self.led_max, self.led_shows = None, {}, 0, 0   # NeoDriver-lánc; kimenő Σ(r+g+b), csúcs
-        self.wire, self.uart_args, self.i2c_hz, self.neodriver_missing = b'', None, None, False
+        self.wire, self.i2c_hz, self.neodriver_missing = b'', None, False
+        self.display, self.lcd, self.lcd_cmds, self.display_fail = None, None, [], None   # szimulált GC9A01 (displayio)
+        self.shapes_made, self.snapshots, self.snap_at = 0, {}, ()   # snap_at: ezekben a lépésekben „fénykép” a kijelzőről
         self.i2c_error, self.i2c_args, self.pins = None, None, {}
 
     def modules(self):
@@ -139,7 +141,7 @@ class FakeXiao:
             def __init__(self, pin):
                 self.pin, self.direction, self.pull = pin, None, None
                 fx.pins[pin] = self
-                self.value = pin != 'D10' or bool(fx.touch_raw(fx.t) > 1500)   # gombok felhúzva; D10: AT42QT1010-tartalék
+                self.value = pin != 'D7' or bool(fx.touch_raw(fx.t) > 1500)    # gombok felhúzva; D7: AT42QT1010-tartalék
         m['digitalio'] = types.SimpleNamespace(DigitalInOut=DIO, Direction=types.SimpleNamespace(INPUT=0, OUTPUT=1),
                                                Pull=types.SimpleNamespace(UP=1, DOWN=2))
 
@@ -148,7 +150,7 @@ class FakeXiao:
                 self.io, self.state, self.rose, self.fell = io, None, False, False
 
             def update(self):
-                v = fx.touch_raw(fx.t) > 1500 if self.io.pin == 'D10' else True
+                v = fx.touch_raw(fx.t) > 1500 if self.io.pin == 'D7' else True
                 self.rose, self.fell = (self.state is False and v), (self.state is True and not v)
                 self.state = v
         m['adafruit_debouncer'] = types.SimpleNamespace(Debouncer=Debouncer)
@@ -193,9 +195,7 @@ class FakeXiao:
                 fx.wire += b                                   # a soros vonalon a Pi felé kimenő bájtok
                 fx.out.append(json.loads(b.decode()))
 
-        def UART(tx, rx, baudrate=9600, **kw):                # a Pi felé menő soros vonal (szimulált)
-            fx.uart_args = (tx, rx, baudrate)
-            return Port()
+        m['usb_cdc'] = types.SimpleNamespace(data=Port(), console=None)
 
         class Seesaw:
             def __init__(self, i2c, addr=0x49):
@@ -223,7 +223,54 @@ class FakeXiao:
             if fx.i2c_error:
                 raise RuntimeError(fx.i2c_error)
             return (scl, sda)
-        m['busio'] = types.SimpleNamespace(I2C=I2C, UART=UART)
+        def SPI(clock, MOSI=None, MISO=None):
+            fx.lcd = {'clock': clock, 'MOSI': MOSI, 'MISO': MISO}
+            if fx.display_fail:
+                raise ValueError(fx.display_fail)
+            return 'spi'
+        m['busio'] = types.SimpleNamespace(I2C=I2C, SPI=SPI)
+
+        # ---- kijelző: displayio + vectorio + adafruit_gc9a01a (a rajzolt alakzatok a tesztben Pillow-val kirajzolhatók)
+        class Group(list):
+            def __init__(self, **kw):
+                super().__init__()
+                self.hidden = False
+
+        class Palette(list):
+            def __init__(self, n):
+                super().__init__([0] * n)
+
+        class Shape:
+            def __init__(self, kind, pixel_shader, **kw):
+                self.kind, self.pixel_shader, self.x, self.y = kind, pixel_shader, 0, 0
+                self.__dict__.update(kw)
+                fx.shapes_made += 1
+
+        class FourWire:
+            def __init__(self, spi, command=None, chip_select=None, reset=None, baudrate=24000000, **kw):
+                fx.lcd.update(command=command, chip_select=chip_select, reset=reset, baudrate=baudrate)
+
+            def send(self, cmd, data):
+                fx.lcd_cmds.append((cmd, bytes(data)))
+
+        class GC9A01A:
+            def __init__(self, bus, width=240, height=240, **kw):
+                self.bus, self.width, self.height, self.root_group, self.kw = bus, width, height, None, kw
+                fx.display = self
+
+        class Label:
+            def __init__(self, font, text='', color=0, scale=1, anchor_point=(0, 0), anchored_position=(0, 0)):
+                self.text, self.color, self.scale = text, color, scale
+                self.anchor_point, self.anchored_position, self.hidden, self.kind = anchor_point, anchored_position, False, 'label'
+        m['displayio'] = types.SimpleNamespace(Group=Group, Palette=Palette, release_displays=lambda: None)
+        m['vectorio'] = types.SimpleNamespace(Polygon=lambda **kw: Shape('poly', **kw),
+                                              Circle=lambda **kw: Shape('circle', **kw),
+                                              Rectangle=lambda **kw: Shape('rect', **kw))
+        m['terminalio'] = types.SimpleNamespace(FONT='terminalio.FONT')
+        m['fourwire'] = types.SimpleNamespace(FourWire=FourWire)
+        m['adafruit_gc9a01a'] = types.SimpleNamespace(GC9A01A=GC9A01A)
+        m['adafruit_display_text'] = types.SimpleNamespace()
+        m['adafruit_display_text.label'] = types.SimpleNamespace(Label=Label)
         if fx.imu_g is None:
             m['adafruit_lsm6ds'] = m['adafruit_lsm6ds.lsm6ds3trc'] = None   # nincs IMU: így is el kell indulnia
         else:
@@ -241,6 +288,8 @@ class FakeXiao:
             fx.t += dt + 0.002                                 # a kör maga is ~2 ms
             fx.step += 1
             fx.led_max = max(fx.led_max, sum(fx.led_out.values()))
+            if fx.step in fx.snap_at:
+                fx.snapshots[fx.step] = fx.screen()
             fx.script(fx)
             if fx.step >= fx.steps:
                 raise _Stop
@@ -261,6 +310,38 @@ class FakeXiao:
     def send(self, obj):
         self.inbox += (json.dumps(obj) + '\n').encode()
 
+    def screen(self):
+        """A szimulált kijelző tartalma Pillow-képként (a látható alakzatokból), és a látható feliratok."""
+        from PIL import Image, ImageDraw
+        img = Image.new('RGB', (240, 240))
+        d, texts = ImageDraw.Draw(img), []
+        if not self.display or self.display.root_group is None:
+            return img, texts
+
+        def col(v):
+            return ((v >> 16) & 255, (v >> 8) & 255, v & 255)
+
+        def draw(item):
+            if getattr(item, 'hidden', False):
+                return
+            if isinstance(item, list) and not hasattr(item, 'kind'):
+                for it in item:
+                    draw(it)
+                return
+            k = item.kind
+            if k == 'label':
+                texts.append(item.text)
+                return
+            c = col(item.pixel_shader[0])
+            if k == 'rect':
+                d.rectangle([item.x, item.y, item.x + item.width - 1, item.y + item.height - 1], fill=c)
+            elif k == 'circle':
+                d.ellipse([item.x - item.radius, item.y - item.radius, item.x + item.radius, item.y + item.radius], fill=c)
+            else:
+                d.polygon([(item.x + x, item.y + y) for x, y in item.points], fill=c)
+        draw(self.display.root_group)
+        return img, texts
+
 
 class XiaoFirmwareTest(unittest.TestCase):
     def test_touchio_touch_and_pwm_haptic(self):
@@ -272,9 +353,9 @@ class XiaoFirmwareTest(unittest.TestCase):
         fx = FakeXiao(touch, script, steps=330).run()
         hello = fx.out[0]
         self.assertEqual((hello['ev'], hello['fw'], hello['touch'], hello['haptic'], hello['imu']),
-                         ('hello', '1.3', 'touchio', True, False))
+                         ('hello', '1.4', 'touchio', True, False))
         self.assertEqual([e for e in fx.out if e['ev'] == 'touch'], [{'ev': 'touch'}] * 2)
-        self.assertEqual((fx.pwm.pin, fx.pwm.frequency), ('D0', 20000))     # a D6 az UART TX-e
+        self.assertEqual((fx.pwm.pin, fx.pwm.frequency), ('D0', 20000))     # D0: rezgés (lábtábla: code.py PINS)
         on = [t for t, d in fx.duty_log if d > 0]
         self.assertTrue(on, 'a rezgőmotor nem kapott PWM-et')
         self.assertTrue(on[-1] - on[0] < 0.8)                  # a minta véget ér, nem zümmög tovább

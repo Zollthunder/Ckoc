@@ -1,3 +1,3 @@
-# A Pi-vel UART-on beszél (D6/D7, lásd code.py), az USB csak táp nélküli hibakereséshez kell: konzol igen, data nem.
+# A XIAO két USB soros portot ad: konzol (hibakereséshez) és data (a Pi ezen küldi/kapja a JSON-üzeneteket)
 import usb_cdc
-usb_cdc.enable(console=True, data=False)
+usb_cdc.enable(console=True, data=True)

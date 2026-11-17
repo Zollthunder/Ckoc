@@ -1,109 +1,23 @@
 """Valódi hardver a Raspberry Pi Zero 2 W-n.
 
-  Kijelző : GC9A01 1,28" kerek, 240×240, a Linux mipi-dbi-spi meghajtójával (/dev/fbN) – SPI0 (MOSI GPIO10, SCLK GPIO11,
-            CE0 GPIO8), DC GPIO25, RST GPIO27, háttérfény GPIO22 (lásd panel.py; a gyári gc9a01 overlay a GPIO18-at, az
-            I2S órajelét foglalná). Ha nincs framebuffer, tartalékként közvetlenül spidev-vel hajtjuk ugyanezeken a lábakon.
+  Kijelző : nincs a Pi-n – a kerek kijelzőt (GC9A01) a XIAO hajtja és ő rajzolja az arcot; a Pi csak az állapotot küldi
+            (brain.Cube.face_msg: "face" és beszéd közben "talk")
   Táp     : Pi-Ener-lite UPS – GPIO4 (alacsony = van külső táp), CW2015 töltöttségmérő 0x62 (power.py)
   Hang    : Seeed ReSpeaker 2-Mics Pi HAT, 1 hangszóró (mono) – v1 (WM8960) és v2.0 (TLV320AIC3104) is; ALSA a kártya
             nevével (seeed2micvoicec, firmware/pi/asound.conf), lejátszás: aplay (dmix), dekódolás: mpg123;
             hangerő és mikrofon-némítás: amixer (a kodek szerint más vezérlőnevekkel)
-  XIAO    : UART – Pi GPIO14 (TXD) -> XIAO D7 (RX), GPIO15 (RXD) <- XIAO D6 (TX), 115200 8N1, /dev/serial0
-            (Pi Zero 2 W-n a mini UART; a PL011 a Bluetooth-é), soronként egy JSON
+  XIAO    : USB CDC soros port (OTG; a XIAO „data” portja), soronként egy JSON
   Kamera  : OV5647 (picamera2) + OpenCV Haar-kaszkád – csak helyben, kép nem hagyja el a kockát
 
-FIGYELEM: ez a kód hardver nélkül készült (a C-kocka koncepció). A GC9A01 inicializáló sorozata a gyártói
-referenciakódból való; az első élesztésnél a lábkiosztást és a színsorrendet ellenőrizni kell.
+FIGYELEM: ez a kód hardver nélkül készült (a C-kocka koncepció); az első élesztésnél a keverőneveket ellenőrizni kell.
 """
-import asyncio, glob, json, logging, os, subprocess, threading, time
+import asyncio, json, logging, os, subprocess, threading, time
 
 import numpy as np
 
-from . import hal, panel
+from . import hal
 
 log = logging.getLogger('ckocka.hw')
-
-# --------------------------------------------------------------------------------------------- kijelző
-GC9A01_INIT = panel.GC9A01_INIT
-
-
-def rgb565(img, byteorder='>'):
-    a = np.asarray(img.convert('RGB'), dtype=np.uint16)
-    v = ((a[..., 0] & 0xF8) << 8) | ((a[..., 1] & 0xFC) << 3) | (a[..., 2] >> 3)
-    return v.astype(byteorder + 'u2').tobytes()
-
-
-
-class FbDisplay(hal.Display):
-    """A mipi-dbi-spi meghajtó framebuffere (a kernel küldi SPI-n, a CE0-t ő kezeli). RGB565, kis végű a memóriában."""
-
-    @staticmethod
-    def find(sys_dir='/sys/class/graphics', match='mipi-dbi'):
-        """A panel /dev/fbN eszköze a meghajtó neve alapján (a HDMI is kaphat fb0-t, ezért nem a sorszám számít)."""
-        for d in sorted(glob.glob(os.path.join(sys_dir, 'fb*'))):
-            try:
-                with open(os.path.join(d, 'name')) as f:
-                    if match in f.read():
-                        return '/dev/' + os.path.basename(d), d
-            except OSError:
-                pass
-        return None
-
-    def __init__(self, dev, sys_path, backlight_dir='/sys/class/backlight'):
-        with open(os.path.join(sys_path, 'bits_per_pixel')) as f:
-            if int(f.read()) != 16:
-                raise RuntimeError('a kijelző framebuffere nem 16 bites (RGB565)')
-        self.fb = open(dev, 'r+b', buffering=0)
-        self.bl = sorted(glob.glob(os.path.join(backlight_dir, '*')))
-        log.info('kijelző: %s (mipi-dbi-spi)', dev)
-
-    def show(self, img):
-        self.fb.seek(0)
-        self.fb.write(rgb565(img, '<'))
-
-    def brightness(self, v):
-        """A gpio-backlight csak be/ki (max_brightness = 1); PWM-es háttérfénynél fokozatos."""
-        for d in self.bl:
-            try:
-                with open(os.path.join(d, 'max_brightness')) as f:
-                    mx = int(f.read())
-                v = max(0.0, min(1.0, v))
-                with open(os.path.join(d, 'brightness'), 'w') as f:
-                    f.write(str(round(v * mx) if mx > 1 else int(v > 0)))
-            except (OSError, ValueError) as e:
-                log.warning('háttérfény: %s', e)
-
-
-class GC9A01(hal.Display):
-    """Tartalék: közvetlen spidev-vezérlés (ha a mipi-dbi-spi overlay nincs betöltve). Ugyanazok a lábak."""
-
-    def __init__(self, dc=panel.PINS['dc'], rst=panel.PINS['reset'], bl=panel.PINS['backlight'], spi_bus=0, spi_dev=0,
-                 hz=panel.SPEED_HZ):
-        import spidev
-        from gpiozero import DigitalOutputDevice, PWMOutputDevice
-        self.dc, self.rst, self.bl = DigitalOutputDevice(dc), DigitalOutputDevice(rst), PWMOutputDevice(bl)
-        self.spi = spidev.SpiDev()
-        self.spi.open(spi_bus, spi_dev)
-        self.spi.max_speed_hz, self.spi.mode = hz, 0
-        self.rst.off(); time.sleep(0.05); self.rst.on(); time.sleep(0.12)
-        for cmd, data in GC9A01_INIT:
-            self._cmd(cmd, data)
-        self._cmd(0x11); time.sleep(0.12)      # kilépés alvásból
-        self._cmd(0x29); time.sleep(0.02)      # kijelző be
-        self.bl.value = 0.9
-
-    def _cmd(self, c, data=()):
-        self.dc.off(); self.spi.writebytes([c])
-        if data:
-            self.dc.on(); self.spi.writebytes(list(data))
-
-    def show(self, img):
-        self._cmd(0x2A, [0, 0, 0, 239]); self._cmd(0x2B, [0, 0, 0, 239]); self._cmd(0x2C)
-        self.dc.on()
-        self.spi.writebytes2(rgb565(img))
-
-    def brightness(self, v):
-        self.bl.value = max(0.0, min(1.0, v))
-
 
 # --------------------------------------------------------------------------------------------- hang
 RESPEAKER_CARD = 'seeed2micvoicec'          # mindkét ReSpeaker 2-Mics változat ezzel a névvel jelenik meg (aplay -l)
@@ -266,18 +180,26 @@ class AlsaAudio(hal.Audio):
 
 
 # --------------------------------------------------------------------------------------------- XIAO
-XIAO_PORT = '/dev/serial0'          # enable_uart=1, soros konzol kikapcsolva (install.sh); felülírható: CKOCKA_XIAO_PORT
 XIAO_BAUD = 115200
 
 
-def xiao_port():
-    return os.environ.get('CKOCKA_XIAO_PORT') or XIAO_PORT
+def find_xiao_port():
+    """A XIAO (CircuitPython) két USB soros portot ad: konzol (if00) és data (if02) – nekünk a data kell.
+    Felülírható: CKOCKA_XIAO_PORT."""
+    import glob
+    if os.environ.get('CKOCKA_XIAO_PORT'):
+        return os.environ['CKOCKA_XIAO_PORT']
+    for pat in ('/dev/serial/by-id/*CircuitPython*if02*', '/dev/serial/by-id/*XIAO*if02*', '/dev/ttyACM1'):
+        hits = sorted(glob.glob(pat))
+        if hits:
+            return hits[0]
+    return '/dev/ttyACM0'
 
 
 class SerialMcu(hal.Mcu):
     def __init__(self, port=None, baud=XIAO_BAUD):
         super().__init__()
-        self.port, self.baud, self.ser = port or xiao_port(), baud, None
+        self.port, self.baud, self.ser = port or find_xiao_port(), baud, None
         self.loop = asyncio.get_event_loop()
         threading.Thread(target=self._reader, daemon=True).start()
 
@@ -358,21 +280,6 @@ class LocalCamera(hal.Camera):
             (self.cam.start if on else self.cam.stop)()
 
 
-class NullDisplay(hal.Display):
-    def show(self, img):
-        pass
-
-
-def make_display():
-    """mipi-dbi-spi framebuffer, különben közvetlen spidev; ha egyik sem megy, a kocka kijelző nélkül is elindul."""
-    found = FbDisplay.find()
-    try:
-        return FbDisplay(*found) if found else GC9A01()
-    except Exception as e:
-        log.warning('a kijelző nem érhető el (%s) – kijelző nélkül fut. Ellenőrzés: python3 -m ckocka.diag spi-leds', e)
-        return NullDisplay()
-
-
 def make(voice_dir):
     from . import power
-    return hal.Hardware(make_display(), AlsaAudio(), SerialMcu(), LocalCamera(), voice_dir, power=power.make_monitor())
+    return hal.Hardware(None, AlsaAudio(), SerialMcu(), LocalCamera(), voice_dir, power=power.make_monitor())

@@ -1,47 +1,48 @@
 # C-kocka – Seeed XIAO RP2040 firmware (CircuitPython 9.x)
-# A kocka „reflexei”: LED-gyűrű + C-szalag, 4 gomb, érintés, mozgásérzékelő (dobás / rázás / fordítás), rezgés.
-# Hardver a 2026-11-17-i költségoptimalizálás szerint: az érintést a XIAO maga érzékeli (touchio), a rezgés egy kész
-# rezgőmotor-modul PWM-mel hajtva (az AT42QT1010 és a DRV2605L kimaradt). A LED-eket egy Adafruit NeoDriver hajtja
-# (I2C -> NeoPixel, a Qwiic-láncon az IMU után), a Pi-vel soros vonalon (UART) beszél – a micro-USB dugó nem fért el.
-# Protokoll: soronként egy JSON – lásd firmware/pi/ckocka/protocol.py.
+# A kocka „reflexei” ÉS az arca: kerek kijelző (az arc animációja itt fut), LED-gyűrű + C-szalag (NeoDriveren),
+# 4 gomb, érintés, mozgásérzékelő (dobás / rázás / fordítás), rezgés.
+# A Pi-vel USB-n beszél (OTG, usb_cdc data port), soronként egy JSON – lásd firmware/pi/ckocka/protocol.py.
+# A Pi csak az állapotot küldi ("face", beszéd közben "talk"), az arcot a faces.py rajzolja vektorosan.
 #
-# Lábkiosztás (XIAO RP2040) – AZ EGYETLEN HELY: a PINS táblázat lent. A tápja 5 V a Pi GPIO-elosztó paneljéről (5V láb).
-#   D6 = TX -> Pi GPIO15 (RXD)    D7 = RX <- Pi GPIO14 (TXD)    UART 115200 8N1, 3,3 V-os jelszint mindkét oldalon
+# Lábkiosztás (XIAO RP2040) – mind a 11 láb foglalt; AZ EGYETLEN HELY: a PINS táblázat lent.
+#   D0  rezgőmotor-modul jelbemenete (IN/SIG), PWM 20 kHz; a modul VCC-je 3V3 (vagy 5V), GND közös
+#   D1 gomb 1 – Andor (fa)   D2 gomb 2   D3 gomb 3   D6 gomb 4      (gomb a GND felé, belső felhúzás)
+#   D7  érintés: rézfólia-elektróda (az érintőbetét alatt) + 1 MΩ lehúzó ellenállás a GND felé (a gombok prototípus-lapján)
+#       – a touchio lehúzó ellenállás nélkül nem indul; ilyenkor digitális bemenetként olvassuk, így tartalékként
+#         egy AT42QT1010 (aktív magas kimenet) is visszadugható ugyanide, szoftvercsere nélkül
 #   D4 = SDA, D5 = SCL  I2C (400 kHz) – Qwiic-lánc az Adafruit 4397 kábellel (STEMMA QT -> női Dupont: 3V3, GND, D4, D5):
 #          1. LSM6DS3TR-C (IMU, 0x6A) – függőlegesen a szán jobb sínjén; a tengelyek átszámolása: reflex.IMU_AXES
 #          2. Adafruit NeoDriver (seesaw, alapcím 0x60 – a valódi panelen ellenőrizni: NEODRIVER_ADDR) -> a 31 LED egy
 #             láncban: előbb a 24-es gyűrű, utána a 7 LED-es C-szalag. A LED-ek 5 V-ja a UPS-ről; összesen ≤ 30 %
-#             fényerő (reflex.LED_BUDGET, ≈ 0,56 A). A NeoDriver maga illeszti az 5 V-os jelszintet (nincs 74AHCT125).
-#   D2 gomb 1 – Andor (fa)   D3 gomb 2   D8 gomb 3   D9 gomb 4      (gomb a GND felé, belső felhúzás)
-#   D10 érintés: rézfólia-elektróda (az érintőbetét alatt) + 1 MΩ lehúzó ellenállás a GND felé (a gombok prototípus-lapján)
-#       – a touchio lehúzó ellenállás nélkül nem indul; ilyenkor digitális bemenetként olvassuk, így tartalékként
-#         egy AT42QT1010 (aktív magas kimenet) is visszadugható ugyanide, szoftvercsere nélkül
-#   D0  rezgőmotor-modul jelbemenete (IN/SIG), PWM 20 kHz; a modul VCC-je 3V3 (vagy 5V), GND közös
-#       (a D6 az UART TX-e lett; a D0/D1 a LED-ek NeoDriverre költözésével szabadult fel)
-#   D1  SZABAD
+#             fényerő (reflex.LED_BUDGET, ≈ 0,56 A), alvás közben ≤ 8 %. A NeoDriver maga illeszti a jelszintet.
+#   D8 = SCK, D10 = MOSI, D9 = DC   GC9A01 kijelző (SPI0, 240×240). A CS a GND-n, a RST és a háttérfény 3,3 V-on:
+#          nincs reset-láb, ezért induláskor szoftveres reset (0x01) megy ki, a háttérfény mindig világít.
 #
-# Szükséges könyvtárak (circup install): adafruit_lsm6ds adafruit_seesaw adafruit_pixelbuf adafruit_debouncer adafruit_ticks
-# A CIRCUITPY meghajtóra: boot.py, code.py és reflex.py (érintés, rezgés, IMU-tengelyek, LED-korlát – PC-n tesztelve)
+# Szükséges könyvtárak (circup install): adafruit_gc9a01a adafruit_display_text adafruit_lsm6ds adafruit_seesaw
+#                                        adafruit_pixelbuf adafruit_debouncer adafruit_ticks
+# A CIRCUITPY meghajtóra: boot.py, code.py, reflex.py és faces.py (PC-n tesztelve)
+# boot.py-ban: usb_cdc.enable(console=True, data=True)   – a „data” porton megy a JSON
 import json, math, time
-import board, digitalio, busio
+import board, digitalio, busio, usb_cdc
 from adafruit_debouncer import Debouncer
-from reflex import TouchDetector, Buzzer, duty_u16, to_cube, led_scale
+from reflex import TouchDetector, Buzzer, duty_u16, to_cube, led_scale, LED_BUDGET
+from faces import Face, N_POLY, N_BAR, N_DOT, N_TEXT
 
 PINS = {
-    'uart_tx': board.D6, 'uart_rx': board.D7,         # board.TX / board.RX
-    'sda': board.D4, 'scl': board.D5,
-    'buttons': (board.D2, board.D3, board.D8, board.D9),
-    'touch': board.D10,
     'motor': board.D0,
-    # szabad: board.D1
+    'buttons': (board.D1, board.D2, board.D3, board.D6),
+    'touch': board.D7,
+    'sda': board.D4, 'scl': board.D5,
+    'lcd_sck': board.D8, 'lcd_mosi': board.D10, 'lcd_dc': board.D9,
 }
-UART_BAUD = 115200
 I2C_HZ = 400_000
 NEODRIVER_ADDR = 0x60                                 # a NeoDriver alapcíme (címátkötőkkel 0x60–0x6F) – ellenőrizni!
 NEODRIVER_PIN = 15                                    # a NeoDriver kimenete a seesaw 15-ös lába
 LED_FRAME = 0.02                                      # LED-frissítés 50 Hz (az I2C-írás ~3 ms)
+FACE_FRAME = 0.04                                     # arc 25 Hz (csak a változó alakzatok rajzolódnak újra)
+LCD_HZ = 24_000_000
 
-FW = '1.3'
+FW = '1.4'
 RING_N, C_N = 24, 7
 
 
@@ -60,8 +61,8 @@ try:
     import touchio
     touch_pad = touchio.TouchIn(PINS['touch'])
 except Exception as e:                                # ValueError: nincs lehúzó ellenállás a lábon – ne álljon le
-    print('FIGYELEM: az érintés (touchio) nem indult a D10-en:', e)
-    print('  Kell egy 1 MΩ-os ellenállás a D10 és a GND közé (a gombok prototípus-lapján).')
+    print('FIGYELEM: az érintés (touchio) nem indult a D7-en:', e)
+    print('  Kell egy 1 MΩ-os ellenállás a D7 és a GND közé (a gombok prototípus-lapján).')
     print('  Addig digitális bemenetként olvasom (belső lehúzással: nem ad hamis érintést; AT42QT1010 is mehet ide).')
     touch_dig = Debouncer(pin_in(PINS['touch'], digitalio.Pull.DOWN))
 TOUCH_KIND = 'touchio' if touch_pad else 'digital'
@@ -92,16 +93,63 @@ if i2c:
     except Exception as e:
         print('FIGYELEM: nincs NeoDriver a 0x%02X címen (LED-ek nélkül fut):' % NEODRIVER_ADDR, e)
 
-# a Pi felé: UART (a USB-konzol hibakereséshez megmarad)
-port = busio.UART(PINS['uart_tx'], PINS['uart_rx'], baudrate=UART_BAUD, timeout=0, receiver_buffer_size=512)
+# kijelző: GC9A01 a displayio-val; ha nem indul, a kocka arc nélkül is működik
+display = face_slots = None
+face = Face()
+try:
+    import displayio, vectorio, terminalio
+    from fourwire import FourWire
+    from adafruit_gc9a01a import GC9A01A
+    from adafruit_display_text.label import Label
+    displayio.release_displays()
+    lcd_spi = busio.SPI(clock=PINS['lcd_sck'], MOSI=PINS['lcd_mosi'])
+    lcd_bus = FourWire(lcd_spi, command=PINS['lcd_dc'], chip_select=None, reset=None, baudrate=LCD_HZ)
+    lcd_bus.send(0x01, b'')                           # szoftveres reset (nincs RST-láb; a könyvtár init-sora nem küldi)
+    time.sleep(0.15)
+    display = GC9A01A(lcd_bus, width=240, height=240, auto_refresh=True)
+    root = displayio.Group()
+
+    def palette(c=(0, 0, 0)):
+        pal = displayio.Palette(1)
+        pal[0] = (c[0] << 16) | (c[1] << 8) | c[2]
+        return pal
+
+    bg = palette((5, 6, 8))
+    root.append(vectorio.Rectangle(pixel_shader=bg, width=240, height=240, x=0, y=0))
+    face_slots = {'polys': [], 'bars': [], 'dots': [], 'texts': []}
+    for kind, n in (('bars', N_BAR), ('polys', N_POLY), ('dots', N_DOT)):
+        for _ in range(n):
+            g = displayio.Group()
+            pal = palette()
+            if kind == 'dots':
+                shape = vectorio.Circle(pixel_shader=pal, radius=3, x=0, y=0)
+            else:
+                shape = vectorio.Polygon(pixel_shader=pal, points=[(0, 0), (1, 0), (0, 1)], x=0, y=0)
+            g.append(shape)
+            g.hidden = True
+            root.append(g)
+            face_slots[kind].append([g, shape, pal, None])   # [csoport, alakzat, paletta, utolsó állapot]
+    for _ in range(N_TEXT):
+        lbl = Label(terminalio.FONT, text=' ', color=0xFFFFFF, scale=2, anchor_point=(0.5, 0.5),
+                    anchored_position=(120, 120))
+        lbl.hidden = True
+        root.append(lbl)
+        face_slots['texts'].append([lbl, lbl, None, None])
+    display.root_group = root
+except Exception as e:
+    print('FIGYELEM: a kijelző nem indult (D8 SCK, D10 MOSI, D9 DC):', e)
+    display = face_slots = None
+
+port = usb_cdc.data or usb_cdc.console
 
 
 def send(obj):
-    port.write((json.dumps(obj) + '\n').encode())
+    if port:
+        port.write((json.dumps(obj) + '\n').encode())
 
 
 # ------------------------------------------------------------------ fények
-L = {'hue': 28, 'bright': 0.8, 'mode': 'off', 'flash': 0.0, 'camled': False, 'next': 0.0}
+L = {'hue': 28, 'bright': 0.8, 'mode': 'off', 'flash': 0.0, 'camled': False, 'next': 0.0, 'budget': LED_BUDGET}
 ring = [(0, 0, 0)] * RING_N                           # a lánc első 24 LED-je
 cstrip = [(0, 0, 0)] * C_N                            # utána a 7 LED-es C-szalag
 
@@ -148,7 +196,7 @@ def draw_leds(now):
     if L['camled']:                                   # a kamera jelzőfénye: a C-szalag utolsó LED-je zöld (mindig látszik, ha a kamera figyel)
         cstrip[C_N - 1] = (0, 160, 40)
     frame = ring + cstrip
-    scale = led_scale(frame)                          # összesen ≤ 30 % (UPS 5 V)
+    scale = led_scale(frame, L['budget'])             # összesen ≤ 30 % (UPS 5 V); alvás közben ≤ 8 %
     if strip.brightness != scale:
         strip.brightness = scale
     strip[0:RING_N + C_N] = frame
@@ -197,7 +245,7 @@ buf = b''
 
 def read_port():
     global buf
-    if not port.in_waiting:
+    if not port or not port.in_waiting:
         return
     buf += port.read(port.in_waiting)
     while b'\n' in buf:
@@ -207,10 +255,16 @@ def read_port():
         except ValueError:
             continue
         c = m.get('cmd')
-        if c == 'leds':
+        if c == 'face':
+            face.set(m)
+        elif c == 'talk':
+            face.talk(m.get('v', 0), time.monotonic())
+        elif c == 'leds':
             L.update(hue=m.get('hue', L['hue']), bright=m.get('bright', L['bright']), mode=m.get('mode', L['mode']))
+            L['budget'] = max(0.0, min(LED_BUDGET, float(m.get('budget', LED_BUDGET))))   # a 30 % fölé soha
         elif c == 'beat':
             L['hue'] = (L['hue'] + 47) % 360; L['flash'] = 1.0
+            face.beat()
         elif c == 'camled':
             L['camled'] = bool(m.get('on'))
         elif c == 'haptic' and motor:
@@ -225,12 +279,48 @@ def read_touch(now):
     return touch_dig.rose
 
 
+# ------------------------------------------------------------------ arc: a faces.Face képkockája -> alakzatok
+F = {'next': 0.0}
+
+
+def rgb(c):
+    return (c[0] << 16) | (c[1] << 8) | c[2]
+
+
+def draw_face(now):
+    if not face_slots or now < F['next']:
+        return
+    F['next'] = now + FACE_FRAME
+    fr = face.frame(now)
+    for kind in ('polys', 'bars', 'dots', 'texts'):
+        for slot, spec in zip(face_slots[kind], fr[kind]):
+            if spec == slot[3]:
+                continue                              # változatlan: nem rajzolódik újra
+            slot[3] = spec
+            g, shape, pal = slot[0], slot[1], slot[2]
+            if spec is None:
+                g.hidden = True
+                continue
+            if kind == 'texts':
+                text, y, scale, col = spec
+                shape.text, shape.scale, shape.color = text, scale, rgb(col)
+                shape.anchored_position = (120, y)
+            elif kind == 'dots':
+                x, y, r, col = spec
+                shape.x, shape.y, shape.radius = x, y, r
+                pal[0] = rgb(col)
+            else:
+                pts, col = spec
+                shape.points = pts
+                pal[0] = rgb(col)
+            g.hidden = False
+
+
 # ------------------------------------------------------------------ főciklus (~100 Hz)
 if imu:                                               # a konzolra: álló kockánál ≈ (0, 1, 0) – lásd reflex.IMU_AXES
     print('cube_g', tuple(round(v / 9.81, 2) + 0.0 for v in to_cube(imu.acceleration)))   # +0.0: ne írjon -0.0-t
-send({'ev': 'hello', 'fw': FW, 'imu': imu is not None, 'leds': strip is not None, 'haptic': motor is not None,
-      'touch': TOUCH_KIND,
-      'upside': IMU['upside']})
+send({'ev': 'hello', 'fw': FW, 'imu': imu is not None, 'leds': strip is not None, 'display': display is not None,
+      'haptic': motor is not None, 'touch': TOUCH_KIND, 'upside': IMU['upside']})
 last_hello = time.monotonic()
 while True:
     now = time.monotonic()
@@ -245,6 +335,7 @@ while True:
     if motor:
         motor.duty_cycle = duty_u16(buzzer.duty(now))
     draw_leds(now)
+    draw_face(now)
     if now - last_hello > 30:                         # életjel: ha a Pi újraindul, újra megkapja az állapotot (a tájolást is)
         send({'ev': 'hello', 'fw': FW, 'upside': IMU['upside']}); last_hello = now
     time.sleep(0.01)

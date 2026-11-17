@@ -13,25 +13,26 @@
 ┌──────────────── Raspberry Pi Zero 2 W  (Python, firmware/pi/ckocka) ───────────────┐
 │ brain.py   viselkedés: bekapcsolás, viccek, személyiségek, party, Ne zavarj,       │
 │            fordítás (adatvédelem), leskelődés, felvidítás, hívás                   │
-│ face.py    az arc a kerek kijelzőn (240×240) – 10 üzemmód                          │
+│ face.py    az arc állapota (a XIAO rajzolja); PC-n PNG-előnézet – 11 üzemmód       │
 │ synth.py   hangeffektek és party-zene kódból                                        │
 │ talk.py    beszélgetés: ébresztőszó/érintés → Whisper → Claude → Piper (+claude.py)│
 │ api.py     WebSocket az apphoz (opcionális párosító kód)                           │
-│ hal.py     hardver-absztrakció ─┬─ hw_real.py: GC9A01 (mipi-dbi), ReSpeaker (mono), │
-│                                 │              OV5647 + OpenCV (helyben), XIAO(UART)│
-│                                 │  power.py:   UPS – takarékmód, leállás 5 % alatt  │
+│ hal.py     hardver-absztrakció ─┬─ hw_real.py: ReSpeaker (ALSA, mono), XIAO (USB),  │
+│                                 │              OV5647 + OpenCV (helyben)            │
+│                                 │  power.py:   UPS – alvás töltéskor, leállás 5 %   │
 │                                 └─ hw_sim.py:  PC – PNG-képek, napló               │
 │            (beszélgetés ugyanígy: talk_real.py a Pi-n, talk_sim.py PC-n/tesztben)  │
 └──────────────────────────────────────┬──────────────────────────────────────────────┘
-                                       │ UART (GPIO14/15 ↔ D7/D6), soronként egy JSON
+                                       │ USB (OTG), soronként egy JSON – az arcról csak az állapot
 ┌────────────── Seeed XIAO RP2040  (CircuitPython, firmware/xiao/code.py) ───────────┐
-│ NeoDriver: Ring 24 + C-szalag · 4 gomb · érintés (touchio) · LSM6DS3 IMU (dobás,    │
-│ rázás, fordítás felismerése) · rezgőmotor (PWM) · kamera-jelzőfény                  │
+│ GC9A01 kijelző: az arc animációja (faces.py, vektoros) · NeoDriver: Ring 24 + C     │
+│ · 4 gomb · érintés (touchio) · LSM6DS3 IMU (dobás, rázás, fordítás) · rezgőmotor    │
 └─────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-**Miért két processzor?** A Pi Linuxot futtat: jó a hanghoz, a kijelzőhöz és a kamerához, de nem valós idejű.
-A XIAO ezredmásodperc pontossággal figyeli a gombokat és a mozgásérzékelőt, és hajtja a LED-eket – akkor is, ha a Pi épp dolgozik.
+**Miért két processzor?** A Pi Linuxot futtat: jó a hanghoz, a beszélgetéshez és a kamerához, de nem valós idejű.
+A XIAO ezredmásodperc pontossággal figyeli a gombokat és a mozgásérzékelőt, hajtja a LED-eket és **rajzolja az arcot** –
+akkor is, ha a Pi épp dolgozik. (A kijelző a Pi tüskesoráról nem érhető el, ezért került a XIAO-ra.)
 
 **Közös protokoll:** az app, a webes szimulátor és a Pi ugyanazokat az üzeneteket használja ([protocol.py](pi/ckocka/protocol.py)).
 A szimulátor „Protokoll” paneljén látható üzenetek ugyanígy mennének a valódi kockának.
@@ -101,17 +102,17 @@ Saját „Hey C” ébresztőszó az openWakeWord tanító jegyzetfüzetével k�
 
 ## Telepítés a Raspberry Pi-re
 
-1. Raspberry Pi OS (Bookworm, 64 bit) a microSD-re. (Az SPI-t, az I2C-t, a kijelzőt, a UPS óráját és a hangpanelt az
+1. Raspberry Pi OS (Bookworm, 64 bit) a microSD-re. (Az I2C-t, a UPS óráját és a hangpanelt az
    `install.sh` kapcsolja be a `config.txt`-ben, a `# ckocka-… begin/end` jelölt blokkokban; a régi fájl: `config.txt.ckocka.bak`.)
 2. A ReSpeaker 2-Mics Pi HAT a Pi tüskesorára, a hangszóró (1 db, mono) a JST hangszórókimenetre (lásd „Hangpanel”).
 3. A repó gyökeréből: `sudo sh firmware/pi/install.sh` – telepít (a hangpanel meghajtóját is; a beszélgetéshez: venv
    `anthropic`, `faster-whisper`, `openwakeword` csomagokkal, a Piper programja és egy angol hang), és szolgáltatásként
-   elindítja (`journalctl -u ckocka -f`). Ha a hangpanel, a kijelző vagy az óra beállítása most került fel: `sudo reboot`.
-   Utána a valódi hardver ellenőrzése (a szolgáltatás leállítása után, `cd /opt/ckocka`):
-   `python3 -m ckocka.diag spi-leds` (kijelző és a ReSpeaker LED-jei, lásd „Kijelző”) és `python3 -m ckocka.diag power` (UPS).
+   elindítja (`journalctl -u ckocka -f`). Ha a hangpanel vagy az óra beállítása most került fel: `sudo reboot`.
+   Utána a UPS ellenőrzése (a szolgáltatás leállítása után): `cd /opt/ckocka && python3 -m ckocka.diag power`.
 4. Beszélgetéshez a kulcs: `sudo nano /etc/ckocka.env` → `ANTHROPIC_API_KEY=...`, majd `sudo systemctl restart ckocka`.
-5. XIAO: CircuitPython 9.x, majd `circup install adafruit_lsm6ds adafruit_seesaw adafruit_pixelbuf adafruit_debouncer adafruit_ticks`,
-   és a `firmware/xiao/boot.py` + `code.py` + `reflex.py` a CIRCUITPY meghajtóra.
+5. XIAO: CircuitPython 9.x, majd `circup install adafruit_gc9a01a adafruit_display_text adafruit_lsm6ds adafruit_seesaw
+   adafruit_pixelbuf adafruit_debouncer adafruit_ticks`, és a `firmware/xiao/boot.py` + `code.py` + `reflex.py` + `faces.py`
+   a CIRCUITPY meghajtóra. A XIAO a Pi USB-portjára megy (OTG kábel).
 
 ## Hangpanel: Seeed ReSpeaker 2-Mics Pi HAT
 
@@ -136,18 +137,22 @@ Két változata van, a szoftver **mindkettőt** kezeli (a kodeket a `/proc/asoun
   lefelé a beszélgetés ettől függetlenül is eldobja a mikrofon hangját.
 - **Próba:** `aplay -l` (látszik-e a `seeed2micvoicec`), `speaker-test -c 2 -t wav`, `arecord -d 3 -f S16_LE -r 16000 -c 1 proba.wav && aplay proba.wav`.
 
-## Kijelző: GC9A01 a mipi-dbi-spi meghajtóval
+## Kijelző és arc: a XIAO rajzolja
 
-- A gyári `gc9a01` overlay **nem használható**: a háttérfényt a GPIO18-ra tenné, ami a ReSpeaker I2S órajele (BCLK).
-  Helyette a Raspberry Pi kernel általános `mipi-dbi-spi` overlaya fut, szabadon választott lábakkal; a panel
-  init-sorozatát a [`ckocka/panel.py`](pi/ckocka/panel.py) írja ki firmware-fájlként (`/lib/firmware/gc9a01.bin`),
-  a Python a kernel framebufferébe (`/dev/fbN`) rajzol. Ha nincs framebuffer, tartalékként közvetlenül spidev-vel hajtja
-  ugyanezeken a lábakon; ha az sem megy, a kocka kijelző nélkül indul el (figyelmeztetés a naplóban).
-- **A ReSpeaker 3 APA102 LED-je chip select nélkül ugyanazon az SPI0-n van**, ezért a kijelző forgalmától villoghatnak.
-  A kocka ezeket a LED-eket nem használja (a 24-es fénygyűrű kiváltja őket). Ellenőrzés a valódi panelen:
-  `python3 -m ckocka.diag spi-leds` – fekete–fehér csíkokat és zajt küld a kijelzőre (ezek a legrosszabb esetek az
-  APA102-nek), és megkérdezi, villogtak-e. Ha igen: a stacking tüskesorban a ReSpeaker felé menő **19-es és 23-as
-  tüskét** kell leválasztani (forrasztás nélkül).
+- A GC9A01 (240×240) a XIAO SPI0-ján van: **D8 = SCK, D10 = MOSI, D9 = DC**. A CS a GND-n, a RST és a háttérfény
+  3,3 V-on, ezért nincs reset-láb: a `fourwire.FourWire` reset és chip select nélkül is indul (ilyenkor csak szoftveres
+  reset van), és mivel az `adafruit_gc9a01a` init-sora nem küld szoftveres resetet, a `code.py` maga küldi (0x01, 150 ms).
+  A háttérfény így mindig világít – alváskor a képernyő fekete.
+- **Az arcot a XIAO rajzolja** ([`firmware/xiao/faces.py`](xiao/faces.py)): a Pi csak az állapotot küldi
+  (`face`: üzemmód, száj, személyiség, tekintet, felirat…; beszéd közben `talk`: a hang hangereje → a száj), csak ha
+  változott. Pislogás, a gondolkodás pontjai, a szédült spirál, a party-hangszínkép a XIAO-n animálódik.
+- **Memória:** nincs képkocka-puffer – az arc ~30 vektoros alakzat (`vectorio` sokszögek és körök) + 2 felirat, és a
+  `displayio` csak a megváltozott részeket rajzolja újra (25 kép/s).
+- Az arcok a DESIGN.md szerint: készenlét (két szem és mosoly), hallgat (nagy, figyelő szemek), gondolkodik (felfelé
+  néz, keringő pontok), beszél (a száj a hanggal nyílik), eldobták (spirál szemek), leskelődik (résnyire nyitott szemek),
+  személyiségek (Chill: félig lehunyt, Hype: tágra nyílt, Sarcastic: hunyorítás + felhúzott szemöldök, Pro: visszafogott).
+- A PC-s szimulátor a Pi oldali `face.py`-jal ugyanezt PNG-be rajzolja; a XIAO rajzát a `tests/test_face_xiao.py`
+  rajzolja ki (`CKOCKA_FACE_PNG=out` mellett a képeket el is menti).
 
 ## Táp: Pi-Ener-lite UPS
 
@@ -156,8 +161,10 @@ Két változata van, a szoftver **mindkettőt** kezeli (a kodeket a `/proc/asoun
 - **Biztonságos leállás** ([`ckocka/power.py`](pi/ckocka/power.py)): külső táp nélkül 5 % alatt (3 egymás utáni mérésen
   át, 10 másodpercenként) a kijelzőn „LOW BATTERY”, a LED-ek kialszanak, majd `shutdown -h now`. A jogot az install.sh
   adja (`/etc/sudoers.d/ckocka`, csak ez az egy parancs). 15 % alatt figyelmeztet (napló + `battery` esemény az appnak).
-- **Takarékmód töltés közben:** a töltőáram fix 1 A, ami melegít; ilyenkor fél LED-fényerő, halványabb kijelző és
-  10 kép/s. Az értékek egy helyen vannak (`power.ECO`), a hőkezelési vizsgálat pontosítja őket.
+- **Alvás töltés közben** (HOKEZELES.md 7.5): a töltőáram fix 1 A, a töltő vesztesége a cella alatt keletkezik. Külső
+  tápon (GPIO4 alacsony) a kocka legfeljebb **15 percig** van ébren (bedugás vagy ébresztés után), utána elalszik, ha épp
+  nem beszél: az arc kialszik, a LED-ek összesen **≤ 8 %**, a kamera szünetel. Az ébresztőszó, gomb, érintés, mozdulat
+  vagy az app felébreszti (újabb 15 percre), kihúzáskor rögtön felébred. Az értékek: `power.CHARGE_AWAKE`, `power.SLEEP_LED_BUDGET`.
 - A CW2015 itt cellaprofil nélkül, a saját alapprofiljával becsül – az első élesztésnél a `diag power` kiírt
   cellafeszültségével össze kell vetni.
 
@@ -165,18 +172,17 @@ Két változata van, a szoftver **mindkettőt** kezeli (a kodeket a `/proc/asoun
 
 | Eszköz | Hova | Megjegyzés |
 |---|---|---|
-| GC9A01 kijelző | Pi SPI0: MOSI GPIO10 (tüske 19), SCLK GPIO11 (23), CS GPIO8 = CE0 (24), DC GPIO25 (22), RST GPIO27 (13), háttérfény GPIO22 (vagy fixen 3,3 V) | stacking tüskesoron át (a ReSpeaker elfoglalja a tüskesort). A ReSpeaker APA102 LED-jei is az SPI0-n vannak: `diag spi-leds` (lásd „Kijelző”) |
+| GC9A01 kijelző | XIAO D8 (SCK), D10 (MOSI), D9 (DC); CS → GND, RST és háttérfény (BL) → 3,3 V | lásd „Kijelző és arc” |
 | Pi-Ener-lite UPS | a Pi alá; GPIO4 = külső táp jelzése, I2C: CW2015 0x62, DS1307 0x68 | lásd „Táp”. A DS1307 5 V-os: mérni kell, hogy az I2C-felhúzás 3,3 V-ra megy-e |
 | ReSpeaker 2-Mics Pi HAT | a Pi tüskesorára | I2S: GPIO18–21, I2C: GPIO2/3 (kodek: v2.0 0x18, v1 0x1a); a lap gombja (GPIO17) és Grove-csatlakozói nincsenek használva |
 | Hangszóró (1 db, 8 Ω) | ReSpeaker JST hangszórókimenet (v2.0: J2, 2 tűs, 2,0 mm) | mono; a 3,5 mm-es aljzat külön, a hangszóró attól nem némul el |
 | Kamera | Pi kamera-csatlakozó (22 pólusú) | OV5647 „spy” kamera |
-| XIAO RP2040 | UART: XIAO D6 (TX) → Pi GPIO15 (RXD, tüske 10), XIAO D7 (RX) ← Pi GPIO14 (TXD, tüske 8); 5 V → XIAO 5V láb, GND – a GPIO-elosztó panel második tüskesoráról | 115200 8N1, 3,3 V-os jelszint; a Pi-n a mini UART (`/dev/serial0`, `enable_uart=1`, soros konzol kikapcsolva – install.sh). A lábak egy helyen: `code.py`, `PINS`. A XIAO USB-je csak hibakereséshez kell (konzol) |
+| XIAO RP2040 | Pi USB (OTG kábel, USB CDC) | táp is innen; a Pi a XIAO „data” soros portját nyitja (`/dev/serial/by-id/*if02*`). **Mind a 11 láb foglalt**, a kiosztás egy helyen: `code.py`, `PINS` |
 | Adafruit NeoDriver (I2C → NeoPixel, seesaw) | Qwiic-lánc: XIAO → IMU → NeoDriver; I2C-cím alapból 0x60 (`NEODRIVER_ADDR`, a valódi panelen ellenőrizni: a XIAO konzolja szól, ha nem találja) | a jelszintet maga illeszti (nincs 74AHCT125); a LED-ek 5 V-ja a UPS 5 V-járól, közös GND |
-| NeoPixel Ring 24 + C LED-szalag (7 LED) | a NeoDriver kimenetén **egy láncban**: előbb a gyűrű (0–23), utána a C-szalag (24–30) | a szoftver a 31 LED-et **összesen legfeljebb 30 %** fényerőre korlátozza (≈ 0,56 A; `reflex.LED_BUDGET`, teszt ellenőrzi), bármit kér a Pi; frissítés 50 Hz |
-| 4 gomb | XIAO D2, D3, D8, D9 → GND | belső felhúzó ellenállás |
-| Érintés: rézfólia-elektróda az érintőbetét alatt | XIAO D10 + **1 MΩ lehúzó ellenállás D10 → GND** (a gombok prototípus-lapján) | `touchio`; induláskor kalibrál (akkor ne érjen hozzá senki), utána lassan követi a hő- és páraváltozást. Lehúzó nélkül a `TouchIn` hibát dob: a firmware nem áll le, a XIAO konzoljára kiírja, mi hiányzik, és digitális bemenetre vált (belső lehúzással, hamis érintés nélkül) – így tartalékként egy AT42QT1010 (aktív magas) is visszadugható ide |
-| Rezgőmotor-modul (ERM + tranzisztor, 3 tűs) | XIAO **D0** (jel, PWM 20 kHz; a D6 az UART TX-e lett), VCC 3V3 (vagy 5 V), GND | `tick` (hallgat) és `buzz` (Ne zavarj) minta, rövid teljes erejű indítással |
-| *(szabad)* | XIAO D1 | a LED-ek NeoDriverre költözésével szabadult fel (a D0 a rezgőmotoré lett) |
+| NeoPixel Ring 24 + C LED-szalag (7 LED) | a NeoDriver kimenetén **egy láncban**: előbb a gyűrű (0–23), utána a C-szalag (24–30) | a szoftver a 31 LED-et **összesen legfeljebb 30 %** fényerőre korlátozza (≈ 0,56 A; `reflex.LED_BUDGET`, teszt ellenőrzi), bármit kér a Pi; töltés közbeni alvásban ≤ 8 %; frissítés 50 Hz |
+| 4 gomb | XIAO D1 (1. – Andor), D2, D3, D6 → GND | belső felhúzó ellenállás |
+| Érintés: rézfólia-elektróda az érintőbetét alatt | XIAO D7 + **1 MΩ lehúzó ellenállás D7 → GND** (a gombok prototípus-lapján) | `touchio`; induláskor kalibrál (akkor ne érjen hozzá senki), utána lassan követi a hő- és páraváltozást. Lehúzó nélkül a `TouchIn` hibát dob: a firmware nem áll le, a XIAO konzoljára kiírja, mi hiányzik, és digitális bemenetre vált (belső lehúzással, hamis érintés nélkül) – így tartalékként egy AT42QT1010 (aktív magas) is visszadugható ide |
+| Rezgőmotor-modul (ERM + tranzisztor, 3 tűs) | XIAO D0 (jel, PWM 20 kHz), VCC 3V3 (vagy 5 V), GND | `tick` (hallgat) és `buzz` (Ne zavarj) minta, rövid teljes erejű indítással |
 | LSM6DS3TR-C | XIAO D4 (SDA), D5 (SCL), 3V3, GND – **Adafruit 4397** kábellel (STEMMA QT → női Dupont; a XIAO-n nincs Qwiic); a lánc első tagja, utána a NeoDriver | ha nincs bekötve, a firmware IMU nélkül fut (konzol: „nincs IMU”). Függőlegesen a szán jobb sínjének külső oldalán: panel X → hátra, Y → fel, Z → jobbra. Az átszámolás a kocka tengelyeire egy helyen van: `firmware/xiao/reflex.py`, `IMU_AXES`. **Első élesztésnél:** álló kockánál a XIAO konzolján `cube_g (0.0, 1.0, 0.0)` körüli értéknek kell megjelennie; ha nem, a panel szitanyomata szerint a táblázatot kell átírni (a teszt ellenőrzi, hogy forgatás maradjon) |
 
 ## Mi nincs benne (még)

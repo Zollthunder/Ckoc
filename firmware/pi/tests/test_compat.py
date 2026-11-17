@@ -1,14 +1,14 @@
-"""A kompatibilitás-ellenőrzés (KOMPATIBILITAS.md, 2026-11-17) firmware-teendőinek tesztjei – hardver nélkül.
-  1. kijelző: mipi-dbi-spi (CE0, DC 25, RST 27, BL 22), APA102-diagnosztika     (ckocka/panel.py, hw_real, diag.py)
-  2. ReSpeaker v2.0 overlay fordítása és beírása                                  (install.sh)
-  3. Pi-Ener-lite: GPIO4, CW2015, biztonságos leállás, takarékmód töltés közben  (ckocka/power.py, brain.py)
-  4. XIAO: IMU a D4 (SDA) / D5 (SCL) lábon, touchio-hiba barátságosan             (firmware/xiao/code.py)
-  5. WS2812: összesen ≤ 30 % fényerő                                              (firmware/xiao/reflex.py, code.py)
-  A. a XIAO UART-on a Pi-hez (GPIO14/15, /dev/serial0) – szimulált soros vonallal
-  B. a 31 LED egy láncban az Adafruit NeoDriveren (seesaw, I2C 0x60)
+"""A kompatibilitás-ellenőrzés (KOMPATIBILITAS.md, 2026-11-17) és az azt követő döntések tesztjei – hardver nélkül.
+  * ReSpeaker v2.0 overlay fordítása és beírása                                   (install.sh)
+  * Pi-Ener-lite: GPIO4, CW2015, biztonságos leállás, alvás töltés közben         (ckocka/power.py, brain.py)
+  * XIAO: lábtábla (mind a 11 láb), touchio-hiba és hiányzó IMU barátságosan       (firmware/xiao/code.py)
+  * WS2812: összesen ≤ 30 % fényerő, alvás közben ≤ 8 %; a 31 LED egy láncban a NeoDriveren
+  * a XIAO USB-n (CDC) a Pi-hez – szimulált soros vonallal
+  (A kijelző és az arc tesztjei: test_face_xiao.py)
 Futtatás (a firmware/pi mappából):  python -m unittest discover -s tests -v
 """
 import asyncio, os, shutil, subprocess, sys, tempfile, unittest
+import time as _real_time
 import unittest.mock
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -16,7 +16,7 @@ sys.path.insert(0, HERE)
 os.environ.setdefault('CKOCKA_HOME', tempfile.mkdtemp())
 
 from test_hardware import FakeXiao, read, reflex, PI, XIAO as XIAO_DIR   # noqa: E402
-from ckocka import diag, hw_real, hw_sim, panel, power         # noqa: E402
+from ckocka import diag, hw_real, hw_sim, power                # noqa: E402
 from ckocka.brain import Cube                                  # noqa: E402
 
 VOICE = os.path.normpath(os.path.join(HERE, '..', '..', '..', 'web', 'voice'))
@@ -80,152 +80,14 @@ class XiaoRobustnessTest(unittest.TestCase):
         touch = lambda t: 2400 if 1.0 <= t < 1.4 else 1000
         fx = FakeXiao(touch, lambda fx: None, pulldown=False, steps=200).run()
         self.assertIn('1 MΩ', fx.console)
-        self.assertIn('D10', fx.console)
+        self.assertIn('D7', fx.console)
         self.assertEqual(fx.out[0]['touch'], 'digital')
         self.assertEqual(fx.step, 200)
-        self.assertEqual(fx.pins['D10'].pull, 2, 'belső lehúzás: lebegő bemenet ne adjon hamis érintést')
+        self.assertEqual(fx.pins['D7'].pull, 2, 'belső lehúzás: lebegő bemenet ne adjon hamis érintést')
 
     def test_touchio_ok_no_warning(self):
         fx = FakeXiao(lambda t: 1000, lambda fx: None, steps=20).run()
         self.assertNotIn('FIGYELEM: az érintés', fx.console)
-
-
-# ============================================================================ 1. kijelző: mipi-dbi-spi
-class PanelTest(unittest.TestCase):
-    def test_firmware_roundtrip(self):
-        blob = panel.firmware_bin()
-        self.assertEqual(blob[:16], b'MIPI DBI' + bytes(7) + b'\x01')
-        cmds = panel.parse_firmware(blob)
-        self.assertEqual(cmds[:len(panel.GC9A01_INIT)], [(c, list(d)) for c, d in panel.GC9A01_INIT])
-        self.assertIn((0x3A, [0x05]), cmds)                     # 16 bit/pixel (RGB565)
-        self.assertEqual(cmds[-4:], [(0x11, []), ('delay', 120), (0x29, []), ('delay', 20)])
-
-    def test_firmware_rejects_garbage(self):
-        with self.assertRaises(ValueError):
-            panel.parse_firmware(b'not a firmware')
-        with self.assertRaises(ValueError):
-            panel.firmware_bin([(0x100, [])], [])
-
-    def test_config_pins(self):
-        lines = panel.config_lines()
-        text = '\n'.join(lines)
-        self.assertIn('dtoverlay=mipi-dbi-spi,spi0-0,', text)     # SPI0 CE0 = GPIO8
-        self.assertIn('dc-gpio=25', text)
-        self.assertIn('reset-gpio=27', text)
-        self.assertIn('backlight-gpio=22', text)
-        self.assertIn('compatible=gc9a01\\0panel-mipi-dbi-spi', text)
-        self.assertNotIn('18', text.replace('width', '').replace('height', ''))   # GPIO18 = I2S BCLK: tilos
-        self.assertNotIn('dtoverlay=gc9a01', text)
-        self.assertNotIn('backlight', '\n'.join(panel.config_lines(backlight=False)))
-
-    def test_cli_writes_firmware(self):
-        with tempfile.TemporaryDirectory() as d:
-            p = os.path.join(d, 'gc9a01.bin')
-            subprocess.run([sys.executable, os.path.join(PI, 'ckocka', 'panel.py'), '--firmware', p], check=True)
-            with open(p, 'rb') as f:
-                self.assertEqual(f.read(), panel.firmware_bin())
-
-    def fake_sys(self, d, name='panel-mipi-dbidrmfb', bpp=16, max_bl=1):
-        os.makedirs(os.path.join(d, 'graphics', 'fb0'))
-        os.makedirs(os.path.join(d, 'graphics', 'fb1'))
-        for fb, n in (('fb0', 'vc4drmfb'), ('fb1', name)):
-            with open(os.path.join(d, 'graphics', fb, 'name'), 'w') as f:
-                f.write(n + '\n')
-            with open(os.path.join(d, 'graphics', fb, 'bits_per_pixel'), 'w') as f:
-                f.write('%d\n' % bpp)
-        bl = os.path.join(d, 'backlight', 'backlight_gpio')
-        os.makedirs(bl)
-        for k, v in (('max_brightness', max_bl), ('brightness', 0)):
-            with open(os.path.join(bl, k), 'w') as f:
-                f.write(str(v))
-        return bl
-
-    def test_fb_display(self):
-        from PIL import Image
-        with tempfile.TemporaryDirectory() as d:
-            bl = self.fake_sys(d)
-            dev, sysp = hw_real.FbDisplay.find(os.path.join(d, 'graphics'))
-            self.assertEqual((dev, os.path.basename(sysp)), ('/dev/fb1', 'fb1'))   # a HDMI fb0-ját átugorja
-            fbfile = os.path.join(d, 'fb1.raw')
-            open(fbfile, 'wb').close()
-            disp = hw_real.FbDisplay(fbfile, sysp, os.path.join(d, 'backlight'))
-            img = Image.new('RGB', (240, 240), (255, 0, 0))
-            disp.show(img)
-            disp.show(img)                                       # mindig az elejére ír
-            disp.fb.close()
-            with open(fbfile, 'rb') as f:
-                data = f.read()
-            self.assertEqual(len(data), 240 * 240 * 2)
-            self.assertEqual(data[:2], b'\x00\xf8')              # piros RGB565 = 0xF800, kis végű a memóriában
-            for v, want in ((0.6, '1'), (0.0, '0')):             # gpio-backlight: csak be/ki
-                disp.brightness(v)
-                with open(os.path.join(bl, 'brightness')) as f:
-                    self.assertEqual(f.read(), want)
-
-    def test_fb_display_rejects_32bit(self):
-        with tempfile.TemporaryDirectory() as d:
-            self.fake_sys(d, bpp=32)
-            _, sysp = hw_real.FbDisplay.find(os.path.join(d, 'graphics'))
-            with self.assertRaises(RuntimeError):
-                hw_real.FbDisplay(os.path.join(d, 'nope'), sysp)
-
-    def test_no_display_still_starts(self):
-        with unittest.mock.patch.object(hw_real.FbDisplay, 'find', return_value=None), \
-                unittest.mock.patch.object(hw_real, 'GC9A01', side_effect=ImportError('no spidev')), \
-                self.assertLogs('ckocka.hw', 'WARNING'):
-            self.assertIsInstance(hw_real.make_display(), hw_real.NullDisplay)
-
-    def test_spidev_fallback_uses_new_pins(self):
-        import inspect
-        sig = inspect.signature(hw_real.GC9A01.__init__).parameters
-        self.assertEqual((sig['dc'].default, sig['rst'].default, sig['bl'].default), (25, 27, 22))
-
-
-# ============================================================================ 1. APA102-diagnosztika
-class FakeDisplay:
-    def __init__(self):
-        self.frames = []
-
-    def show(self, img):
-        self.frames.append(img)
-
-
-class Apa102DiagTest(unittest.TestCase):
-    def test_decoder(self):
-        self.assertEqual(diag.apa102_decode(bytes(100)), [None] * 3)
-        stream = bytes(4) + bytes([0xFF, 1, 2, 3]) * 3
-        self.assertEqual(diag.apa102_decode(stream), [(31, 3, 2, 1)] * 3)
-        self.assertEqual(diag.apa102_decode(bytes([0xFF] * 50)), [None] * 3)   # kezdőkeret nélkül nem vált
-
-    def test_patterns_provoke_the_leds(self):
-        # a teszt képei a kijelző SPI-forgalmában (RGB565, nagy végű a vezetéken) APA102-kereteket hoznak létre:
-        # ha a LED-ek a buszon vannak, a diagnosztika biztosan „megszólítja” őket
-        lit = [diag.apa102_decode(hw_real.rgb565(img)) for img in diag.patterns()]
-        self.assertTrue(all(l is not None for l in lit[0]), 'a fekete–fehér csíkok nem gyújtják meg a LED-eket')
-
-    def test_flow(self):
-        for ans, code in (('i', 1), ('n', 0), ('', 2), ('Igen', 1)):
-            with self.subTest(ans=ans):
-                disp, said, blanked = FakeDisplay(), [], []
-                r = diag.spi_leds(disp, seconds=0.05, ask=lambda q: ans, out=said.append,
-                                  blank=lambda: blanked.append(1))
-                self.assertEqual(r, code)
-                self.assertTrue(disp.frames)
-                self.assertEqual(blanked, [1])
-                if code == 1:
-                    self.assertIn('19', said[-1])
-                    self.assertIn('23', said[-1])
-
-    def test_firmware_does_not_drive_respeaker_leds(self):
-        # a ReSpeaker APA102 LED-jei a spidev0.1-en: csak a diagnosztika nyúlhat hozzájuk (kikapcsolásra)
-        for f in os.listdir(os.path.join(PI, 'ckocka')):
-            if f.endswith('.py') and f != 'diag.py':
-                src = read(PI, 'ckocka', f).replace(' ', '')
-                if 'SpiDev(' in src:                                 # csak a kijelző tartaléka: spidev0.0 (CE0)
-                    self.assertEqual(f, 'hw_real.py')
-                    self.assertIn('spi_dev=0', src)
-                for bad in ('open(0,1)', 'spi_dev=1', 'device=1'):
-                    self.assertNotIn(bad, src, f)
 
 
 # ============================================================================ 3. Pi-Ener-lite
@@ -251,9 +113,9 @@ class PowerPolicyTest(unittest.TestCase):
         acts = sum(self.feed([(False, 14), (False, 13), (True, 13), (False, 12)]), [])
         self.assertEqual(acts.count('warn'), 2)
 
-    def test_eco_while_charging(self):
-        acts = self.feed([(False, 50), (True, 50), (True, 80), (True, 99.5), (True, 60), (False, 60)])
-        self.assertEqual(acts, [[], ['eco_on'], [], ['eco_off'], ['eco_on'], ['eco_off']])
+    def test_charging_follows_ext_power(self):
+        acts = self.feed([(False, 50), (True, 50), (True, 100), (None, 100), (False, 99)])
+        self.assertEqual(acts, [[], ['charge_on'], [], [], ['charge_off']])
 
     def test_constants(self):
         self.assertEqual((power.SHUTDOWN_SOC, power.EXT_POWER_GPIO, power.CW2015_ADDR), (5.0, 4, 0x62))
@@ -299,8 +161,8 @@ class FakeCube:
     def __init__(self):
         self.calls = []
 
-    def set_eco(self, on):
-        self.calls.append(('eco', on))
+    def set_charging(self, on):
+        self.calls.append(('charge', on))
 
     def emit(self, type_, **d):
         self.calls.append((type_, d))
@@ -320,17 +182,13 @@ class PowerGuardTest(unittest.TestCase):
             asyncio.run(t())
         self.assertEqual(shut, [1])
         kinds = [c[0] for c in cube.calls]
-        self.assertEqual(kinds, ['eco', 'eco', 'battery', 'battery', 'bye'])
+        self.assertEqual(kinds, ['charge', 'charge', 'battery', 'battery', 'bye'])
         self.assertTrue(cube.calls[3][1]['shutdown'])
 
-    def test_cube_eco_and_goodbye(self):
+    def test_cube_goodbye(self):
         hw = hw_sim.make(VOICE, None, speed=0.02)
         cube = Cube(hw, settings=False)
         cube.s.on, cube.s.bright = True, 0.8
-        cube.set_eco(True)
-        self.assertEqual(hw.mcu.sent[-1]['bright'], 0.4)
-        cube.set_eco(False)
-        self.assertEqual(hw.mcu.sent[-1]['bright'], 0.8)
         cube.battery_shutdown()
         self.assertEqual((cube.face.text, cube.s.on, hw.mcu.sent[-1]['mode']), ('LOW BATTERY', False, 'off'))
 
@@ -350,10 +208,9 @@ class InstallCompatTest(unittest.TestCase):
         self.assertIn('[ -f "$CONFIG" ] || CONFIG=/boot/config.txt', self.sh)    # /boot/firmware/overlays/ az alap
         self.assertIn('echo "dtoverlay=$OVL" >> "$CONFIG"', self.sh)
 
-    def test_display_ups_and_shutdown_setup(self):
-        for want in ("sed -i '/^dtoverlay=gc9a01/d'", 'panel.py" --firmware /lib/firmware/gc9a01.bin',
-                     'panel.py" --config', 'dtparam=i2c_arm=on', 'dtoverlay=i2c-rtc,ds1307',
-                     '/usr/sbin/shutdown -h now', 'visudo -cf', 'python3-smbus'):
+    def test_ups_and_shutdown_setup(self):
+        for want in ('dtparam=i2c_arm=on', 'dtoverlay=i2c-rtc,ds1307', '/usr/sbin/shutdown -h now', 'visudo -cf',
+                     'python3-smbus', 'usermod -aG dialout pi'):
             self.assertIn(want, self.sh)
         self.assertEqual(power.SHUTDOWN_CMD[-3:], ['/usr/sbin/shutdown', '-h', 'now'])   # pont azt, amit a sudoers enged
 
@@ -376,28 +233,67 @@ class InstallCompatTest(unittest.TestCase):
             self.assertIn('# ckocka-display begin\n[all]\ndtparam=spi=on\n# ckocka-display end\n', text)
             self.assertTrue(text.startswith('[pi4]\narm_boost=1\n[all]\ndtparam=audio=on\n'))
             self.assertTrue(os.path.exists(cfg + '.ckocka.bak'))
+            # egy korábbi telepítés kijelző-blokkja kikerül (a kijelzőt már a XIAO hajtja)
+            start = self.sh.index('config_unblock() {')
+            unblock = self.sh[start:self.sh.index('\n}\n', start) + 3]
+            out = subprocess.run(['sh', '-c', unblock + 'REBOOT=0\nconfig_unblock display\nconfig_unblock uart\necho "R=$REBOOT"\n'],
+                                 env=env, capture_output=True, text=True, check=True).stdout
+            self.assertEqual(out.strip(), 'R=1')
+            with open(cfg) as f:
+                self.assertEqual(f.read(), '[pi4]\narm_boost=1\n[all]\ndtparam=audio=on\n')
+
+    def test_no_pi_display_or_uart_left(self):
+        code = ' '.join(l for l in self.sh.splitlines() if not l.lstrip().startswith('#'))   # megjegyzések nélkül
+        for gone in ('mipi-dbi-spi', 'panel.py', 'enable_uart', 'spidev', 'gc9a01'):
+            self.assertNotIn(gone, code)
+        self.assertFalse(os.path.exists(os.path.join(PI, 'ckocka', 'panel.py')))
+        self.assertNotIn('Display', read(PI, 'ckocka', 'hw_real.py'))
 
 
-# ============================================================================ A. XIAO <-> Pi soros vonal (UART)
-class XiaoUartTest(unittest.TestCase):
-    def test_uart_pins_and_baud(self):
+# ============================================================================ XIAO lábtábla és a USB-s soros vonal
+class XiaoPinsTest(unittest.TestCase):
+    WANT = {'motor': 'D0', 'buttons': ('D1', 'D2', 'D3', 'D6'), 'touch': 'D7', 'sda': 'D4', 'scl': 'D5',
+            'lcd_sck': 'D8', 'lcd_mosi': 'D10', 'lcd_dc': 'D9'}
+
+    def test_pin_table_as_decided(self):
         fx = FakeXiao(lambda t: 1000, lambda fx: None, steps=5).run()
-        self.assertEqual(fx.uart_args, ('D6', 'D7', 115200))          # TX = D6 -> Pi GPIO15, RX = D7 <- Pi GPIO14
-        self.assertEqual(hw_real.XIAO_BAUD, 115200)
+        self.assertEqual(fx.pwm.pin, 'D0')
+        self.assertEqual(sorted(p for p in fx.pins if p != 'D7'), ['D1', 'D2', 'D3', 'D6'])   # gombok
+        self.assertIn('D7', FakeXiao(lambda t: 1000, lambda fx: None, pulldown=False, steps=5).run().pins)  # érintés
+        self.assertEqual(fx.i2c_args, ('D5', 'D4'))
+        self.assertEqual((fx.lcd['clock'], fx.lcd['MOSI'], fx.lcd['command']), ('D8', 'D10', 'D9'))
+        used = ['D0', 'D1', 'D2', 'D3', 'D6', 'D7', 'D4', 'D5', 'D8', 'D10', 'D9']
+        self.assertEqual(sorted(used), sorted('D%d' % i for i in range(11)))   # mind a 11 foglalt, egyik sem kétszer
 
-    def test_pin_table_no_double_use(self):
-        fx = FakeXiao(lambda t: 1000, lambda fx: None, steps=5).run()
-        used = list(fx.pins) + [fx.pwm.pin] + list(fx.uart_args[:2]) + list(fx.i2c_args)
-        self.assertEqual(len(used), len(set(used)), used)
-        self.assertNotIn('D1', used)                                   # szabad
+    def test_pins_only_in_table(self):
         code = read(XIAO_DIR, 'code.py')
-        self.assertIn('# szabad: board.D1', code)
-        for line in code.splitlines():                                 # lábak csak a PINS táblában
+        for line in code.splitlines():
             if 'board.D' in line and not line.lstrip().startswith('#'):
                 self.assertTrue(line.startswith("    '"), line)
 
-    def test_commands_over_simulated_serial(self):
-        # Pi -> XIAO: a hw_real.SerialMcu.send bájtjai mennek a XIAO UART-jára; XIAO -> Pi: a XIAO kimenete a Pi-hez
+    def test_buttons_in_order(self):
+        # a 4. gomb (D6) lenyomása 'button' 4-et küld
+        fx = FakeXiao(lambda t: 1000, lambda fx: None, steps=60)
+        mods = fx.modules
+        def modules():
+            m = mods()
+            orig = m['adafruit_debouncer'].Debouncer
+
+            class D(orig):
+                def update(self):
+                    if self.io.pin != 'D6':
+                        return super().update()
+                    v = not (0.4 < fx.t < 0.5)                         # a 4. gomb egyszer lenyomva
+                    self.rose, self.fell = (self.state is False and v), (self.state is True and not v)
+                    self.state = v
+            m['adafruit_debouncer'] = type(m['adafruit_debouncer'])(Debouncer=D)
+            return m
+        fx.modules = modules
+        fx.run()
+        self.assertEqual([e['id'] for e in fx.out if e['ev'] == 'button'], [4])
+
+    def test_usb_port_and_commands(self):
+        # Pi -> XIAO: a hw_real.SerialMcu.send bájtjai mennek a XIAO USB-s data portjára
         sent = []
         mcu = hw_real.SerialMcu.__new__(hw_real.SerialMcu)
         mcu.ser = type('Ser', (), {'write': lambda self, b: sent.append(b)})()
@@ -407,9 +303,10 @@ class XiaoUartTest(unittest.TestCase):
             if fx.step == 20:
                 fx.inbox += b''.join(sent)
         fx = FakeXiao(lambda t: 1000, script, steps=60).run()
-        self.assertTrue(any(d > 0 for _, d in fx.duty_log), 'a soros parancs nem ért át')
+        self.assertTrue(any(d > 0 for _, d in fx.duty_log), 'a parancs nem ért át')
         self.assertTrue(fx.wire.startswith(b'{"ev": "hello"'))
-        self.assertTrue(fx.wire.endswith(b'\n'))
+        self.assertIn('data=True', read(XIAO_DIR, 'boot.py'))
+        self.assertNotIn('UART', read(XIAO_DIR, 'code.py'))
 
 
 class FakeSerialModule:
@@ -429,8 +326,7 @@ class FakeSerialModule:
 
             def read(self, n):
                 if not mod.rx:
-                    import time
-                    time.sleep(0.01)
+                    _real_time.sleep(0.01)       # a valódi time: a háttérszál ne a szimulált XIAO óráját léptesse
                     return b''
                 b = bytes(mod.rx[:n])
                 del mod.rx[:n]
@@ -442,11 +338,13 @@ class FakeSerialModule:
 
 
 class PiSerialTest(unittest.TestCase):
-    def test_default_port_is_serial0(self):
-        with unittest.mock.patch.dict(os.environ, {'CKOCKA_XIAO_PORT': ''}):
-            self.assertEqual(hw_real.xiao_port(), '/dev/serial0')
-        with unittest.mock.patch.dict(os.environ, {'CKOCKA_XIAO_PORT': '/dev/ttyS0'}):
-            self.assertEqual(hw_real.xiao_port(), '/dev/ttyS0')
+    def test_default_port_is_xiao_usb(self):
+        with unittest.mock.patch.dict(os.environ, {'CKOCKA_XIAO_PORT': ''}), \
+                unittest.mock.patch('glob.glob', side_effect=lambda pat: ['/dev/serial/by-id/usb-Seeed_XIAO_RP2040-if02']
+                                    if 'CircuitPython' not in pat and 'XIAO' in pat else []):
+            self.assertEqual(hw_real.find_xiao_port(), '/dev/serial/by-id/usb-Seeed_XIAO_RP2040-if02')
+        with unittest.mock.patch.dict(os.environ, {'CKOCKA_XIAO_PORT': '/dev/ttyACM5'}):
+            self.assertEqual(hw_real.find_xiao_port(), '/dev/ttyACM5')
 
     def test_xiao_events_reach_the_pi(self):
         # a szimulált XIAO valódi kimenete (hello + érintés), darabokra törve és zajjal, a Pi olvasóján át
@@ -455,21 +353,94 @@ class PiSerialTest(unittest.TestCase):
 
         async def t():
             with unittest.mock.patch.dict(sys.modules, {'serial': fake}), \
-                    unittest.mock.patch.dict(os.environ, {'CKOCKA_XIAO_PORT': ''}):
+                    unittest.mock.patch.dict(os.environ, {'CKOCKA_XIAO_PORT': '/dev/ttyACM1'}):
                 mcu = hw_real.SerialMcu()
                 evs = [await asyncio.wait_for(mcu.events.get(), 3) for _ in range(2)]
                 mcu.send({'cmd': 'beat'})
                 return evs
         evs = asyncio.run(t())
-        self.assertEqual(fake.opened[0], ('/dev/serial0', 115200))
+        self.assertEqual(fake.opened[0], ('/dev/ttyACM1', 115200))
         self.assertEqual([e['ev'] for e in evs], ['hello', 'touch'])
-        self.assertEqual(evs[0]['fw'], '1.3')
+        self.assertEqual(evs[0]['fw'], '1.4')
         self.assertEqual(fake.tx, [b'{"cmd":"beat"}\n'])
 
-    def test_install_enables_uart(self):
-        sh = read(PI, 'install.sh')
-        for want in ('enable_uart=1', "console=(serial0|ttyS0|ttyAMA0)", 'serial-getty@ttyS0', 'usermod -aG dialout pi'):
-            self.assertIn(want, sh)
+
+
+# ============================================================================ alvás töltés közben (HOKEZELES.md 7.5)
+class ChargingSleepTest(unittest.TestCase):
+    def make(self):
+        hw = hw_sim.make(VOICE, None, speed=0.02)
+        cube = Cube(hw, settings=False)
+        cube.s.on = True
+        return cube, hw
+
+    def test_sleeps_after_awake_window(self):
+        cube, hw = self.make()
+        with unittest.mock.patch.object(power, 'CHARGE_AWAKE', 0.0):
+            cube.set_charging(True)
+            self.assertFalse(cube.sleeping)
+
+            async def t():
+                task = asyncio.ensure_future(cube.charge_loop(period=0.01))
+                await asyncio.sleep(0.05)
+                task.cancel()
+            asyncio.run(t())
+        self.assertTrue(cube.sleeping)
+        leds = [m for m in hw.mcu.sent if m.get('cmd') == 'leds'][-1]
+        self.assertEqual((leds['mode'], leds['budget']), ('dim', 0.08))     # LED ≤ 8 %
+        self.assertFalse(hw.camera.enabled)                                  # a kamera szünetel
+        self.assertEqual(cube.face_msg()['mode'], 'sleep')                   # az arc kialszik
+
+    def test_awake_window_is_15_minutes(self):
+        cube, hw = self.make()
+        self.assertEqual(power.CHARGE_AWAKE, 15 * 60)
+        cube.set_charging(True)
+        self.assertAlmostEqual(cube._awake_until - __import__('time').monotonic(), 900, delta=2)
+
+    def test_does_not_sleep_while_busy(self):
+        cube, hw = self.make()
+        with unittest.mock.patch.object(power, 'CHARGE_AWAKE', 0.0):
+            cube.set_charging(True)
+            cube.s.busy = True
+
+            async def t():
+                task = asyncio.ensure_future(cube.charge_loop(period=0.01))
+                await asyncio.sleep(0.05)
+                task.cancel()
+            asyncio.run(t())
+        self.assertFalse(cube.sleeping)
+
+    def test_wakes_on_touch_app_or_unplug(self):
+        for how in ('button', 'app', 'unplug'):
+            with self.subTest(how=how):
+                cube, hw = self.make()
+                cube.set_charging(True)
+                cube.go_sleep()
+                self.assertTrue(cube.sleeping)
+
+                async def t():
+                    if how == 'button':
+                        await cube.on_mcu({'ev': 'button', 'id': 2})
+                    elif how == 'app':
+                        await cube.command_json('{"type":"led.color","data":{"hue":120}}')
+                    else:
+                        cube.set_charging(False)
+                asyncio.run(t())
+                self.assertFalse(cube.sleeping)
+                self.assertTrue(hw.camera.enabled)
+                self.assertEqual([m for m in hw.mcu.sent if m.get('cmd') == 'leds'][-1]['budget'], 0.3)
+
+    def test_xiao_caps_led_budget(self):
+        def script(fx):
+            if fx.step == 2:
+                fx.send({'cmd': 'leds', 'hue': 60, 'bright': 1.0, 'mode': 'solid', 'budget': 0.08})
+            if fx.step == 60:
+                fx.send({'cmd': 'leds', 'hue': 60, 'bright': 1.0, 'mode': 'solid', 'budget': 0.9})   # 30 % fölé nem
+        fx = FakeXiao(lambda t: 1000, script, steps=50).run()
+        self.assertLessEqual(fx.led_max, 0.08 * 31 * 765 * 1.01)
+        fx = FakeXiao(lambda t: 1000, script, steps=120).run()
+        self.assertLessEqual(fx.led_max, LED_LIMIT * 1.01)
+        self.assertEqual(reflex.SLEEP_BUDGET, power.SLEEP_LED_BUDGET)
 
 
 # ============================================================================ B. LED-ek: Adafruit NeoDriver (seesaw)

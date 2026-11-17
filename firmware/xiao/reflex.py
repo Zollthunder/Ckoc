@@ -92,6 +92,9 @@ LED_COUNT = 31
 LED_BUDGET = 0.30
 
 
+SLEEP_BUDGET = 0.08                                 # alvás töltés közben (HOKEZELES.md 7.5): ≤ 8 %
+
+
 def led_scale(pixels, budget=LED_BUDGET, count=LED_COUNT):
     """pixels: (r, g, b) hármasok (0..255). Visszaad: a szorzó (0..1), amellyel a teljes áram a keret alatt marad."""
     total = 0

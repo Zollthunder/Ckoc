@@ -1,7 +1,8 @@
-"""A kerek kijelző (GC9A01, 240×240) arca – Pillow-val rajzolva, a webes szimulátor arcával azonos üzemmódokkal.
+"""Az arc állapota (FaceState) és PC-s előnézete (FaceRenderer, Pillow).
 
-Üzemmódok: off, face, listen, think, dizzy, text, eq, privacy, dnd, call.
-A render() egy RGB képet ad; a kijelző-meghajtó (vagy a szimuláció) teszi ki.
+A valódi kockán a kerek kijelzőt (GC9A01, 240×240) a XIAO hajtja és ő rajzolja az arcot (firmware/xiao/faces.py);
+a Pi csak a FaceState-et küldi el (brain.Cube.face_msg). A FaceRenderer csak a szimulációban fut (PNG-képek).
+Üzemmódok: off, face, listen, think, dizzy, text, eq, privacy, dnd, call (+ a XIAO-n: sleep).
 """
 import math, random
 from dataclasses import dataclass, field

@@ -53,7 +53,10 @@ class Cube:
         self._save_handle = None
         self._call = None
         self._last_cheer = 0.0
-        self.eco = False                      # takarékmód töltés közben (power.py: a UPS töltőárama fix 1 A, melegít)
+        self.charging = False                 # külső tápon (power.py) – ilyenkor alszik, legfeljebb 15 perc ébrenlét
+        self.sleeping = False
+        self._awake_until = 0.0
+        self._face_sent, self._talk_sent, self._talk_t = None, 0.0, 0.0   # amit a XIAO-nak utoljára küldtünk az arcról
 
     # ------------------------------------------------------------ segédek
     def _load_lines(self):
@@ -80,17 +83,49 @@ class Cube:
         """A LED-ek állapota a XIAO-nak: szín, fényerő és üzemmód az állapotból számolva.
         activity: 'listen' / 'think' a beszélgetés alatt (ha épp nincs fontosabb: ki, Ne zavarj, fejjel lefelé, party)."""
         s = self.s
-        mode = 'off' if not s.on else 'dim' if (s.upside_down or s.dnd) else 'party' if s.party else activity or 'solid'
-        bright = s.bright * (power.ECO['led'] if self.eco else 1.0)
-        self.hw.mcu.send({'cmd': 'leds', 'hue': round(s.hue), 'bright': round(bright, 2), 'mode': mode})
+        mode = 'off' if not s.on else 'dim' if (s.upside_down or s.dnd or self.sleeping) else 'party' if s.party \
+            else activity or 'solid'
+        budget = power.SLEEP_LED_BUDGET if self.sleeping else 0.3
+        self.hw.mcu.send({'cmd': 'leds', 'hue': round(s.hue), 'bright': round(s.bright, 2), 'mode': mode, 'budget': budget})
 
-    def set_eco(self, on):
-        """Takarékmód (power.ECO): kevesebb LED-fény, halványabb kijelző, kisebb képfrissítés."""
-        self.eco = bool(on)
-        bl = getattr(self.hw.display, 'brightness', None)
-        if bl:
-            bl(power.ECO['backlight'] if on else 1.0)
+    # ------------------------------------------------------------ töltés közben: alvás (HOKEZELES.md 7.5)
+    def set_charging(self, on):
+        """A power.guard hívja: külső táp be/ki. Bedugáskor még legfeljebb power.CHARGE_AWAKE ideig ébren marad."""
+        self.charging = bool(on)
+        if self.charging:
+            self._awake_until = time.monotonic() + power.CHARGE_AWAKE
+        else:
+            self.wake_up()
+
+    def go_sleep(self):
+        """Alvás: az arc kialszik, a LED-ek ≤ 8 %, a kamera szünetel. Az ébresztőszót továbbra is figyeli."""
+        if self.sleeping:
+            return
+        log.info('töltés közben alszik')
+        self.sleeping = True
+        if self.s.party:
+            self.set_party(False)
+        self.hw.camera.enable(False)
+        self.hw.mcu.send({'cmd': 'camled', 'on': False})
         self.lights()
+        self.emit('power.sleep', on=True)
+
+    def wake_up(self):
+        if not self.sleeping:
+            return
+        log.info('felébredt')
+        self.sleeping = False
+        self._awake_until = time.monotonic() + power.CHARGE_AWAKE
+        self.hw.camera.enable(not self.s.upside_down)
+        self.lights()
+        self.emit('power.sleep', on=False)
+
+    async def charge_loop(self, period=5.0):
+        while True:
+            await asyncio.sleep(period)
+            if self.charging and not self.sleeping and time.monotonic() >= self._awake_until \
+                    and not self.s.busy and not self._call:
+                self.go_sleep()
 
     def battery_shutdown(self):
         """Lemerült (külső táp nélkül 5 % alatt): elköszön, mielőtt a power.guard leállítja a Pi-t."""
@@ -210,15 +245,18 @@ class Cube:
     async def on_mcu(self, ev):
         kind = ev.get('ev')
         if kind == 'hello':
-            log.info('XIAO firmware %s (érintés: %s, rezgés: %s)', ev.get('fw'), ev.get('touch', '?'), ev.get('haptic', '?'))
+            log.info('XIAO firmware %s (érintés: %s, rezgés: %s, kijelző: %s, LED: %s)', ev.get('fw'), ev.get('touch', '?'),
+                     ev.get('haptic', '?'), ev.get('display', '?'), ev.get('leds', '?'))
             if ev.get('touch') == 'digital':
-                log.warning('a XIAO nem talált 1 MΩ-os lehúzót a D10-en: digitális érintésbemenet (AT42QT1010 tartalék)')
+                log.warning('a XIAO nem talált 1 MΩ-os lehúzót a D7-en: digitális érintésbemenet (AT42QT1010 tartalék)')
+            self._face_sent = None                   # a XIAO (újra)indult: az arc állapotát újra elküldjük
             self.lights()
             if 'upside' in ev:                       # a Pi a XIAO után indult: így sem késik le a tájolást
                 await self.flip(bool(ev['upside']))
             return
         if kind == 'imu' and ev.get('kind') == 'flip':
             return await self.flip(bool(ev.get('up')))
+        self.wake_up()                               # alvásból: bármely gomb/érintés/mozdulat felébreszti, és végre is hajtja
         if not self.s.on:
             await self.boot()                        # bármely gomb/mozdulat bekapcsolja, és utána végre is hajtja
         if kind == 'button':
@@ -364,6 +402,8 @@ class Cube:
         while True:
             await self.talk.ears.wake()
             s = self.s
+            if s.on and self.sleeping:
+                self.wake_up()                       # töltés közbeni alvásból is az ébresztőszó ébreszti
             if s.on and not s.upside_down and not s.dnd and not s.busy and not s.party and self.hw.audio.level() < 0.02:
                 log.info('ébresztőszó')
                 await self.converse('wake')
@@ -525,7 +565,8 @@ class Cube:
         while True:
             await asyncio.sleep(9 + random.random() * 9)
             s = self.s
-            if not (s.on and s.peek and not s.busy and not s.upside_down and not s.dnd and not s.party and self.face.mode == 'face'):
+            if not (s.on and s.peek and not s.busy and not s.upside_down and not s.dnd and not s.party and not self.sleeping
+                    and self.face.mode == 'face'):
                 continue
             seen = await self.hw.camera.look()
             if not seen.get('face'):
@@ -573,6 +614,7 @@ class Cube:
     # ------------------------------------------------------------ app-parancsok
     async def command(self, type_, d):
         s = self.s
+        self.wake_up()                               # az appból érkező parancs is felébreszti
         if type_ == 'power.on':
             await self.boot()
         elif type_ == 'power.off':
@@ -640,18 +682,39 @@ class Cube:
         return {'ok': True}
 
     # ------------------------------------------------------------ futás
+    def face_msg(self):
+        """Az arc állapota a XIAO-nak (ő rajzolja: firmware/xiao/faces.py). Csak változáskor megy ki."""
+        f = self.face
+        return {'cmd': 'face', 'mode': 'sleep' if self.sleeping else f.mode, 'mouth': f.mouth, 'persona': f.persona,
+                'look': [round(f.look[0], 2), round(f.look[1], 2)], 'peek': bool(f.peeking), 'text': f.text,
+                'sub': f.sub, 'color': list(f.text_color) if f.text_color else None, 'caller': f.caller,
+                'live': bool(f.call_live)}
+
+    def sync_face(self, now):
+        msg = self.face_msg()
+        if msg != self._face_sent:
+            self._face_sent = msg
+            self.hw.mcu.send(msg)
+        lvl = 0.0 if self.sleeping else round(min(1.0, self.face.talk_level), 2)
+        # beszéd közben: változáskor, de legalább 4×/s (a XIAO 0,4 s üzenet nélkül becsukja a szájat)
+        if abs(lvl - self._talk_sent) >= 0.05 or (lvl > 0) != (self._talk_sent > 0) or (lvl > 0 and now - self._talk_t > 0.25):
+            self._talk_sent, self._talk_t = lvl, now
+            self.hw.mcu.send({'cmd': 'talk', 'v': lvl})
+
     async def face_loop(self):
         last = time.monotonic()
         while True:
             now = time.monotonic()
-            self.renderer.tick(self.face, now - last)
-            last = now
             self.face.talk_level = self.hw.audio.level()
             self.face.persona = self.s.base_persona()
             if not self.s.party:
                 self.face.hue = self.s.hue
-            self.hw.display.show(self.renderer.render(self.face, now))
-            await asyncio.sleep(1 / (power.ECO['fps'] if self.eco else FPS))
+            self.sync_face(now)
+            if self.hw.display:                      # csak a szimulációban: a face.py ugyanezt PNG-be rajzolja
+                self.renderer.tick(self.face, now - last)
+                self.hw.display.show(self.renderer.render(self.face, now))
+            last = now
+            await asyncio.sleep(1 / FPS)
 
     async def mcu_loop(self):
         while True:
@@ -660,9 +723,9 @@ class Cube:
             asyncio.ensure_future(self.on_mcu(ev))
 
     def start(self):
-        loops = [self.face_loop, self.mcu_loop, self.peek_loop] + ([self.wake_loop] if self.talk else [])
+        loops = [self.face_loop, self.mcu_loop, self.peek_loop, self.charge_loop] + ([self.wake_loop] if self.talk else [])
         self._tasks += [asyncio.ensure_future(self._guard(f, f.__name__)) for f in loops]
-        if getattr(self.hw, 'power', None):           # UPS: biztonságos leállás, takarékmód töltés közben
+        if getattr(self.hw, 'power', None):           # UPS: biztonságos leállás, alvás töltés közben
             self._tasks.append(asyncio.ensure_future(self._guard(lambda: power.guard(self, self.hw.power), 'power')))
         self.lights()
 
