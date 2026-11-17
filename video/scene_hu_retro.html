@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C-kocka – retró magyar reklám</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; color: #ddd; font: 13px "Segoe UI", system-ui, sans-serif; overflow: hidden; }
+  #out { position: absolute; inset: 0; margin: auto; max-width: 100%; max-height: calc(100% - 44px); aspect-ratio: 16 / 9; display: block; }
+  #ui { position: fixed; left: 0; right: 0; bottom: 0; height: 44px; display: flex; gap: 10px; align-items: center; padding: 0 12px; background: #111; }
+  #ui input[type=range] { flex: 1; }
+  #ui button { background: #222; color: #eee; border: 1px solid #444; border-radius: 6px; padding: 5px 12px; cursor: pointer; }
+  body.render #ui { display: none; }
+  body.render #out { max-height: 100%; }
+  #load { position: fixed; inset: 0; display: grid; place-items: center; font-size: 16px; }
+</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head>
+<body>
+<div id="load">Betöltés…</div>
+<canvas id="out" width="1920" height="1080"></canvas>
+<div id="ui">
+  <button id="play">▶ Play</button>
+  <span id="time">0:00.0</span>
+  <input id="seek" type="range" min="0" max="45" step="0.01" value="0">
+</div>
+<audio id="audio" src="hu_retro/audio_mix_hu_retro.wav" preload="auto"></audio>
+<script type="module" src="scene_hu_retro.js"></script>
+</body>
+</html>

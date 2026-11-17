@@ -1,0 +1,13 @@
+[
+ {"id":"H01","voice":"Gitta Nikolina","era":1978,"text":"Kedves Nézőink! Bemutatjuk az új C-kockát.","say":"Kedves Nézőink! Bemutatjuk az új Cé kockát!"},
+ {"id":"H02","voice":"Gitta Nikolina","era":1978,"text":"Kicsi kocka, nagy barát: mesél, nevet egész nap át!","say":"Kicsi kocka, nagy barát: mesél, nevet egész nap át!"},
+ {"id":"H03","voice":"Gitta Nikolina","era":1978,"text":"Kérje a szaküzletekben!","say":"Kérje a szaküzletekben!"},
+ {"id":"H04","voice":"Craig Gutsy","era":1993,"text":"Figyelem, figyelem! Itt a C-kocka!","say":"Figyelem, figyelem! Itt a Cé-kocka!"},
+ {"id":"H05","voice":"Craig Gutsy","era":1993,"text":"Beszél, világít, és ha leejti, akkor sem törik el!","say":"Beszél, világít, és ha leejti, akkor sem törik el!"},
+ {"id":"H06","voice":"Craig Gutsy","era":1993,"text":"Rendelje meg most, házhoz szállítjuk!","say":"Rendelje meg most, házhoz szállítjuk!"},
+ {"id":"H07","voice":"Craig Gutsy","era":2004,"text":"Az új C-kocka. Most akciósan!","say":"Az új Cé-kocka. Most akciósan!"},
+ {"id":"H08","voice":"Craig Gutsy","era":2004,"text":"Ajándék fagombbal!","say":"Ajándék fagombbal!"},
+ {"id":"H09","voice":"Craig Gutsy","era":2004,"text":"Ne maradjon le!","say":"Ne maradjon le!"},
+ {"id":"H10","voice":"Gitta Nikolina","era":0,"text":"C-kocka. Egy kis barát az asztalára.","say":"Cé-kocka. Egy kis barát az asztalára."},
+ {"id":"H11","voice":"Gitta Nikolina","era":0,"text":"A kockázatokról és mellékhatásokról kérdezze a kockát!","say":"A kockázatokról és mellékhatásokról kérdezze a kockát!"}
+]
