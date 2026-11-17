@@ -56,7 +56,7 @@ A piaci tanulmány tanulsága: amelyik eszköz csak egy telefonos app tudását 
 ## 5. Kampányterv (a gyártási lépésekhez igazítva)
 | Szakasz | Mikor | Mit csinálunk | Siker mércéje |
 |---|---|---|---|
-| **0. Prototípus** (3 db) | most | fotók, a videók (a 2:56-os bemutató, valamint a japán, a 90-es amerikai és a készülő retro magyar reklám) mint „vírusos” tartalom; belső bemutató a cégnél | visszajelzés 20–30 kollégától |
+| **0. Prototípus** (3 db) | most | fotók, a videók (a 2:56-os bemutató, valamint a japán, a 90-es amerikai és a retro magyar reklám) mint „vírusos” tartalom; belső bemutató a cégnél | visszajelzés 20–30 kollégától |
 | **1. Érdeklődés** | prototípus után 1–2 hónap | előrendelési oldal e-mail-listával; rövid videók hetente (Shorts/Reels/TikTok); maker-cikk a felépítésről | 500–1000 feliratkozó |
 | **2. Kampány** | 3–4. hónap | közösségi finanszírozás 100–300 db-ra, korai madár ár (pl. 249 €), sorszámozott limitált széria, színválasztás (gumisarok, gombok) | a cél elérése az első héten |
 | **3. Céges csatorna** | párhuzamosan | ajándékcsomag cégeknek: egyedi szín, gravírozott alu tető, saját „céges személyiség” | 3–5 céges megrendelés |
