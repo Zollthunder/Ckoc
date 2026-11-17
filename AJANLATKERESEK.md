@@ -23,7 +23,7 @@ Alapok: [ELEKTRONIKA.md](ELEKTRONIKA.md) (modulok), [GYARTASI_TERV.md](GYARTASI_
 |---|---|---|---|---|---|---|---|
 | 1 | Raspberry Pi **Zero 2 WH** (gyárilag forrasztott tüskesorral) | 1 | 3 | 16,99 € ≈ 6 626 Ft | 19 878 Ft | Botland, 16,99 € nettó [K]; *alternatíva:* BerryBase (WH), welectron (W, 16,72 €), Hestore (W, 12 133 Ft [O]). **Döntés (2026-11-17): EU-s boltból** (KOLTSEGOPTIMALIZALAS.md, E1) | 2026-11-17 |
 | 2 | ~~Tüskesor a Pi-hez~~ – a WH-ban gyárilag benne van (a saját forrasztás ütközne a „csatlakozók forrasztás helyett” elvvel) | – | – | – | 0 Ft | – | 2026-11-17 |
-| 3 | **Seeed ReSpeaker 2-Mics Pi HAT** (107100001, 2 mikrofon, **mono** hangszórókimenet) – az Adafruit Voice Bonnet (#4757, kifutott) helyett | 1 | 3 | ~10 € ≈ 3 900 Ft | 11 700 Ft | DigiKey/Farnell 9–11 € nettó, Hackster 12,90 USD [K]. **Döntés (2026-11-17): ReSpeaker + 1 hangszóró** (KOLTSEGOPTIMALIZALAS.md, E6). **Ellenőrizni:** a v2.0 (TLV320AIC3104 kodek) leírásaiban csak 3,5 mm-es jack szerepel; ha nincs rajta JST hangszórókimenet, kell mellé egy kész mono erősítőmodul (~4 €) | 2026-11-17 |
+| 3 | **Seeed ReSpeaker 2-Mics Pi HAT** (107100001, 2 mikrofon, **mono** hangszórókimenet) – az Adafruit Voice Bonnet (#4757, kifutott) helyett | 1 | 3 | ~10 € ≈ 3 900 Ft | 11 700 Ft | DigiKey/Farnell 9–11 € nettó, Hackster 12,90 USD [K]. **Döntés (2026-11-17): ReSpeaker + 1 hangszóró** (KOLTSEGOPTIMALIZALAS.md, E6). **Ellenőrizve (2026-11-17):** a v2.0 kapcsolási rajza (2024-11-15) szerint a lapon **TPA2005D1** mono D-osztályú erősítő van (5 V-ról, 8 Ω-ra kb. 1,4 W), kimenete egy **2 tűs, 2,0 mm-es csatlakozón** (J2, A2001WF-02A, JST PH-kompatibilis), mellette 3,5 mm-es jack. Az erősítőt egy vezérlőjel (AMP_CTL) kapcsolja be. **Külön erősítőmodul nem kell.** | 2026-11-17 |
 | 4 | UPS panel Pi Zeróhoz: Pi-Ener-lite (USB-C, töltöttségmérő, RTC) | 1 | 3 | 35 USD ≈ 11 900 Ft | 35 700 Ft | Tindie (gyártó, Kínából szállít; „6 left in stock”) [O] | 2026-11-16 |
 | 5 | 18650 Li-ion cella, védett, 3000 mAh (KEEPPOWER ICR18650-3000P) | 1 | 3 | 4 932 Ft | 14 796 Ft | Hestore.hu, 100.442.96 [O] | 2026-11-16 |
 | 6 | Kerek kijelző 1,28", GC9A01, 240×240, SPI | 1 | 3 | 8,70 € ≈ 3 393 Ft | 10 179 Ft | eu.robotshop.com, Elecrow modul, 10,45 € bruttó [K]; a „kerek NYÁK-os” kivitelt ellenőrizni | 2026-11-16 |
@@ -81,7 +81,7 @@ A [SZERELES.md](SZERELES.md) szerint kockánként: 25 db M2,5 menetes betét, 4 
 | Beszállító | Becsült díj | Megjegyzés |
 |---|---|---|
 | Hestore (Pi, cellák, gyűrű, hangszórók, gombok) | 2 000 Ft | **becslés**; futárdíj |
-| EU-s disztribútor (Mouser / DigiKey / TME: ReSpeaker, XIAO, IMU, rezgőmodul, Qwiic, USB-C) | 8 000 Ft | **becslés**; egy helyről rendelve egy bizonyos érték fölött gyakran ingyenes – ellenőrizni |
+| EU-s disztribútor (Mouser / DigiKey / TME: ReSpeaker, XIAO, IMU, rezgőmodul, Qwiic, USB-C) | 8 000 Ft | **becslés**; **döntés (2026-11-17, B1):** ami lehet, innen, egy csomagban; egy helyről rendelve egy bizonyos érték fölött gyakran ingyenes – ellenőrizni |
 | Botland (Pi Zero 2 WH; a ReSpeaker az EU-s disztribútori rendelésben) | 3 000 Ft | **becslés** |
 | Pi-Ener-lite (Tindie, Kínából) | 7 080 Ft | „from 9 USD” [O]; ~12 USD szállítás + vámkezelési díj **becslés**; az importÁFA a 27%-ban benne van |
 | LED-szalag | 1 700 Ft | **becslés** |
@@ -170,7 +170,7 @@ Tisztelt Hölgyem / Uram!
 
 | # | Tétel | Gyártói cikkszám / adat | Mennyiség |
 |---|---|---|---|
-| 1 | Seeed ReSpeaker 2-Mics Pi HAT | Seeed **107100001** – kérjük, jelezze a változatot (v1: WM8960 / v2.0: TLV320AIC3104), és hogy van-e rajta **JST hangszórókimenet** (nem csak 3,5 mm-es jack) | 3 db |
+| 1 | Seeed ReSpeaker 2-Mics Pi HAT | Seeed **107100001** – a **v2.0** változatot kérjük (TLV320AIC3104 kodek, TPA2005D1 hangszóró-erősítő) | 3 db |
 | 2 | Seeed Studio XIAO RP2040 | Seeed **102010428** | 3 db |
 | 3 | Adafruit LSM6DS3TR-C 6-DoF IMU, STEMMA QT | Adafruit **4503** | 3 db |
 | 4 | Rezgőmotor-modul | lapos ERM motor + tranzisztoros meghajtó egy panelen, 3,3–5 V, 3 tűs csatlakozó (PWM-bemenet) | 3 db |
@@ -291,10 +291,10 @@ Köszönettel:
 - **Menetes betétek:** 70 db-os csomag; 75 db kell + selejt, ezért 2 csomag.
 - **LED-szalag:** jellemzően csak 1 m-es vagy 5 m-es tekercsben kapható; 3 kockához 0,33 m kell → **1 m-t rendelünk** (2026-11-17).
 - **PMMA, fa:** egész tábla vagy minimum vágási méret; érdemes **maradékot** kérni.
-- **Eloxálás:** kis darabszámnál a **minimális tételdíj** a döntő. Ha a 4 tetőlap mellé más eloxálandó munka is van, együtt olcsóbb. Ha a minimum díj nagyon magas, a natúr (színtelen) eloxálás vagy a festett/porszórt alu is szóba jöhet.
+- **Eloxálás:** kis darabszámnál a **minimális tételdíj** a döntő. Ha a 4 tetőlap mellé más eloxálandó munka is van, együtt olcsóbb. Ha a minimum díj nagyon magas, a natúr (színtelen) eloxálás vagy a festett/porszórt alu is szóba jöhet. **Döntés (2026-11-17, M8):** a prototípus tetőlapjai más eloxálandó munkával együtt menjenek. A 25 000 Ft-os becslés a legrosszabb esetet mutatja.
 
 ### Szállítási idők és beszerzési kockázatok
-- **Hangpanel:** az Adafruit Voice Bonnet (4757) kifutott (BerryBase: „nem szállítható”, Botland: „Discontinued”, DigiKey: „Obsolete”). **Döntés (2026-11-17): Seeed ReSpeaker 2-Mics Pi HAT + 1 hangszóró (mono).** A v1 (WM8960) több boltban már kifutott (SparkFun, Core Electronics); a v2.0 TLV320AIC3104 kodekes, és a leírásaiban csak 3,5 mm-es jack szerepel. **Rendelés előtt ellenőrizni:** van-e JST hangszórókimenet (ha nincs: kész mono erősítőmodul kell mellé, ~4 €), a mikrofonok helyét (a tetőlap furataihoz) és a magasságot a modellben.
+- **Hangpanel:** az Adafruit Voice Bonnet (4757) kifutott (BerryBase: „nem szállítható”, Botland: „Discontinued”, DigiKey: „Obsolete”). **Döntés (2026-11-17): Seeed ReSpeaker 2-Mics Pi HAT + 1 hangszóró (mono).** A v1 (WM8960) több boltban már kifutott (SparkFun, Core Electronics); a v2.0 TLV320AIC3104 kodekes. **Hangszórókimenet ellenőrizve (2026-11-17):** a v2.0 kapcsolási rajza (2024-11-15) szerint a lapon **TPA2005D1** mono D-osztályú erősítő van (5 V-ról, 8 Ω-ra kb. 1,4 W), kimenete egy **2 tűs, 2,0 mm-es csatlakozón** (J2, A2001WF-02A, JST PH-kompatibilis), mellette 3,5 mm-es jack. Az erősítőt egy vezérlőjel (AMP_CTL) kapcsolja be. **Külön erősítőmodul nem kell.** **Még ellenőrizni:** a mikrofonok helyét (a tetőlap furataihoz) és a magasságot a modellben; rendeléskor a v2.0-t kérni.
 - **Pi-Ener-lite:** Kínából, a Tindie-n „6 left in stock”, kiküldés ~5 nap + nemzetközi szállítás (kb. 1–3 hét, **becslés**). Időben rendelni kell. Tartalék: Geekworm X306 (drágább, ~54 USD [K]) vagy DFRobot UPS HAT.
 - **Raspberry Pi Zero 2 W(H):** a Botlandnél és a BerryBase-nél kevés darab látszik (2026-11-17), a Hestore-nál „az átlagosnál hosszabb szállítási idő”, a welectronnál „hamarosan raktáron”. Két helyről érdemes ajánlatot kérni.
 - **Mini kamera:** az Adafruit 1937-es „spy” kamera saját leírása szerint **nem Pi Zero-kompatibilis** a szalagkábele miatt; Pi Zero (22 pólusú) kábeles OV5647 modul kell, pl. Arducam B006603 vagy Pi Supply Spy Camera (8,5 × 11,3 mm). A Kailap JAL-KH3-C20B-1B (OV5640) sem jó: DVP párhuzamos interfészű, autofókuszos, 25 pólusú csatlakozóval.
