@@ -1,9 +1,18 @@
-Nézetenkénti DXF-ek (dxf/<alkatrész>/: elöl, felül, oldal, metszet) – állapot 2026-11-16
+Nézetenkénti DXF-ek (dxf/<alkatrész>/: elöl, felül, oldal, metszet) – állapot 2026-11-17
 
 A 2026-11-16-i M2 -> M2,5 átállás (menetes betét Ø3,6, csavarfurat Ø2,8, süllyesztés Ø5,0) és a Ø36 mm-es hangszórógyűrű:
-- frissítve:  tetolap, rgb_fenygyuru
-- RÉGI méretekkel maradt: also_talca_(szan_alap), haz_(sls)
-  (ennél a két testnél a Fusion „összes él vetítése” exportja kétszer is lefagyott, ezért kihagytuk)
+- frissítve Fusionből (tools/export_dxf_part.py): tetolap, rgb_fenygyuru
+- frissítve a 3d/c-kocka.step fájlból, Fusion nélkül (tools/export_dxf_step.py, OpenCascade + ezdxf, 2026-11-17):
+  also_talca_(szan_alap), haz_(sls)
+  (ennél a két testnél a Fusion „összes él vetítése” exportja kétszer is lefagyott)
+- a többi alkatrész nem változott az átállásban, azok DXF-jei a korábbi Fusionös exportból valók.
+
+A STEP-ből készült rajzok ugyanazokat a nézeteket és koordinátákat használják, mint a Fusionösek
+(elöl: XY, +Z felől; felül: XZ, +Y felől, y = -Z; oldal: YZ, +X felől, x = -Z; metszet: XY a test Z-közepén),
+két különbséggel: a takart élek a szaggatott „REJTETT” rétegen vannak, és a hengerek körvonala is rajta van.
+Ellenőrizve: befoglaló méretek egyeznek a régiekkel (tálca 90 × 90 × 9, ház 90 × 90 × 81 mm);
+ház: 14 db Ø3,6 betét, 4 db Ø2,8 átmenő furat, oldalanként 105 db Ø2 rácsfurat;
+tálca: 3 db Ø3,6 betét, 4 db Ø2,8 süllyesztett furat (a modellben a süllyesztés Ø4,97), 4 db Ø2,8 lábfurat Ø7 fészekkel.
 
 Hiteles méretek: a 3D modell (3d/c-kocka.step / .f3d), a nyomtatási STL-ek (3d/nyomtatas/) és a vágási DXF-ek (dxf/vagas/).
 A nézetenkénti DXF-ek csak tájékoztató rajzok, gyártáshoz nem ezek kellenek.
