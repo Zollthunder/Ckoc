@@ -18,14 +18,14 @@
 │ talk.py    beszélgetés: ébresztőszó/érintés → Whisper → Claude → Piper (+claude.py)│
 │ api.py     WebSocket az apphoz (opcionális párosító kód)                           │
 │ hal.py     hardver-absztrakció ─┬─ hw_real.py: GC9A01 (mipi-dbi), ReSpeaker (mono), │
-│                                 │              OV5647 + OpenCV (helyben), XIAO (USB)│
+│                                 │              OV5647 + OpenCV (helyben), XIAO(UART)│
 │                                 │  power.py:   UPS – takarékmód, leállás 5 % alatt  │
 │                                 └─ hw_sim.py:  PC – PNG-képek, napló               │
 │            (beszélgetés ugyanígy: talk_real.py a Pi-n, talk_sim.py PC-n/tesztben)  │
 └──────────────────────────────────────┬──────────────────────────────────────────────┘
-                                       │ USB, soronként egy JSON
+                                       │ UART (GPIO14/15 ↔ D7/D6), soronként egy JSON
 ┌────────────── Seeed XIAO RP2040  (CircuitPython, firmware/xiao/code.py) ───────────┐
-│ NeoPixel Ring 24 + C-szalag · 4 gomb · érintés (touchio) · LSM6DS3 IMU (dobás,      │
+│ NeoDriver: Ring 24 + C-szalag · 4 gomb · érintés (touchio) · LSM6DS3 IMU (dobás,    │
 │ rázás, fordítás felismerése) · rezgőmotor (PWM) · kamera-jelzőfény                  │
 └─────────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -110,7 +110,7 @@ Saját „Hey C” ébresztőszó az openWakeWord tanító jegyzetfüzetével k�
    Utána a valódi hardver ellenőrzése (a szolgáltatás leállítása után, `cd /opt/ckocka`):
    `python3 -m ckocka.diag spi-leds` (kijelző és a ReSpeaker LED-jei, lásd „Kijelző”) és `python3 -m ckocka.diag power` (UPS).
 4. Beszélgetéshez a kulcs: `sudo nano /etc/ckocka.env` → `ANTHROPIC_API_KEY=...`, majd `sudo systemctl restart ckocka`.
-5. XIAO: CircuitPython 9.x, majd `circup install neopixel adafruit_lsm6ds adafruit_debouncer adafruit_ticks`,
+5. XIAO: CircuitPython 9.x, majd `circup install adafruit_lsm6ds adafruit_seesaw adafruit_pixelbuf adafruit_debouncer adafruit_ticks`,
    és a `firmware/xiao/boot.py` + `code.py` + `reflex.py` a CIRCUITPY meghajtóra.
 
 ## Hangpanel: Seeed ReSpeaker 2-Mics Pi HAT
@@ -170,13 +170,14 @@ Két változata van, a szoftver **mindkettőt** kezeli (a kodeket a `/proc/asoun
 | ReSpeaker 2-Mics Pi HAT | a Pi tüskesorára | I2S: GPIO18–21, I2C: GPIO2/3 (kodek: v2.0 0x18, v1 0x1a); a lap gombja (GPIO17) és Grove-csatlakozói nincsenek használva |
 | Hangszóró (1 db, 8 Ω) | ReSpeaker JST hangszórókimenet (v2.0: J2, 2 tűs, 2,0 mm) | mono; a 3,5 mm-es aljzat külön, a hangszóró attól nem némul el |
 | Kamera | Pi kamera-csatlakozó (22 pólusú) | OV5647 „spy” kamera |
-| XIAO RP2040 | Pi USB (OTG adapter) | táp is innen |
-| NeoPixel Ring 24 | XIAO D0 → 74AHCT125 → DIN | 5 V közvetlenül a UPS 5 V-járól, közös GND. A szoftver a 31 LED-et **összesen legfeljebb 30 %** fényerőre korlátozza (≈ 0,56 A; `reflex.LED_BUDGET`, teszt ellenőrzi), bármit kér a Pi |
-| C LED-szalag (7 LED) | XIAO D1 → 74AHCT125 → DIN | mint fent |
+| XIAO RP2040 | UART: XIAO D6 (TX) → Pi GPIO15 (RXD, tüske 10), XIAO D7 (RX) ← Pi GPIO14 (TXD, tüske 8); 5 V → XIAO 5V láb, GND – a GPIO-elosztó panel második tüskesoráról | 115200 8N1, 3,3 V-os jelszint; a Pi-n a mini UART (`/dev/serial0`, `enable_uart=1`, soros konzol kikapcsolva – install.sh). A lábak egy helyen: `code.py`, `PINS`. A XIAO USB-je csak hibakereséshez kell (konzol) |
+| Adafruit NeoDriver (I2C → NeoPixel, seesaw) | Qwiic-lánc: XIAO → IMU → NeoDriver; I2C-cím alapból 0x60 (`NEODRIVER_ADDR`, a valódi panelen ellenőrizni: a XIAO konzolja szól, ha nem találja) | a jelszintet maga illeszti (nincs 74AHCT125); a LED-ek 5 V-ja a UPS 5 V-járól, közös GND |
+| NeoPixel Ring 24 + C LED-szalag (7 LED) | a NeoDriver kimenetén **egy láncban**: előbb a gyűrű (0–23), utána a C-szalag (24–30) | a szoftver a 31 LED-et **összesen legfeljebb 30 %** fényerőre korlátozza (≈ 0,56 A; `reflex.LED_BUDGET`, teszt ellenőrzi), bármit kér a Pi; frissítés 50 Hz |
 | 4 gomb | XIAO D2, D3, D8, D9 → GND | belső felhúzó ellenállás |
 | Érintés: rézfólia-elektróda az érintőbetét alatt | XIAO D10 + **1 MΩ lehúzó ellenállás D10 → GND** (a gombok prototípus-lapján) | `touchio`; induláskor kalibrál (akkor ne érjen hozzá senki), utána lassan követi a hő- és páraváltozást. Lehúzó nélkül a `TouchIn` hibát dob: a firmware nem áll le, a XIAO konzoljára kiírja, mi hiányzik, és digitális bemenetre vált (belső lehúzással, hamis érintés nélkül) – így tartalékként egy AT42QT1010 (aktív magas) is visszadugható ide |
-| Rezgőmotor-modul (ERM + tranzisztor, 3 tűs) | XIAO D6 (jel, PWM 20 kHz), VCC 3V3 (vagy 5 V), GND | `tick` (hallgat) és `buzz` (Ne zavarj) minta, rövid teljes erejű indítással |
-| LSM6DS3TR-C | XIAO D4 (SDA), D5 (SCL), 3V3, GND – **Adafruit 4397** kábellel (STEMMA QT → női Dupont; a XIAO-n nincs Qwiic) | ha nincs bekötve, a firmware IMU nélkül fut (konzol: „nincs IMU”). Függőlegesen a szán jobb sínjének külső oldalán: panel X → hátra, Y → fel, Z → jobbra. Az átszámolás a kocka tengelyeire egy helyen van: `firmware/xiao/reflex.py`, `IMU_AXES`. **Első élesztésnél:** álló kockánál a XIAO konzolján `cube_g (0.0, 1.0, 0.0)` körüli értéknek kell megjelennie; ha nem, a panel szitanyomata szerint a táblázatot kell átírni (a teszt ellenőrzi, hogy forgatás maradjon) |
+| Rezgőmotor-modul (ERM + tranzisztor, 3 tűs) | XIAO **D0** (jel, PWM 20 kHz; a D6 az UART TX-e lett), VCC 3V3 (vagy 5 V), GND | `tick` (hallgat) és `buzz` (Ne zavarj) minta, rövid teljes erejű indítással |
+| *(szabad)* | XIAO D1 | a LED-ek NeoDriverre költözésével szabadult fel (a D0 a rezgőmotoré lett) |
+| LSM6DS3TR-C | XIAO D4 (SDA), D5 (SCL), 3V3, GND – **Adafruit 4397** kábellel (STEMMA QT → női Dupont; a XIAO-n nincs Qwiic); a lánc első tagja, utána a NeoDriver | ha nincs bekötve, a firmware IMU nélkül fut (konzol: „nincs IMU”). Függőlegesen a szán jobb sínjének külső oldalán: panel X → hátra, Y → fel, Z → jobbra. Az átszámolás a kocka tengelyeire egy helyen van: `firmware/xiao/reflex.py`, `IMU_AXES`. **Első élesztésnél:** álló kockánál a XIAO konzolján `cube_g (0.0, 1.0, 0.0)` körüli értéknek kell megjelennie; ha nem, a panel szitanyomata szerint a táblázatot kell átírni (a teszt ellenőrzi, hogy forgatás maradjon) |
 
 ## Mi nincs benne (még)
 

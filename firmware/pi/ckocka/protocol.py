@@ -3,7 +3,7 @@
 Három irány:
   app  -> Pi   : parancsok   {"type": "persona.set", "data": {"name": "hype"}}      (WebSocket, JSON)
   Pi   -> app  : események   {"type": "event.throw", "data": {"count": 3}}          (WebSocket, JSON)
-  XIAO <-> Pi  : soronként egy JSON (USB CDC soros port, 115200)
+  XIAO <-> Pi  : soronként egy JSON (UART: Pi GPIO14/15 <-> XIAO D7/D6, 115200 8N1, /dev/serial0)
        XIAO -> Pi : {"ev": "button", "id": 1} | {"ev": "touch"} | {"ev": "imu", "kind": "throw"|"shake"|"flip", "up": true}
                     {"ev": "hello", "fw": "1.1", "imu": true, "haptic": true, "touch": "touchio"|"digital", "upside": false}
                     {"ev": "battery", ...}

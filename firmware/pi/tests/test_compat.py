@@ -4,6 +4,8 @@
   3. Pi-Ener-lite: GPIO4, CW2015, biztonságos leállás, takarékmód töltés közben  (ckocka/power.py, brain.py)
   4. XIAO: IMU a D4 (SDA) / D5 (SCL) lábon, touchio-hiba barátságosan             (firmware/xiao/code.py)
   5. WS2812: összesen ≤ 30 % fényerő                                              (firmware/xiao/reflex.py, code.py)
+  A. a XIAO UART-on a Pi-hez (GPIO14/15, /dev/serial0) – szimulált soros vonallal
+  B. a 31 LED egy láncban az Adafruit NeoDriveren (seesaw, I2C 0x60)
 Futtatás (a firmware/pi mappából):  python -m unittest discover -s tests -v
 """
 import asyncio, os, shutil, subprocess, sys, tempfile, unittest
@@ -13,7 +15,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 os.environ.setdefault('CKOCKA_HOME', tempfile.mkdtemp())
 
-from test_hardware import FakeXiao, read, reflex, PI           # noqa: E402
+from test_hardware import FakeXiao, read, reflex, PI, XIAO as XIAO_DIR   # noqa: E402
 from ckocka import diag, hw_real, hw_sim, panel, power         # noqa: E402
 from ckocka.brain import Cube                                  # noqa: E402
 
@@ -52,11 +54,11 @@ class LedBudgetTest(unittest.TestCase):
     def test_full_request_is_capped_not_blacked_out(self):
         fx = self.run_leds(1.0, 'solid', 60)                    # sárga, teljes fényerő: a keret közelében marad
         self.assertGreater(fx.led_max, LED_LIMIT * 0.9)
-        self.assertLess(fx.strips['D0'].brightness, 1.0)
+        self.assertLess(fx.strip.brightness, 1.0)
 
     def test_dim_request_untouched(self):
         fx = self.run_leds(0.2, 'solid', 60)
-        self.assertEqual(fx.strips['D0'].brightness, 1.0)       # a kis fényerőt nem csökkenti tovább
+        self.assertEqual(fx.strip.brightness, 1.0)              # a kis fényerőt nem csökkenti tovább
 
 
 # ============================================================================ 4. XIAO: lábak, barátságos hibák
@@ -374,6 +376,133 @@ class InstallCompatTest(unittest.TestCase):
             self.assertIn('# ckocka-display begin\n[all]\ndtparam=spi=on\n# ckocka-display end\n', text)
             self.assertTrue(text.startswith('[pi4]\narm_boost=1\n[all]\ndtparam=audio=on\n'))
             self.assertTrue(os.path.exists(cfg + '.ckocka.bak'))
+
+
+# ============================================================================ A. XIAO <-> Pi soros vonal (UART)
+class XiaoUartTest(unittest.TestCase):
+    def test_uart_pins_and_baud(self):
+        fx = FakeXiao(lambda t: 1000, lambda fx: None, steps=5).run()
+        self.assertEqual(fx.uart_args, ('D6', 'D7', 115200))          # TX = D6 -> Pi GPIO15, RX = D7 <- Pi GPIO14
+        self.assertEqual(hw_real.XIAO_BAUD, 115200)
+
+    def test_pin_table_no_double_use(self):
+        fx = FakeXiao(lambda t: 1000, lambda fx: None, steps=5).run()
+        used = list(fx.pins) + [fx.pwm.pin] + list(fx.uart_args[:2]) + list(fx.i2c_args)
+        self.assertEqual(len(used), len(set(used)), used)
+        self.assertNotIn('D1', used)                                   # szabad
+        code = read(XIAO_DIR, 'code.py')
+        self.assertIn('# szabad: board.D1', code)
+        for line in code.splitlines():                                 # lábak csak a PINS táblában
+            if 'board.D' in line and not line.lstrip().startswith('#'):
+                self.assertTrue(line.startswith("    '"), line)
+
+    def test_commands_over_simulated_serial(self):
+        # Pi -> XIAO: a hw_real.SerialMcu.send bájtjai mennek a XIAO UART-jára; XIAO -> Pi: a XIAO kimenete a Pi-hez
+        sent = []
+        mcu = hw_real.SerialMcu.__new__(hw_real.SerialMcu)
+        mcu.ser = type('Ser', (), {'write': lambda self, b: sent.append(b)})()
+        mcu.send({'cmd': 'haptic', 'pattern': 'tick'})
+
+        def script(fx):
+            if fx.step == 20:
+                fx.inbox += b''.join(sent)
+        fx = FakeXiao(lambda t: 1000, script, steps=60).run()
+        self.assertTrue(any(d > 0 for _, d in fx.duty_log), 'a soros parancs nem ért át')
+        self.assertTrue(fx.wire.startswith(b'{"ev": "hello"'))
+        self.assertTrue(fx.wire.endswith(b'\n'))
+
+
+class FakeSerialModule:
+    """A pyserial helyett: a Serial() egy szimulált soros vonal, amelyen a XIAO bájtjai jönnek."""
+
+    def __init__(self, rx):
+        self.rx, self.opened, self.tx = bytearray(rx), [], []
+
+    def Serial(self, port, baud, timeout=1):
+        self.opened.append((port, baud))
+        mod = self
+
+        class S:
+            @property
+            def in_waiting(self):
+                return len(mod.rx)
+
+            def read(self, n):
+                if not mod.rx:
+                    import time
+                    time.sleep(0.01)
+                    return b''
+                b = bytes(mod.rx[:n])
+                del mod.rx[:n]
+                return b
+
+            def write(self, b):
+                mod.tx.append(b)
+        return S()
+
+
+class PiSerialTest(unittest.TestCase):
+    def test_default_port_is_serial0(self):
+        with unittest.mock.patch.dict(os.environ, {'CKOCKA_XIAO_PORT': ''}):
+            self.assertEqual(hw_real.xiao_port(), '/dev/serial0')
+        with unittest.mock.patch.dict(os.environ, {'CKOCKA_XIAO_PORT': '/dev/ttyS0'}):
+            self.assertEqual(hw_real.xiao_port(), '/dev/ttyS0')
+
+    def test_xiao_events_reach_the_pi(self):
+        # a szimulált XIAO valódi kimenete (hello + érintés), darabokra törve és zajjal, a Pi olvasóján át
+        fx = FakeXiao(lambda t: 2400 if 1.0 <= t < 1.4 else 1000, lambda fx: None, steps=200).run()
+        fake = FakeSerialModule(b'\x00\xffzaj\n' + fx.wire)
+
+        async def t():
+            with unittest.mock.patch.dict(sys.modules, {'serial': fake}), \
+                    unittest.mock.patch.dict(os.environ, {'CKOCKA_XIAO_PORT': ''}):
+                mcu = hw_real.SerialMcu()
+                evs = [await asyncio.wait_for(mcu.events.get(), 3) for _ in range(2)]
+                mcu.send({'cmd': 'beat'})
+                return evs
+        evs = asyncio.run(t())
+        self.assertEqual(fake.opened[0], ('/dev/serial0', 115200))
+        self.assertEqual([e['ev'] for e in evs], ['hello', 'touch'])
+        self.assertEqual(evs[0]['fw'], '1.3')
+        self.assertEqual(fake.tx, [b'{"cmd":"beat"}\n'])
+
+    def test_install_enables_uart(self):
+        sh = read(PI, 'install.sh')
+        for want in ('enable_uart=1', "console=(serial0|ttyS0|ttyAMA0)", 'serial-getty@ttyS0', 'usermod -aG dialout pi'):
+            self.assertIn(want, sh)
+
+
+# ============================================================================ B. LED-ek: Adafruit NeoDriver (seesaw)
+class NeoDriverTest(unittest.TestCase):
+    def run_leds(self, script=None, **kw):
+        def s(fx):
+            if fx.step == 2:
+                fx.send({'cmd': 'leds', 'hue': 60, 'bright': 1.0, 'mode': 'solid'})
+                fx.send({'cmd': 'camled', 'on': True})
+        fx = FakeXiao(lambda t: 1000, script or s, steps=100)
+        for k, v in kw.items():
+            setattr(fx, k, v)
+        return fx.run()
+
+    def test_one_chain_of_31_on_neodriver(self):
+        fx = self.run_leds()
+        self.assertEqual((fx.strip.ss.addr, fx.strip.pin, len(fx.strip)), (0x60, 15, 31))
+        self.assertFalse(fx.strip.auto_write)
+        self.assertEqual(fx.i2c_hz, 400000)
+        self.assertEqual(fx.strip[30], (0, 160, 40))                   # kamera-jelzőfény: a C-szalag utolsó LED-je
+        self.assertEqual(fx.strip[0], fx.strip[23])                    # a gyűrű 0–23
+        self.assertTrue(fx.out[0]['leds'])
+        self.assertLessEqual(fx.led_max, LED_LIMIT * 1.01)
+
+    def test_led_refresh_throttled(self):
+        fx = self.run_leds()
+        self.assertLess(fx.led_shows, 100 * 0.012 / 0.02 + 2)          # ~50 Hz, nem minden körben (I2C-idő)
+
+    def test_missing_neodriver_keeps_running(self):
+        fx = self.run_leds(neodriver_missing=True)
+        self.assertFalse(fx.out[0]['leds'])
+        self.assertIn('nincs NeoDriver', fx.console)
+        self.assertEqual(fx.step, 100)
 
 
 if __name__ == '__main__':

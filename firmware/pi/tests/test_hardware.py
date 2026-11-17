@@ -117,7 +117,7 @@ class _Stop(Exception):
 
 
 class FakeXiao:
-    """Hamis CircuitPython-modulok (board, touchio, pwmio, usb_cdc, …); a code.py végtelen ciklusát a hamis
+    """Hamis CircuitPython-modulok (board, touchio, pwmio, busio.UART, seesaw, …); a code.py végtelen ciklusát a hamis
     time.sleep állítja meg, és minden körben lefuttat egy „forgatókönyv”-lépést."""
 
     def __init__(self, touch_raw, script, pulldown=True, steps=400, imu_g=None):
@@ -126,7 +126,8 @@ class FakeXiao:
         self.console = ''
         self.touch_raw, self.script, self.pulldown = touch_raw, script, pulldown
         self.out, self.inbox, self.duty_log, self.pwm = [], b'', [], None
-        self.strips, self.led_out, self.led_max = {}, {}, 0      # LED-szalagok; a kimenő Σ(r+g+b) lábanként, és a csúcs
+        self.strip, self.led_out, self.led_max, self.led_shows = None, {}, 0, 0   # NeoDriver-lánc; kimenő Σ(r+g+b), csúcs
+        self.wire, self.uart_args, self.i2c_hz, self.neodriver_missing = b'', None, None, False
         self.i2c_error, self.i2c_args, self.pins = None, None, {}
 
     def modules(self):
@@ -189,28 +190,40 @@ class FakeXiao:
                 return b
 
             def write(self, b):
+                fx.wire += b                                   # a soros vonalon a Pi felé kimenő bájtok
                 fx.out.append(json.loads(b.decode()))
-        m['usb_cdc'] = types.SimpleNamespace(data=Port(), console=None)
+
+        def UART(tx, rx, baudrate=9600, **kw):                # a Pi felé menő soros vonal (szimulált)
+            fx.uart_args = (tx, rx, baudrate)
+            return Port()
+
+        class Seesaw:
+            def __init__(self, i2c, addr=0x49):
+                if fx.neodriver_missing:
+                    raise ValueError('No I2C device at address: 0x%x' % addr)
+                self.i2c, self.addr = i2c, addr
 
         class Pixels(list):                                    # mint a pixelbuf: a getitem a fényerő ELŐTTI értéket adja
-            def __init__(self, pin, n, brightness=1.0, **kw):
+            def __init__(self, ss, pin, n, brightness=1.0, auto_write=True, **kw):
                 super().__init__([(0, 0, 0)] * n)
-                self.pin, self.brightness = pin, brightness
-                fx.strips[pin] = self
-
-            def fill(self, c):
-                self[:] = [c] * len(self)
+                self.ss, self.pin, self.brightness, self.auto_write = ss, pin, brightness, auto_write
+                fx.strip = self
 
             def show(self):
-                fx.led_out[self.pin] = sum(int(v * self.brightness) for p in self for v in p)
-        m['neopixel'] = types.SimpleNamespace(NeoPixel=Pixels)
+                fx.led_out['neodriver'] = sum(int(v * self.brightness) for p in self for v in p)
+                fx.led_shows += 1
+        ss_mod = types.SimpleNamespace(Seesaw=Seesaw)
+        np_mod = types.SimpleNamespace(NeoPixel=Pixels)
+        m['adafruit_seesaw'] = types.SimpleNamespace(seesaw=ss_mod, neopixel=np_mod)
+        m['adafruit_seesaw.seesaw'], m['adafruit_seesaw.neopixel'] = ss_mod, np_mod
 
-        def I2C(scl, sda):
+        def I2C(scl, sda, frequency=100000):
             fx.i2c_args = (scl, sda)
+            fx.i2c_hz = frequency
             if fx.i2c_error:
                 raise RuntimeError(fx.i2c_error)
             return (scl, sda)
-        m['busio'] = types.SimpleNamespace(I2C=I2C)
+        m['busio'] = types.SimpleNamespace(I2C=I2C, UART=UART)
         if fx.imu_g is None:
             m['adafruit_lsm6ds'] = m['adafruit_lsm6ds.lsm6ds3trc'] = None   # nincs IMU: így is el kell indulnia
         else:
@@ -259,9 +272,9 @@ class XiaoFirmwareTest(unittest.TestCase):
         fx = FakeXiao(touch, script, steps=330).run()
         hello = fx.out[0]
         self.assertEqual((hello['ev'], hello['fw'], hello['touch'], hello['haptic'], hello['imu']),
-                         ('hello', '1.2', 'touchio', True, False))
+                         ('hello', '1.3', 'touchio', True, False))
         self.assertEqual([e for e in fx.out if e['ev'] == 'touch'], [{'ev': 'touch'}] * 2)
-        self.assertEqual((fx.pwm.pin, fx.pwm.frequency), ('D6', 20000))
+        self.assertEqual((fx.pwm.pin, fx.pwm.frequency), ('D0', 20000))     # a D6 az UART TX-e
         on = [t for t, d in fx.duty_log if d > 0]
         self.assertTrue(on, 'a rezgőmotor nem kapott PWM-et')
         self.assertTrue(on[-1] - on[0] < 0.8)                  # a minta véget ér, nem zümmög tovább

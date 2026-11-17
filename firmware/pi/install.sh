@@ -82,6 +82,20 @@ config_block ups <<EOF
 dtparam=i2c_arm=on
 dtoverlay=i2c-rtc,ds1307
 EOF
+# --- XIAO: soros vonal (UART) a GPIO14/15-ön. Pi Zero 2 W-n ez a mini UART (/dev/serial0 -> ttyS0; a PL011 a Bluetooth-é).
+#     enable_uart=1 (a mini UART órája így stabil), a Linux soros konzolja ki, hogy ne írjon a XIAO-ra.
+config_block uart <<EOF
+enable_uart=1
+EOF
+CMDLINE=$(dirname "$CONFIG")/cmdline.txt
+if grep -Eq 'console=(serial0|ttyS0|ttyAMA0),[0-9]+ ?' "$CMDLINE" 2>/dev/null; then
+  cp "$CMDLINE" "$CMDLINE.ckocka.bak"
+  sed -i -E 's/console=(serial0|ttyS0|ttyAMA0),[0-9]+ ?//g' "$CMDLINE"
+  REBOOT=1
+fi
+systemctl disable --now serial-getty@ttyS0.service 2>/dev/null || true
+usermod -aG dialout pi                      # a szolgáltatás (pi) olvashassa a /dev/serial0-t
+
 # biztonságos leállás: a szolgáltatás (pi felhasználó) jelszó nélkül csak ezt az egy parancsot futtathatja rootként
 SUDOERS=/etc/sudoers.d/ckocka
 printf 'pi ALL=(root) NOPASSWD: /usr/sbin/shutdown -h now\n' > "$SUDOERS.tmp"

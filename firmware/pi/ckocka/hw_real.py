@@ -7,7 +7,8 @@
   Hang    : Seeed ReSpeaker 2-Mics Pi HAT, 1 hangszóró (mono) – v1 (WM8960) és v2.0 (TLV320AIC3104) is; ALSA a kártya
             nevével (seeed2micvoicec, firmware/pi/asound.conf), lejátszás: aplay (dmix), dekódolás: mpg123;
             hangerő és mikrofon-némítás: amixer (a kodek szerint más vezérlőnevekkel)
-  XIAO    : USB CDC soros port (/dev/ttyACM0), soronként egy JSON
+  XIAO    : UART – Pi GPIO14 (TXD) -> XIAO D7 (RX), GPIO15 (RXD) <- XIAO D6 (TX), 115200 8N1, /dev/serial0
+            (Pi Zero 2 W-n a mini UART; a PL011 a Bluetooth-é), soronként egy JSON
   Kamera  : OV5647 (picamera2) + OpenCV Haar-kaszkád – csak helyben, kép nem hagyja el a kockát
 
 FIGYELEM: ez a kód hardver nélkül készült (a C-kocka koncepció). A GC9A01 inicializáló sorozata a gyártói
@@ -265,20 +266,18 @@ class AlsaAudio(hal.Audio):
 
 
 # --------------------------------------------------------------------------------------------- XIAO
-def find_xiao_port():
-    """A XIAO (CircuitPython) két USB soros portot ad: konzol (if00) és data (if02) – nekünk a data kell."""
-    import glob
-    for pat in ('/dev/serial/by-id/*CircuitPython*if02*', '/dev/serial/by-id/*XIAO*if02*', '/dev/ttyACM1'):
-        hits = sorted(glob.glob(pat))
-        if hits:
-            return hits[0]
-    return '/dev/ttyACM0'
+XIAO_PORT = '/dev/serial0'          # enable_uart=1, soros konzol kikapcsolva (install.sh); felülírható: CKOCKA_XIAO_PORT
+XIAO_BAUD = 115200
+
+
+def xiao_port():
+    return os.environ.get('CKOCKA_XIAO_PORT') or XIAO_PORT
 
 
 class SerialMcu(hal.Mcu):
-    def __init__(self, port=None, baud=115200):
+    def __init__(self, port=None, baud=XIAO_BAUD):
         super().__init__()
-        self.port, self.baud, self.ser = port or find_xiao_port(), baud, None
+        self.port, self.baud, self.ser = port or xiao_port(), baud, None
         self.loop = asyncio.get_event_loop()
         threading.Thread(target=self._reader, daemon=True).start()
 
