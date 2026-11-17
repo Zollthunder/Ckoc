@@ -10,6 +10,8 @@
 #  1) E6 – Seeed ReSpeaker 2-Mics Pi HAT a Voice Bonnet helyén. Adatok a gyártó Eagle-fájljából („ReSpeaker 2-Mics Pi HAT.brd”,
 #     v1.0): panel 65,0 × 30,0 mm (Pi Zero-méret, furatkép 58 × 23), MIC1/MIC2 felső hangnyílású MEMS mikrofon, a hangnyílás
 #     a panel sarkától (3,05; 21,34) és (61,98; 21,34) mm-re, legmagasabb alkatrész a 6 × 6 × 5,0 mm-es gomb (K1).
+#     BECSÜLT a v2.0-ra: a v2 koordinátáit a Seeed nem adja meg, csak azt, hogy a v1 és v2 lapkiosztása „lényegében azonos”.
+#     A hangszóró-csatlakozó (J2) és a jack körül a tetőtartóig 3,9 mm, a szánig 5,4 mm hely van (ellenőrizve).
 #     A HAT a Pi Zero fölött van (place_modules.py: közép x = 0, z = -4, hossztengely Z); a tüskesort a -X (bal) oldalra
 #     tesszük, így a mikrofonok x = -6,34-nél, z = +25,46 (elöl) és z = -33,46 (hátul) vannak, a megmaradó (jobb, +X)
 #     hangszórótól a lehető legtávolabb.
@@ -68,7 +70,7 @@ HAT = (-15.0, 71.8, -36.5, 15.0, 79.4, 28.5)            # x0, y0, z0, x1, y1, z1
 USB_POCKET = (-16.0, 5.0, -42.5, 16.0, 9.5, -40.3)
 USB_FLANGE = (-15.0, 5.2, -42.4, 15.0, 13.8, -40.4)
 
-NAME_HAT = 'ReSpeaker 2-Mics Pi HAT (2 mikrofon + mono hang)'
+NAME_HAT = 'ReSpeaker 2-Mics Pi HAT (mikrofonhely v1 alapjan, v2-n becsult)'
 NAME_VIB = 'Rezgomotor-modul (ERM, 3 tus)'
 NAME_USB = 'USB-C panelhosszabbito (altalanos, fules)'
 

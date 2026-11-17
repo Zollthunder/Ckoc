@@ -22,7 +22,7 @@ Költségdöntések (2026-11-17, KOLTSEGOPTIMALIZALAS.md E2–E4, E6, M5, M10) �
 3d/c-kocka.stl, 3d/nyomtatas/ (haz, also_talca, tetotarto; hangszoro_rogzito_bal törölve), nézeti DXF: tetolap, haz_(sls),
 also_talca_(szan_alap); vágási DXF: tetolap_alu_2mm (2 mikrofonfurat áthelyezve); a gumitalp DXF-jei törölve.
 Világkoordináta (mm, Y fel, eleje +Z):
-- ReSpeaker 2-Mics Pi HAT (gyártói Eagle-fájl): mikrofonok x = -6,34, z = +25,46 / -33,46 (tüskesor a -X oldalon).
+- ReSpeaker 2-Mics Pi HAT (gyártói v1 Eagle-fájl; a v2.0-ra BECSÜLT, az első panelen lemérni): mikrofonok x = -6,34, z = +25,46 / -33,46 (tüskesor a -X oldalon).
   Tetőlap: Ø1,6 ide (a régi x = 0, z = ±21 furatok megszűntek); ház pereme: Ø2 a hátsó fölött; tetőtartó: régi Ø6
   csatornák betömve, új Ø6 elöl, Ø3 hátul. Helyőrző: 30 × 7,6 × 65 doboz y 71,8…79,4 (tetőtartóig 3,9 mm).
 - 1 hangszóró (jobb, +X); bal hangszóró és gyűrű törölve, a ház bal csavaroszlopai maradtak.

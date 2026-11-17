@@ -123,7 +123,7 @@ SHAPE_REPRESENTATION_RELATIONSHIP()
 #134=MANIFOLD_SOLID_BREP('Tetotarto (PETG)',#54815);
 #135=MANIFOLD_SOLID_BREP('Elolapi tarto (PETG)',#14661);
 #137=MANIFOLD_SOLID_BREP('Hangszoro rogzito jobb (PETG)',#14663);
-#138=MANIFOLD_SOLID_BREP('ReSpeaker 2-Mics Pi HAT (2 mikrofon + mono hang)',#56734);
+#138=MANIFOLD_SOLID_BREP('ReSpeaker 2-Mics Pi HAT (mikrofonhely v1 alapjan, v2-n becsult)',#56734);
 #139=MANIFOLD_SOLID_BREP('Raspberry Pi Zero 2 W',#14665);
 #140=MANIFOLD_SOLID_BREP('UPS + 18650 akku',#14666);
 #141=MANIFOLD_SOLID_BREP('Kerek kijelzo 1.28" (GC9A01, kerek NYAK)',#14667);

@@ -12,7 +12,7 @@ Megjegyzések:
 - Diffúzor: 3 db Ø2,8 furat M2,5 süllyesztett csavarhoz -> ALULRÓL 90°-os süllyesztés Ø5,0-re.
 - Gumitalp: 2026-11-17 óta nincs (nincs vágás). Helyette 4 kész, öntapadós, átlátszó gumiláb (Ø10 × 3 mm) a diffúzor alján,
   ebben a rajzban (±20,5; -19,0) és (±17,5; 21,5) középponttal – a csavarfejektől legalább 3 mm-re.
-- Tetőlap: 6 db Ø1,6 furat; ebből 2 hasznos a ReSpeaker 2-Mics Pi HAT mikrofonjai fölött (x = -6,34; y = -25,46 és 33,46),
+- Tetőlap: 6 db Ø1,6 furat; ebből 2 hasznos a ReSpeaker 2-Mics Pi HAT mikrofonjai fölött (x = -6,34; y = -25,46 és 33,46; a v1 rajzából, a v2-re becsült),
   4 díszítés (r = 21 mm). A hátsó mikrofonfurat a lap szélétől 1,7 mm-re van – CNC-vel/lézerrel rendben, kivágószerszámmal nem.
 - A betétek (C, érintőbetét) körben 0,1 mm-rel kisebbek a nyílásnál (illesztési hézag);
   lézernél a vágásrést (kerf) ne kompenzáld kifelé.
