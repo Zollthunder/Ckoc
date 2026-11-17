@@ -69,7 +69,7 @@ Minden nyomtatott alkatrészbe olvaszd be az M2,5-ös betéteket (a fenti tábl�
 
 1. A **NeoPixel gyűrűt** a tálca fényablaka fölé tedd (a LED-ek lefelé, a diffúzor felé nézzenek).
 2. A **szánt** tedd a tálcára, és alulról 4 db M2,5×8 süllyesztett csavarral húzd a lábaiba.
-3. A szán aljára: **XIAO RP2040, rezgőmotor-modul**. Az **IMU** függőlegesen a **jobb sín külső oldalára** kerül (alkatrész-oldal kifelé, a rögzítőfuratos él felül), 2 db M2,5×6 csavarral a sín betéteibe. A Qwiic kábelt (50 mm) a sín résén át vezesd a XIAO-hoz.
+3. A szán aljára: **XIAO RP2040, rezgőmotor-modul**. Az **IMU** függőlegesen a **jobb sín külső oldalára** kerül (alkatrész-oldal kifelé, a rögzítőfuratos él felül), 2 db M2,5×6 csavarral a sín betéteibe. A Qwiic → Dupont kábelt (Adafruit 4397, 150 mm) a sínbe vágott résen (y 17…24, z −5…1) át a XIAO tüskéire (3V3, GND, D4 = SDA, D5 = SCL). Az út kb. 40 mm, a kb. 110 mm-es ráhagyást a jobb sín külső oldalán, az IMU előtt (z −5…+20, a sín és a hangszóró között) laza hurokban, kábelkötegelővel a sín réséhez fogva kell elvezetni – ragasztás nélkül.
 4. A szán polcaira: **UPS panel + 18650 akku**, felette a **Raspberry Pi Zero 2 W**, rá 11 mm-es távtartókkal a **ReSpeaker hangpanel**.
 5. Kösd be a kábeleket: gyűrű → XIAO, IMU és rezgés → XIAO (I²C), XIAO → Pi (USB vagy UART), UPS → Pi táp. (Az USB-C hosszabbító a házban van, a 8. lépésben dugod be.)
 

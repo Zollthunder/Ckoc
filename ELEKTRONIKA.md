@@ -45,7 +45,7 @@ Az ESP32-S3-as tervhez a Bluetooth-kihangosítás miatt **egy második chip** é
 - **Hátul:** az USB-C hosszabbító a ház hátfalában (közép 18 mm-rel az alj fölött), PETG szorítólappal.
 
 **IMU (2026-11-17 óta):** függőlegesen a szán **jobb sínjének külső oldalán** (a jobb hangszóró felőli oldalon). A NYÁK síkja függőleges, az alkatrész-oldal kifelé, jobbra néz (+X); a hosszanti él vízszintes, előre-hátra fut; a két rögzítőfuratos él felül van. A panel saját tengelyei a kockához képest (Y fel, eleje +Z, jobb +X): **panel X → hátra (−Z), panel Y → fel (+Y), panel Z → jobbra (+X)**. Ez a panel éleiből és a gyártói rajzból adódik; a chip tengelyjelölését a megvásárolt panel szitanyomatán ellenőrizni. **A firmware-ben (`firmware/xiao/code.py`, a `claude/confident-wilson-a057bb` ágon) a tengelyeket át kell számolni** (dobás, rázás, tájolás) – a firmware-t ez a változtatás nem módosította.
-Rögzítés: 2 db M2,5×6 csavar a szán sínjébe olvasztott betétekbe; a Qwiic kábel **50 mm** (Adafruit 4399), a sínbe vágott résen át a XIAO-hoz.
+Rögzítés: 2 db M2,5×6 csavar a szán sínjébe olvasztott betétekbe; a kábel **Adafruit 4397** (Qwiic → női Dupont, 150 mm; a XIAO-n nincs Qwiic), a sínbe vágott résen (y 17…24, z −5…1) át a XIAO tüskéire (3V3, GND, D4 = SDA, D5 = SCL). Az út kb. 40 mm, a kb. 110 mm-es ráhagyást a jobb sín külső oldalán, az IMU előtt (z −5…+20, a sín és a hangszóró között) laza hurokban, kábelkötegelővel a sín réséhez fogva kell elvezetni – ragasztás nélkül.
 - **A tető sarkaiban:** a 4 gomb kapcsolói; középen az érintőbetét alatt az elektróda.
 
 Képek: [iso](assets/fusion/modulok_iso.png) · [elöl](assets/fusion/modulok_elol.png) · [oldal](assets/fusion/modulok_oldal.png)

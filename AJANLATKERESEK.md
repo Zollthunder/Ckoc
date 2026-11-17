@@ -37,7 +37,7 @@ Alapok: [ELEKTRONIKA.md](ELEKTRONIKA.md) (modulok), [GYARTASI_TERV.md](GYARTASI_
 | 14 | ~~Külön rezgőmotor~~ – a 13. tételben benne van | – | – | – | 0 Ft | – | 2026-11-17 |
 | 15 | **1 MΩ-os ellenállás** az érintőelektródához (a XIAO RP2040 maga érzékel, CircuitPython `touchio`) – az Adafruit AT42QT1010 helyett; a gombok prototípus-lapjára kerül | 1 | 10 | 10 Ft | 100 Ft | **becslés** [B]; **döntés (2026-11-17)** (KOLTSEGOPTIMALIZALAS.md, E2) | 2026-11-17 |
 | 16 | Nyomógomb 6×6 mm, THT (TACTS-6x6x7.3) | 4 | 20 | 22 Ft (10+ ár) | 440 Ft | Hestore.hu, 100.420.19 [O] | 2026-11-16 |
-| 17 | STEMMA QT / Qwiic kábel, **50 mm** (Adafruit **4399**, XIAO → IMU; 2026-11-17 óta, az IMU a sín külső oldalán) | 1 | 3 | ~1,03 € ≈ 402 Ft | 1 206 Ft | a 100 mm-es ára (elektronicavoorjou.nl, 1,25 € bruttó [K], 2026-11-16) – az 50 mm-es árát ellenőrizni [B] | 2026-11-17 |
+| 17 | STEMMA QT / Qwiic → **női Dupont-aljzatok**, 150 mm (Adafruit **4397**, IMU → XIAO tüskéi; a XIAO-n nincs Qwiic, KOMPATIBILITAS.md 5.) | 1 | 3 | ~1,03 € ≈ 402 Ft | 1 206 Ft | a Qwiic–Qwiic kábel ára (elektronicavoorjou.nl, 1,25 € bruttó [K], 2026-11-16) – a 4397 árát ellenőrizni [B] | 2026-11-17 |
 | 18 | USB-C panelbe szerelhető hosszabbító, **általános, 10–15 cm** (az Adafruit #4218 helyett; a ház hátfalában, PETG szorítólappal – fül ≤ 31 × 2 mm, test ≤ 13 × 8 mm) | 1 | 3 | ~2 € ≈ 800 Ft | 2 400 Ft | **becslés** [B]; **döntés (2026-11-17)** (KOLTSEGOPTIMALIZALAS.md, E4) | 2026-11-17 |
 | 19 | microSD kártya, 32 GB, A1 (a Pi rendszeréhez; az ELEKTRONIKA.md-ből hiányzik) | 1 | 3 | 3 000 Ft | 9 000 Ft | **becslés** [B] | – |
 | 20 | CR1220 gombelem (a UPS panel RTC-jéhez, nincs a dobozban) | 1 | 3 | 300 Ft | 900 Ft | **becslés** [B] | – |
@@ -177,7 +177,7 @@ Tisztelt Hölgyem / Uram!
 | 2 | Seeed Studio XIAO RP2040 | Seeed **102010428** | 3 db |
 | 3 | Adafruit LSM6DS3TR-C 6-DoF IMU, STEMMA QT | Adafruit **4503** | 3 db |
 | 4 | Rezgőmotor-modul | lapos ERM motor + tranzisztoros meghajtó egy panelen, 3,3–5 V, 3 tűs csatlakozó (PWM-bemenet) | 3 db |
-| 5 | STEMMA QT / Qwiic kábel, 50 mm | Adafruit **4399** | 3 db |
+| 5 | STEMMA QT / Qwiic → női Dupont-aljzatok, 150 mm | Adafruit **4397** | 3 db |
 | 6 | USB-C panelbe szerelhető hosszabbító | aljzat–dugó, **10–15 cm**, füles panelrögzítéssel; a fül legfeljebb 31 × 2 mm, a fül mögötti test legfeljebb 13 × 8 mm | 3 db |
 | 7 | Kerek kijelző 1,28", GC9A01, 240×240, IPS, SPI | kerek NYÁK-os kivitel, Ø ~37,5 mm | 3 db |
 | 8 | Mini kameramodul OV5647 | Raspberry Pi Zero-hoz (22 pólusú, 0,5 mm-es FPC kábellel), kamerafej ~8,5 × 11,3 mm, fix fókusz (pl. Arducam B006603 vagy Pi Supply Spy Camera) | 3 db |
