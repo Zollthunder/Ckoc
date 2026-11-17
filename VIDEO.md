@@ -206,3 +206,31 @@ Három korszak, egy kocka: rövid montázs a hazai gyártású tévéreklámok h
 **Zene és hanghatások** (`tools/hu_retro_audio.js`, mind kódból, 120 BPM): 1978 – „oom-pah” basszus, elektromos zongora, seprűs pergő, saját harangjáték-dallam; 1993 – house-lábdob, taps, orgonás akkordütések, szinti-basszus; 2004 – pumpáló pad, pengetett arpeggio; mindegyik korszak elején ugyanaz a saját háromhangos „C-kocka” motívum más hangszínnel. Hanghatások: csatornaváltás, vetítőgép, csúszófütty, „boing”, lézer, puffanás, pénztárgép, csillogás, csengő.
 **Fájlok:** `video/hu_retro/` (`lines_hu_retro.json` – szöveg és kiejtés, `timeline_hu_retro.json`, `scene_hu_retro_part.js`, `voice/` + `minoseg.json`), `tools/build_hu_retro_scene.js` → `video/scene_hu_retro.html` / `.js`, `tools/hu_retro_audio.js`.
 **Újragenerálás:** XTTS-jelöltek a skill `xtts_generate.py`-jával (`--lang hu --speaker "Gitta Nikolina"` ill. `"Craig Gutsy"`, a `say` szöveggel) → `pick_best.py --lang hungarian` → `node tools/hu_retro_audio.js` → `node tools/build_hu_retro_scene.js` → `node tools/render_video.js full --page scene_hu_retro.html --audio video/hu_retro/audio_mix_hu_retro.wav --out video/c-kocka_retro_hu.mp4`.
+
+## Bónusz: „Cat mode” – függőleges rövid klip (20 mp, 9:16) – `video/c-kocka_catmode_short.mp4`
+
+TikTok/Reels/Shorts-formátum (1080×1920) a kocka új cat mode-járól. Pörgős: kb. 1 mp-enként vált a kép, 120 BPM-es ütemre. Az első fél másodperc a horog: sima arc, villanás, kiugranak a macskafülek, és megszólal a miaú. A végén a kép visszavált a nyitó sima arcra, így újrajátszáskor a hurok észrevétlen. Narráció nincs: nagy, vastag angol feliratok viszik a történetet, mert sokan hang nélkül nézik. Két magyar poén is van benne: a „DOROMBOL” és a „cicc-cicc!”.
+
+| idő | kép | felirat |
+|---|---|---|
+| 0–1,5 | sima arc → villanás → macskafülek „pop” | POV: your desk cube… / …has a CAT MODE 🐱 |
+| 1,5–2,5 | az app kapcsolója (a saját appunk stilizálva) | One tap in the app |
+| 2,5–5,5 | közeli képek: réspupilla, orr és ω-száj, bajusz | slit pupils ✔ · pink nose ✔ · ω mouth ✔ · whiskers ✔ |
+| 5,5–7 | egy kéz megsimogatja a tetőt | now… pet the roof 👋 |
+| 7–10 | dorombol: ^ ^ szem, remegés, rezgéshullámok | PRRRRR · it actually purrs · + vibration motor |
+| 10–11 | | Hungarian for purr: „DOROMBOL” |
+| 11–14,5 | | no fur · no litter box · no 3 a.m. zoomies… **…mostly** (a kocka megpördül) |
+| 14,5–16,5 | a fülek felhegyeződnek, aztán miaú | „cicc-cicc!” (how Hungarians call a cat) · MEOW. |
+| 16,5–20 | zárókép, dorombol | Hi, C! 🐱 · Cat mode. Now purring. |
+
+- **Kép:** a fő videó 3D-s kockája, álló kamerával. A macskaarc ugyanaz, mint a XIAO-n és a szimulátorban (`drawCat` / `Face._cat`), a színek is egyeznek: szem #c4f06e, orr #ff8caa, fülbelső #783c50. A háttér pasztell színátmenet úszó mancsnyomokkal.
+- **Hang:** minden kódból készül (`tools/catmode_audio.js`).
+  - Zene: saját pattogós dallam F–Am–Dm–B♭ akkordokra.
+  - Miaú: fűrészhang mozgó formánsokkal („i” → „a” → „u”).
+  - Dorombolás: a kocka `synth.purr()`-je, kiegészítve egy 260/520 Hz körüli zörejsávval, hogy telefonhangszórón is hallatszódjon.
+  - A dorombolás alatt a zene visszahúzódik.
+  - Valódi hang, hangminta vagy létező dallam nincs benne.
+- **Újragenerálás:**
+  1. `node tools/catmode_audio.js`
+  2. `node tools/build_catmode_scene.js`
+  3. `node tools/render_video.js full --page scene_catmode.html --audio video/catmode/audio_mix_catmode.wav --out video/c-kocka_catmode_short.mp4`

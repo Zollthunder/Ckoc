@@ -1,0 +1,41 @@
+{
+  "fps": 30,
+  "duration": 20.0,
+  "bpm": 120,
+  "beat": 0.5,
+  "cuts": [
+    {"id": "hook",   "t": 0.0},
+    {"id": "app",    "t": 1.5},
+    {"id": "eyes",   "t": 2.5},
+    {"id": "nose",   "t": 3.5},
+    {"id": "whisk",  "t": 4.5},
+    {"id": "pet",    "t": 5.5},
+    {"id": "purr1",  "t": 7.0},
+    {"id": "purr2",  "t": 8.0},
+    {"id": "purr3",  "t": 9.0},
+    {"id": "hu",     "t": 10.0},
+    {"id": "nofur",  "t": 11.0},
+    {"id": "litter", "t": 12.0},
+    {"id": "zoom",   "t": 13.0},
+    {"id": "cicc",   "t": 14.5},
+    {"id": "meow2",  "t": 15.5},
+    {"id": "end",    "t": 16.5},
+    {"id": "loop",   "t": 19.6}
+  ],
+  "voices": [],
+  "sfx": [
+    {"id": "flash", "t": 0.40}, {"id": "pop", "t": 0.42}, {"id": "meow", "t": 0.48},
+    {"id": "tap", "t": 1.95}, {"id": "toggle", "t": 2.0}, {"id": "meowsmall", "t": 2.1},
+    {"id": "swish", "t": 2.5}, {"id": "tick", "t": 2.75}, {"id": "swish", "t": 3.5}, {"id": "tick", "t": 3.75}, {"id": "boing", "t": 4.0},
+    {"id": "swish", "t": 4.5}, {"id": "tick", "t": 4.75}, {"id": "twang", "t": 4.9},
+    {"id": "rub", "t": 5.7}, {"id": "rub", "t": 6.2},
+    {"id": "purr", "t": 6.75, "len": 6.2},
+    {"id": "hit", "t": 7.0}, {"id": "hit", "t": 9.0},
+    {"id": "swish", "t": 11.0}, {"id": "swish", "t": 12.0},
+    {"id": "swish", "t": 13.0}, {"id": "zoomies", "t": 13.75},
+    {"id": "swish", "t": 14.5}, {"id": "cicc", "t": 14.55}, {"id": "perk", "t": 14.95},
+    {"id": "pop", "t": 15.55}, {"id": "meow", "t": 15.6},
+    {"id": "hit", "t": 16.5}, {"id": "purr", "t": 16.9, "len": 2.7},
+    {"id": "flash", "t": 19.55}
+  ]
+}
