@@ -18,7 +18,7 @@ A kocka **négy egységből** áll, amiket külön lehet összerakni és kiprób
 ### Kötőelemek
 | Db | Elem | Hová |
 |---|---|---|
-| 22 | **M2,5 menetes betét** (beolvasztós, Ø3,6-os furatba, 4 mm hosszú) | tetőtartó 4, ház elöl 4, ház a tálcához 4, ház a hangszóróhoz 3, tálca a diffúzorhoz 3, szán lábai 4 |
+| 26 | **M2,5 menetes betét** (beolvasztós, Ø3,6-os furatba, 4 mm hosszú) | tetőtartó 4, ház elöl 4, ház a tálcához 4, ház a hangszóróhoz 3, tálca a diffúzorhoz 3, szán lábai 4, szán jobb sín (IMU) 2, USB-C szorítólap 2 |
 | 4 | M2,5×8 süllyesztett fejű (ISO 10642 / DIN 7991) | tetőlap → tetőtartó |
 | 4 | M2,5×6 hengeres fejű (ISO 4762 / DIN 912) | előlapi tartó → ház |
 | 3 | M2,5×6 hengeres fejű | hangszóró-rögzítő gyűrű → ház |
@@ -26,6 +26,8 @@ A kocka **négy egységből** áll, amiket külön lehet összerakni és kiprób
 | 3 | M2,5×6 süllyesztett fejű | diffúzor → tálca |
 | 4 | M2,5×6 süllyesztett fejű | tálca → szán lábai (alulról) |
 | 4+ | M2,5 távtartó (11 mm) + csavar | Pi + ReSpeaker hangpanel |
+| 2 | M2,5×6 hengeres fejű | IMU → szán jobb sín (külső oldal) |
+| 2 | M2,5×8 süllyesztett fejű | ház hátfala (kívülről) → USB-C szorítólap |
 
 A csavarhosszak a modellből számolt **javaslatok**, az első próbaszerelésnél ellenőrizni kell őket.
 
@@ -45,7 +47,7 @@ A csavarhosszak a modellből számolt **javaslatok**, az első próbaszerelésn�
 ---
 
 ## 0. Előkészítés: menetes betétek
-Minden nyomtatott alkatrészbe olvaszd be az M2,5-ös betéteket (a fenti táblázat szerint 22 db). A betét felülete egy síkba kerüljön a felülettel, és ne álljon ferdén – a pákát függőlegesen tartsd, lassan nyomd.
+Minden nyomtatott alkatrészbe olvaszd be az M2,5-ös betéteket (a fenti táblázat szerint 26 db). A betét felülete egy síkba kerüljön a felülettel, és ne álljon ferdén – a pákát függőlegesen tartsd, lassan nyomd.
 
 ## 1. Ház: C fénycsatorna, érintőbetét és hangszórók
 ![A ház belülről: a C és a két hangszóró a rögzítőgyűrűkkel](szereles/kepek/01_haz_elokeszites.png)
@@ -55,7 +57,8 @@ Minden nyomtatott alkatrészbe olvaszd be az M2,5-ös betéteket (a fenti tábl�
 3. **Belülről** húzz körbe egy vékony szilikoncsíkot a C kilógó része és a fal közé. Kívül ne kerüljön szilikon a résbe.
 4. Ugyanígy: az **érintőbetétet** tedd az alu tetőlap Ø18-as furatába (a tetőlap felső síkjával egy síkba), és alulról szilikonozd körbe.
 5. **Hangszóró:** a 36 mm-es hangszórót (VISATON K 36 WP) a rács mögé tedd, a PETG gyűrűvel szorítsd oda, 3 db M2,5×6 csavarral. **Csak az egyik oldalon** (2026-11-17 óta mono); a másik rács szellőző marad. *(Az ábrán még két hangszóró látszik.)*
-6. Hagyd **24 órát** kötni (ez idő alatt jöhet a többi egység).
+6. **USB-C:** a hosszabbító aljzatát belülről told a hátfal nyílásába (9,4 × 3,6 mm, 18 mm-rel az alj fölött), a fülét fogd a fal és a nyomtatott **USB-C szorítólap** közé, és kívülről 2 db M2,5×8 süllyesztett csavarral húzd a lap betéteibe. A hosszabbító a házban marad; a dugós vége szabadon lóg (10–15 cm).
+7. Hagyd **24 órát** kötni (ez idő alatt jöhet a többi egység).
 
 ## 2. Tálca: diffúzor és gumilábak
 ![A tálca alulról: a diffúzor 3 süllyesztett csavarral](szereles/kepek/02_talca_diffuzor.png)
@@ -69,9 +72,9 @@ Minden nyomtatott alkatrészbe olvaszd be az M2,5-ös betéteket (a fenti tábl�
 
 1. A **NeoPixel gyűrűt** a tálca fényablaka fölé tedd (a LED-ek lefelé, a diffúzor felé nézzenek).
 2. A **szánt** tedd a tálcára, és alulról 4 db M2,5×6 süllyesztett csavarral húzd a lábaiba.
-3. A szán aljára: **XIAO RP2040, IMU, rezgőmotor-modul**, és a tálca peremére az **USB-C panel**.
+3. A szán aljára: **XIAO RP2040, rezgőmotor-modul**. Az **IMU** függőlegesen a **jobb sín külső oldalára** kerül (alkatrész-oldal kifelé, a rögzítőfuratos él felül), 2 db M2,5×6 csavarral a sín betéteibe. A Qwiic kábelt (50 mm) a sín résén át vezesd a XIAO-hoz.
 4. A szán polcaira: **UPS panel + 18650 akku**, felette a **Raspberry Pi Zero 2 W**, rá 11 mm-es távtartókkal a **ReSpeaker hangpanel**.
-5. Kösd be a kábeleket: gyűrű → XIAO, IMU és rezgés → XIAO (I²C), XIAO → Pi (USB vagy UART), UPS → Pi táp, USB-C → UPS.
+5. Kösd be a kábeleket: gyűrű → XIAO, IMU és rezgés → XIAO (I²C), XIAO → Pi (USB vagy UART), UPS → Pi táp. (Az USB-C hosszabbító a házban van, a 8. lépésben dugod be.)
 
 ## 4. Előlapi egység
 ![Előlapi egység: kijelző, kamera, C LED-szalag](szereles/kepek/04_eloegyseg.png)
@@ -104,7 +107,7 @@ Mielőtt bármi a házba kerülne: csatlakoztass mindent, és nézd meg, hogy m�
 ## 8. Szán alulról
 ![A szán alulról betolva (a ház áttetsző)](szereles/kepek/08_szan_alulrol.png)
 
-1. Csatlakoztasd a kábeleket: előlapi egység, tetőegység, hangszóró.
+1. Csatlakoztasd a kábeleket: előlapi egység, tetőegység, hangszóró, és a ház hátfalán lévő **USB-C hosszabbító dugóját a Pi-Ener-lite USB-C aljzatába**.
 2. Tolj be **alulról** a tálcát a szánnal együtt (vigyázz, hogy kábel ne csípődjön be).
 3. Rögzítsd 4 db M2,5×14 csavarral alulról a ház oszlopaiba.
 
@@ -116,12 +119,14 @@ Ragaszd fel a 8 narancs gumisarkot (zsírtalanítás után). Ez az egyetlen igaz
 ---
 
 ## Szétszerelés (szerviz)
-- **Akku / elektronika:** 4 csavar alul → a tálca a szánnal együtt kicsúszik.
+- **Akku / elektronika:** 4 csavar alul → a tálcát csak 2–3 cm-re húzd ki, és **dugd le az USB-C hosszabbítót a Pi-Ener-lite-ról** (a hosszabbító a ház hátfalán marad); utána a tálca a szánnal együtt kicsúszik.
 - **Gombsapkák, tetőlap:** 4 csavar a tetőn → a tetőlap a sapkákkal leemelhető. A tetőtartó (gombmodulok, érintés) ilyenkor leereszkedik a hangpanelre; kivenni a tálca kihúzása után, alulról lehet.
 - **Kijelző / kamera:** a tető levétele után az előlapi egység 4 csavarja.
 - **C vagy érintőbetét csere:** a szilikont belülről késsel ki lehet vágni.
 
+**IMU (2026-11-17 óta):** függőlegesen a szán **jobb sínjének külső oldalán** (a jobb hangszóró felőli oldalon). A NYÁK síkja függőleges, az alkatrész-oldal kifelé, jobbra néz (+X); a hosszanti él vízszintes, előre-hátra fut; a két rögzítőfuratos él felül van. A panel saját tengelyei a kockához képest (Y fel, eleje +Z, jobb +X): **panel X → hátra (−Z), panel Y → fel (+Y), panel Z → jobbra (+X)**. Ez a panel éleiből és a gyártói rajzból adódik; a chip tengelyjelölését a megvásárolt panel szitanyomatán ellenőrizni. **A firmware-ben (`firmware/xiao/code.py`, a `claude/confident-wilson-a057bb` ágon) a tengelyeket át kell számolni** (dobás, rázás, tájolás) – a firmware-t ez a változtatás nem módosította.
+
 ## Még pontosítandó (a valódi alkatrészek alapján)
-- a modulok rögzítőfuratai a szánon (Pi, Bonnet, UPS, XIAO, IMU) – a pontos furatképet a megvásárolt panelekről kell levenni,
+- a modulok rögzítőfuratai a szánon (Pi, ReSpeaker, UPS, XIAO; az IMU-é a gyártói rajzból kész) – a pontos furatképet a megvásárolt panelekről kell levenni,
 - a 4 gombmodul rögzítése a tetőtartó alján, és a kijelző csavarjai,
 - a kábelek hossza és a csatlakozók típusa (JST-SH / JST-PH).

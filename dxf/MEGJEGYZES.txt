@@ -32,3 +32,9 @@ Világkoordináta (mm, Y fel, eleje +Z):
 Ugyanez a Fusion-modellben is (tools/cost_pass_fusion.py, 2026-11-17): a 3d/c-kocka.f3d, .step, .stl és a nyomtatási STL-ek
 már a Fusionből vannak exportálva; a Fusion STEP-je testenként (név, térfogat, befoglaló méret) egyezik az OCP-s változattal.
 A nézeti DXF-ek ebből a STEP-ből készültek; a vágási tetolap_alu_2mm.dxf mikrofonfuratai egyeznek a tetőlap nézetével.
+
+IMU és USB-C áthelyezése (2026-11-17, Zollo jóváhagyásával) – tools/imu_usbc_fusion.py, a Fusionben, onnan exportálva:
+- IMU (Adafruit 4503) függőlegesen a szán jobb sínjének külső oldalán: NYÁK x 22,5…24,1, y 11,5…29,3, z -33,5…-8,1;
+  2 csavaroszlop + M2,5 betét a sínben (y 26,74; z -10,64 / -30,96), Qwiic kábelrés a sínben (y 17…24, z -5…1).
+- USB-C nyílás a ház hátfalában: 9,4 × 3,6 mm, közép y = 18; 2 db Ø2,8 + süllyesztés Ø5 (x = ±19). A régi nyílás (osztásvonal)
+  és a tálca USB-C zsebei visszatöltve. Új PETG alkatrész: USB-C szorítólap (3d/nyomtatas/FDM_PETG/usb_c_szoritolap.stl).

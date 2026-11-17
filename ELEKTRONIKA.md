@@ -40,7 +40,12 @@ Az ESP32-S3-as tervhez a Bluetooth-kihangosítás miatt **egy második chip** é
 - **Középen:** a UPS panel a 18650-es akkuval (a stack hosszában, elölről hátra).
 - **Elöl:** a kerek kijelző, mellette a mini kamera a C nyílásában, a C mögött az S-alakú LED-szalag (a tartó C bordáján).
 - **Oldalt:** a 36 mm-es hangszóró az egyik rács mögött; a másik rács szellőző.
-- **Alul:** a NeoPixel gyűrű, benne a XIAO RP2040, az IMU és a rezgéspanel.
+- **Alul:** a NeoPixel gyűrű, benne a XIAO RP2040 és a rezgőmotor-modul.
+- **Jobb oldalt, a szán sínjén kívül:** az IMU (függőlegesen, lásd lent).
+- **Hátul:** az USB-C hosszabbító a ház hátfalában (közép 18 mm-rel az alj fölött), PETG szorítólappal.
+
+**IMU (2026-11-17 óta):** függőlegesen a szán **jobb sínjének külső oldalán** (a jobb hangszóró felőli oldalon). A NYÁK síkja függőleges, az alkatrész-oldal kifelé, jobbra néz (+X); a hosszanti él vízszintes, előre-hátra fut; a két rögzítőfuratos él felül van. A panel saját tengelyei a kockához képest (Y fel, eleje +Z, jobb +X): **panel X → hátra (−Z), panel Y → fel (+Y), panel Z → jobbra (+X)**. Ez a panel éleiből és a gyártói rajzból adódik; a chip tengelyjelölését a megvásárolt panel szitanyomatán ellenőrizni. **A firmware-ben (`firmware/xiao/code.py`, a `claude/confident-wilson-a057bb` ágon) a tengelyeket át kell számolni** (dobás, rázás, tájolás) – a firmware-t ez a változtatás nem módosította.
+Rögzítés: 2 db M2,5×6 csavar a szán sínjébe olvasztott betétekbe; a Qwiic kábel **50 mm** (Adafruit 4399), a sínbe vágott résen át a XIAO-hoz.
 - **A tető sarkaiban:** a 4 gomb kapcsolói; középen az érintőbetét alatt az elektróda.
 
 Képek: [iso](assets/fusion/modulok_iso.png) · [elöl](assets/fusion/modulok_elol.png) · [oldal](assets/fusion/modulok_oldal.png)
@@ -48,7 +53,8 @@ Képek: [iso](assets/fusion/modulok_iso.png) · [elöl](assets/fusion/modulok_el
 ## Ami a modellben változott emiatt
 - A kocka **90 mm**-es lett (80 helyett), a tetőlap 72 mm, a gombok és a mikrofonfuratok ehhez igazodva kijjebb kerültek.
 - A **kamerafurat** 22 mm-ről **26 mm-re** került a középtől (a C nyílásán belül maradt), így 3 mm hely marad a kerek kijelzőpanel mellett.
-- Az alsó kis panelek (XIAO, IMU, rezgés) a LED-gyűrű fölé kerültek, hogy ne legyenek szorosan mellette.
+- Az alsó kis panelek (XIAO, rezgés) a LED-gyűrű fölé kerültek, hogy ne legyenek szorosan mellette.
+- 2026-11-17: az IMU a jobb sín külső oldalára, az USB-C nyílás az osztásvonalról a ház hátfalába került, mert egy valódi USB-C hosszabbító anyavége a szán fedélzetébe és az IMU-ba ütközött volna (Zollo jóváhagyásával).
 
 ## Eldöntött kérdések
 - Bluetooth-kihangosító: **kell** → a Pi Zero 2 W beépítve tudja (nem kell második chip).
