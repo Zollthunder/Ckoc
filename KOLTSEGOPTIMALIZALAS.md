@@ -124,16 +124,52 @@ A hőkezelés miatti hűtőborda (+400 Ft/db) ebben még nincs benne. A pontos s
 |---|---|
 | Pi Zero 2 W (WH) | 6 000 |
 | ReSpeaker 2-Mics HAT (E6) / Voice Bonnet helyett | 3 900 |
-| Töltőmodul + MAX17048 + tartó (E5) | 2 500 |
+| Pi-Ener-lite UPS panel + import (E5 elvetve, 2026-11-17) | 11 200 |
 | 18650 cella | 3 500 |
 | Kijelző + kamera (E7) | 3 700 |
 | 1 hangszóró (E6) | 1 500 |
 | LED-gyűrű + C szalag | 2 900 |
 | XIAO RP2040 + IMU + rezgőmodul (E3) | 4 600 |
 | Gombok, Qwiic, USB-C (E4), microSD, kábelköteg | 5 300 |
-| **Összesen** | **kb. 34 000 Ft ≈ 87 €** |
+| Kompatibilitás miatt (KOMPATIBILITAS.md): stacking tüskesor, szintillesztő, OTG kábel, forrasztott XIAO | 1 800 |
+| **Összesen** | **kb. 44 500 Ft ≈ 114 €** |
 
-A PIACI_TANULMANY.md 100 db-ra **~120 €** elektronikával és **~185 €** önköltséggel számol. Az optimalizálással az elektronika kb. **−33 €**, a mechanika és a szerelés (M6, M7, G1–G4) kb. **−8 €** → **kb. 145–150 €/db** önköltség. Így a 299 €-s limitált árnál (235 € nettó) a bruttó árrés **~21%-ról ~37%-ra** nő. *(CE nélkül, ahogy a PIACI_TANULMANY.md is a 100 db-os sorozatot.)*
+A PIACI_TANULMANY.md 100 db-ra **~120 €** elektronikával és **~185 €** önköltséggel számol. A döntések után (E5 elvetve, a Pi-Ener-lite marad) az elektronika kb. **−6 €** (a kompatibilitási kiegészítőkkel együtt), a mechanika és a szerelés (M6, M7, G1–G4) kb. **−8 €** → **kb. 170–175 €/db** önköltség. Így a 299 €-s limitált árnál (235 € nettó) a bruttó árrés **~21%-ról ~27–28%-ra** nő. *(Az E5-tel ~37% lett volna; frissítve 2026-11-17.)* *(CE nélkül, ahogy a PIACI_TANULMANY.md is a 100 db-os sorozatot.)*
+
+### 5.4 Mennyibe kerül most egy C-kocka? (2026-11-17, minden döntés után)
+Nettó (ÁFA nélkül), 1 EUR = 390 Ft. Minden szám **becslés**.
+
+| | **Prototípus (3 db-os tétel)** | **100 db-os limitált széria** |
+|---|---|---|
+| Anyag és vásárolt alkatrész (szállítással, 10% tartalékkal) | 109 500 Ft ([AJANLATKERESEK.md](AJANLATKERESEK.md), a kompatibilitási kiegészítőkkel) | ~44 500 Ft elektronika + ~10 700 Ft ház és mechanika (a PIACI_TANULMANY.md 35 €-ja, a mártásos színezéssel csökkentve) |
+| Hűtőborda a Pi-n (HOKEZELES.md) | 400 Ft | 400 Ft |
+| Szerelés | ~1 óra ≈ 10 000 Ft (a 1,5 óra helyett: színezés, kevesebb modul, R1 sarok) | ~45 perc ≈ 7 500 Ft (kábelköteg, teszt-szkript) |
+| Házon belüli gépidő (SLS, CNC/lézer, FDM, SLA) | ~5 000–15 000 Ft *(gépóradíj nélkül nem pontosítható)* | benne a ház és mechanika sorban |
+| Csomagolás, garancia | – | ~3 100 Ft |
+| **Önköltség** | **~125 000–135 000 Ft ≈ 320–345 €** | **~66 000–68 000 Ft ≈ 170–175 €** |
+
+**Haszon a 100 db-os szériánál** (a PIACI_TANULMANY.md ára: **299 € bruttó** ≈ 116 600 Ft, ebből nettó 235 € ≈ 91 700 Ft):
+- **Közvetlen eladás (saját webshop, céges ajándék):** kb. **24 000–26 000 Ft (62–65 €) haszon darabonként**, ~27–28% bruttó árrés → 100 db-on kb. **2,5 millió Ft**.
+- **Webáruházon át (−20%):** a gyártóhoz kb. 73 300 Ft jut → kb. **5 000–7 000 Ft (~15 €) / db**, ~7–9% → vékony, ebben a darabszámban nem éri meg.
+- **CE/RED nincs benne (~8–15 e€, a kiberbiztonsági követelményekkel inkább a felső sáv).** 100 db-ra ráosztva ez darabonként 80–150 € lenne, és az egész hasznot elvinné. **Fontos javítás (2026-11-17):** az EU szabályai szerint a kereskedelmi tevékenység keretében *ingyen* átadott termék (céges ajándék) is „forgalmazásnak” számít, ezért ehhez is CE kell. CE nélkül csak a belső kipróbálásra szánt prototípus és a „nem kapható” jelöléssel kiállított darab mehet. A 100 db-os számítás így csak akkor áll meg, ha a CE költségét nagyobb darabszám (1000+) vagy magasabb ár viseli. Jogi ellenőrzés kell.
+
+**A prototípus** önköltsége (~130 000 Ft) nagyjából a piaci ár kétszerese, ezért eladásra nem alkalmas, csak bemutatásra és kipróbálásra. Ha mégis árazni kellene: 30%-os árréssel kb. **185 000 Ft nettó ≈ 235 000 Ft bruttó** lenne.
+
+### 5.5 CE-állapot alkatrészenként (2026-11-17, webes keresés, [K])
+**A lényeg:** az alkatrészek CE-jelölése nem öröklődik a termékre. A kész C-kockát egészként kell vizsgálni (EMC, biztonság, rádió, kiberbiztonság), és erről a gyártó nyilatkozik. A beszállítói dokumentumok azért fontosak, mert csökkentik a vizsgálatot (főleg a rádiós részét), és kellenek a műszaki dokumentációhoz (RoHS, akku).
+
+| Alkatrész | Megfelelőségi dokumentum | Megjegyzés |
+|---|---|---|
+| Raspberry Pi Zero 2 W(H) | ✅ **EU-megfelelőségi nyilatkozat a RED alapján** (Raspberry Pi Ltd; [Mouser-másolat](https://www.mouser.com/catalog/additional/Raspberry_Pi_EU_DoC_Raspberry_Pi_Zero_2.pdf), hivatalos: [Raspberry Pi approvals](https://pip.raspberrypi.com/categories/594-approvals)) | a legfontosabb: előtanúsított rádiós modul, a rádiós vizsgálat jó része erre építhet |
+| Seeed XIAO RP2040 | ⚠️ valószínű: a Seeed adatlapja CE-tanúsítványt linkel a 102010428-ra (nem nyitottam meg), a Plus változatra van EMC CE-dokumentum ([Seeed](https://files.seeedstudio.com/Seeed_Certificate/documents_certificate/100059977-CE.pdf)) | nincs rajta rádió |
+| Seeed ReSpeaker 2-Mics Pi HAT v2.0 | ❓ nem találtam | a Seeed tanúsítvány-archívumában vagy a beszállítótól kérni |
+| Pi-Ener-lite UPS | ❌ semmilyen CE-említést nem találtam ([Tindie](https://www.tindie.com/products/rachel/pi-ener-litea-portable-power-platform-for-pi-zero/)); kis gyártó, Kínából | **a leggyengébb pont:** töltő + akku, a biztonsági vizsgálatnál ez lesz a legkényesebb. Sorozatban a saját alappanel (S1) megoldja |
+| Adafruit LSM6DS3TR-C IMU | ❓ az Adafruit CE-ről nem nyilatkozik, egyes termékekre RoHS-tanúsítványt ad | fejlesztői panel |
+| GC9A01 kijelző, OV5647 kamera | ❓ általános, gyártói dokumentum nélkül | sorozatban dokumentált beszállító kell |
+| 18650 cella (KeepPower, védett) | ❓ ellenőrizni: az akkurendelet szerint a cellának is megfelelőségi dokumentum és jelölés kell, a szállításhoz UN38.3 | a beszállítótól kérni |
+| Hangszóró, LED-gyűrű, LED-szalag, gombok, kábelek, rezgőmodul, USB-C hosszabbító | – (alkatrészek, önmagukban általában nem CE-kötelesek) | **RoHS-nyilatkozat** kell mindegyikről |
+
+**Teendő a CE előtt:** a hivatalos Pi-nyilatkozat letöltése, RoHS- és REACH-nyilatkozat minden beszállítótól, a cella dokumentumai (akkurendelet, UN38.3), és a Pi-Ener-lite gyártójától nyilatkozat kérése. Ha nem ad, sorozatban helyette dokumentált töltőpanel vagy saját alappanel (S1) kell.
 
 ### 5.3 Melyik javaslat melyik sorozatnál
 | Javaslat | 3 db | 100 db | 500 db | 2000 db |

@@ -76,3 +76,11 @@ Nagyobb darabszámnál a kész modulok helyett **egy saját NYÁK** olcsóbb leh
 1. **Gyártási rajzok átbeszélése:** melyik alkatrész miből, hogyan készül (vágás, marás, nyomtatás).
 2. **Költségoptimalizálás:** árak, alternatívák, mi hagyható el vagy oldható meg olcsóbban.
 3. Prototípus: a modulok beszerzése és összerakása.
+
+## Kompatibilitás-ellenőrzés (2026-11-17)
+Részletek és források: [KOMPATIBILITAS.md](KOMPATIBILITAS.md). A legfontosabbak:
+- **Kijelző:** a `mipi-dbi-spi` overlayjel, SPI0 CE0 (GPIO8), DC = GPIO25, RST = GPIO27, BL = GPIO22 vagy fixen 3,3 V. A gyári `gc9a01` overlay nem jó (a háttérvilágítást a GPIO18-ra, az I2S órajelére tenné). A ReSpeaker APA102 LED-jei ugyanezen az SPI-n vannak, és chip select nélkül a kijelző adatától villoghatnak → próba, szükség esetén a két LED-tüske leválasztása. A kijelzőnek **stacking tüskesor** kell a Pi és a ReSpeaker közé.
+- **XIAO RP2040:** a **gyárilag forrasztott** változat; az IMU-hoz **Adafruit 4397** kábel (Qwiic → női Dupont), a Pi-hez micro-B → USB-C OTG kábel; az érintéshez 1 MΩ-os lehúzó ellenállás.
+- **WS2812 LED-ek:** 74AHCT125 szintillesztő; a LED-ek 5 V-ja közvetlenül a UPS-ről, fényerőkorlát ≤ 30%.
+- **Pi-Ener-lite:** 2,5 A kimenet, **1 A fix töltőáram** (nem 0,5 A), a GPIO4 a UPS-é (külső táp jelzése).
+- **ReSpeaker v2.0:** a `respeaker-2mic-v2_0` overlayt a Seeed repójából kell lefordítani.
