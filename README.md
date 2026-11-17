@@ -29,5 +29,12 @@ node serve.js
 ```
 Utána a böngészőben: `http://localhost:8080` (weboldal) és `http://localhost:8080/video/scene.html` (a videó jelenete, lejátszható).
 
+### Beszélgetés a kockával (csak helyben)
+A szimulátorban a 🎙️ gombbal vagy gépelve lehet beszélni a kockához, a válaszokat a Claude API adja ([talk.js](talk.js)). Ehhez Node 18 vagy újabb kell, és egy Claude API-kulcs környezeti változóban:
+```bash
+ANTHROPIC_API_KEY=... node serve.js
+```
+Kulcs nélkül, próbamódban: `CKOCKA_TALK_MOCK=1 node serve.js`. A kulcs csak a helyi szerveren van, a weboldalba nem kerül, és a végpont csak a saját gépről hívható. A nyilvános oldalon ezért a beszélgetés nem él.
+
 ---
 Tervezte: Zollo & C (Claude) · AI Kihívás 2026 · Koncepciótermék, nem kerül forgalomba.

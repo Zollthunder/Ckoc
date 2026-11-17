@@ -518,3 +518,22 @@ A műfaj ismert elemeit használja (napsugaras hátterek, beugró feliratok vast
 - Az első képkockákon a kamera túl közel volt, a feliratok rálógtak a kockára. A próbaképek alapján hátrébb került.
 
 **Tanulság:** egy jól felépített renderelő-„motor” újrahasznosítható: a második videó a forgatókönyvtől a kész MP4-ig egy délután alatt elkészült, és maga a renderelés 89 másodperc volt.
+
+## 2026-11-17 – A kocka beszél: beszélgetés Claude-dal, és a többi ötlet egyszerre
+
+**Példapromptok:**
+> „valami ötlet, hogy tudjuk fejleszteni vmit a c kockán?”
+> „és mindre igent mondok, elkezdheted őket”
+
+**Hogyan:** az AI nyolc fejlesztési ötletet javasolt. Zollo mindre igent mondott, ezért az AI **szétosztotta a munkát**: négy önálló feladat külön Claude Code sessionökben, saját git-ágon fut párhuzamosan (Pi-szoftver beszélgetéssel, a hiányzó DXF-ek Fusion nélkül, költségoptimalizálás, hőterhelés). A weboldalt érintő feladatokat ő maga csinálta egymás után, mert ugyanazokat a fájlokat érintik.
+
+**Mi készült el itt:**
+- **Beszélgetés a szimulátorban:** egy 🎙️ gomb vagy a kocka érintőfelülete elindítja a böngésző beszédfelismerőjét (magyarul vagy angolul), de be is lehet gépelni a kérdést. A helyi szerver ([serve.js](serve.js) → [talk.js](talk.js)) a **Claude API**-tól kér választ a kocka aktuális személyiségében. A válasz rövid és angol, és a kocka arcának hangulatát is a modell választja (mosoly, vigyor, aggódó, meglepett, unott). Gondolkodás közben a kocka felfelé néz, és lüktet a C betű. Fejjel lefelé fordítva a hallott szöveget eldobja, a félkész választ pedig nem mondja ki.
+- **Biztonság:** az API-kulcs csak a helyi szerveren van (környezeti változóban), a weboldalba sosem kerül. A végpontot csak a saját gépről lehet hívni. A nyilvános oldalon ezért a beszélgetés nem él, és ezt a felület ki is írja. Kulcs nélküli próbához van egy próbamód (`CKOCKA_TALK_MOCK=1`).
+- **Beágyazott szimulátor:** a főoldalon most egy ablakban kipróbálható a szimulátor, telefonméretben is.
+- **Magyar/angol nyelvváltó:** angol főoldal ([index-en.html](index-en.html)), a szimulátor pedig `?lang=en`-nel angolul jelenik meg (egy kis szótár cseréli a feliratokat).
+- **Frissített „Hogyan készült?”:** az idővonal 6 lépésről 10-re bővült (hang és Whisper, szimulátor, saját szoftver, japán reklám), és frissültek az elakadások is.
+
+**Elakadás:** a gépen **Node 14** fut, a Claude hivatalos JavaScript SDK-ja viszont Node 18-at kér. A szerver ezért régi Node-on is elindul, a beszélgetés pedig kiírja, mi hiányzik. Az éles próbához újabb Node és API-kulcs kell.
+
+**Tanulság:** amikor egyszerre sok független feladat van, érdemes őket szétosztani: külön sessionök, külön ágak, és mindegyik csak a saját fájljaihoz nyúl. Így nem írják felül egymás munkáját.

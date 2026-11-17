@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C-Cube – a little friend for your desk</title>
+<meta name="description" content="C-Cube: a desktop AI assistant concept. 3D model in Fusion 360, a video and a website – all made together with an AI in a few days.">
+<meta property="og:title" content="C-Cube – a little friend for your desk">
+<meta property="og:description" content="A desktop AI assistant concept that I designed together with an AI.">
+<meta property="og:image" content="assets/poster.jpg">
+<link rel="alternate" hreflang="hu" href="index.html">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='6' width='52' height='52' rx='12' fill='%2330333a'/%3E%3Cpath d='M44 22a14 14 0 1 0 0 20' fill='none' stroke='%23ff9a3c' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="web/site.css">
+<script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
+</head>
+<body>
+
+<header class="nav">
+  <a class="brand" href="#top"><span class="brand-c">C</span>-Cube</a>
+  <nav>
+    <a href="#video">Video</a>
+    <a href="#funkciok">Features</a>
+    <a href="sim.html?lang=en">Simulator</a>
+    <a href="#modell">3D model</a>
+    <a href="#hogyan">How it was made</a>
+    <a href="#letoltes">Downloads</a>
+    <a href="index.html" hreflang="hu" lang="hu">HU</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- ===== Nyitó rész az interaktív 3D kockával ===== -->
+  <section class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">AI Challenge · concept product</p>
+      <h1>A little friend<br>for your desk.</h1>
+      <p class="lead">The <strong>C-Cube</strong> is a palm-sized desktop AI assistant: you can talk to it, it's always in a good mood, and the glowing <span class="c-mark">C</span> and the smiling face on its little display show what it's up to. And if you're having a bad day, you can even throw it.</p>
+      <p class="lead small">I made all of it – from the idea through the 3D model and the video to this website – together with an artificial intelligence, in a few days.</p>
+      <div class="cta">
+        <a class="btn primary" href="#video">▶ Watch the video</a>
+        <a class="btn" href="sim.html?lang=en">🎮 Try it</a>
+        <a class="btn" href="#hogyan">How was it made?</a>
+      </div>
+    </div>
+    <div class="hero-3d">
+      <div id="viewer" class="viewer" aria-label="Interactive 3D C-Cube – drag with the mouse to rotate">
+        <div class="viewer-loading">Loading 3D model…</div>
+      </div>
+      <div class="modes" role="group" aria-label="Try the cube's modes">
+        <button data-mode="sunny" class="on">☀️ Default</button>
+        <button data-mode="party">🎵 Party</button>
+        <button data-mode="shake">🎱 Shake it!</button>
+        <button data-mode="dizzy">🤾 Throw</button>
+        <button data-mode="dnd">📳 Do not disturb</button>
+      </div>
+      <p class="hint">Drag the cube to rotate it · its eyes follow your mouse 👀</p>
+    </div>
+  </section>
+
+  <!-- ===== Videó ===== -->
+  <section id="video" class="section stage">
+    <h2>The video</h2>
+    <p class="section-lead">2:56 about the C-Cube: how it wakes up, what it can do, and how it was made. The video was made from code too – the 3D scene, the music and the sound effects. The narration is spoken by a local AI voice model (XTTS-v2).</p>
+    <div class="video-wrap">
+      <video controls preload="metadata" poster="assets/poster.jpg">
+        <source src="video/c-kocka.mp4" type="video/mp4">
+        Your browser can't play the video – <a href="video/c-kocka.mp4">download it here</a>.
+      </video>
+    </div>
+    <h3 style="margin-top:56px">Bonus: a “Japanese commercial” 🇯🇵</h3>
+    <p class="section-lead">31 seconds in the style of the genre: rapid cuts, sunburst backgrounds, giant captions, taiko drums and “PRICELESS!”. Japanese narration (local AI voice) with English subtitles – the music and every sound effect were made from code.</p>
+    <div class="video-wrap">
+      <video controls preload="metadata">
+        <source src="video/c-cube_japan.mp4" type="video/mp4">
+        Your browser can't play the video – <a href="video/c-cube_japan.mp4">download it here</a>.
+      </video>
+    </div>
+  </section>
+
+  <!-- ===== Funkciók ===== -->
+  <section id="funkciok" class="section">
+    <h2>What can it do?</h2>
+    <p class="section-lead">Three groups: it entertains, it helps, it looks out for you.</p>
+    <div class="groups">
+      <article class="group">
+        <h3>🎉 It entertains</h3>
+        <ul>
+          <li><b>Party mode</b> – to the music, the C and the RGB light ring underneath flash to the beat.</li>
+          <li><b>Andor, the dad-joke button</b> 🌳 – a wood-clad button that only tells dad jokes. <i>Ba-dum-tss!</i></li>
+          <li><b>The peeking cube</b> – sometimes it secretly looks at you. If you look back, it quickly looks away.</li>
+          <li><b>Stress-ball mode</b> – you can throw it! The orange rubber corners let it take it, and afterwards it's a little dizzy.</li>
+          <li><b>Shake to Decide</b> – ask a yes–no question, shake it, and the display shows <b>YES</b> or <b>NO</b>.</li>
+        </ul>
+      </article>
+      <article class="group">
+        <h3>🤝 It helps</h3>
+        <ul>
+          <li><b>Voice-based AI assistant</b> – Q&amp;A, reminders, timers, translation, weather.</li>
+          <li><b>Do-not-disturb mode</b> – quiet and dark; for something important it just gives a gentle buzz.</li>
+          <li><b>App, Bluetooth, speakerphone</b> – your phone calls through the cube.</li>
+          <li><b>It cheers you up</b> – the camera notices when you're tired or sad and tries to lift your mood.</li>
+          <li><b>Power-on ritual</b> – <i>“Welcome back, Captain! I haven't seen you for 14 hours…”</i></li>
+        </ul>
+      </article>
+      <article class="group">
+        <h3>🔒 It looks out for you</h3>
+        <ul>
+          <li><b>Flip it over for silence</b> – upside down, the microphones and the camera switch off too.</li>
+          <li><b>On-device image processing</b> – the camera image never goes to the cloud.</li>
+          <li><b>Indicator light</b> – always shows when the camera is active.</li>
+        </ul>
+      </article>
+    </div>
+
+    <h3 class="sub-h">Pick a personality – or build your own</h3>
+    <div class="persona">
+      <div><span>☀️</span><b>Sunny</b><i>„Good morning, sunshine!”</i></div>
+      <div><span>🧘</span><b>Chill</b><i>„Breathe in… the emails can wait.”</i></div>
+      <div><span>🔥</span><b>Hype</b><i>„LET'S GOOOO!”</i></div>
+      <div><span>😏</span><b>Sarcastic</b><i>„Oh great. Monday.”</i></div>
+      <div><span>💼</span><b>Pro</b><i>„You have three meetings today.”</i></div>
+      <div><span>✨</span><b>Custom</b><i>sliders in the app: humor, energy, sarcasm…</i></div>
+    </div>
+
+    <h3 class="sub-h" id="probald">🎮 Try it right here</h3>
+    <p class="section-lead">Switch it on, press its buttons, throw it, or control it from the phone app. It makes sound too.</p>
+    <div class="sim-embed"><iframe id="simFrame" src="sim.html?embed&lang=en" title="C-Cube simulator" loading="lazy" allow="microphone; autoplay"></iframe></div>
+    <p class="center" style="margin:18px 0 8px"><a class="btn" href="sim.html?lang=en">↗ The simulator on its own page</a></p>
+    <script>
+      // a beágyazott szimulátor elküldi a magasságát, így nincs belső görgetősáv
+      addEventListener('message', e => { const h = e.data && e.data.ckockaHeight; if (e.source === document.getElementById('simFrame').contentWindow && h > 200) document.getElementById('simFrame').style.height = Math.ceil(h) + 'px'; });
+    </script>
+
+    <div class="shots">
+      <figure><img src="assets/shot-party.jpg" alt="Party mode: colorful lights and a spectrum on the display" loading="lazy"><figcaption>Party mode</figcaption></figure>
+      <figure><img src="assets/shot-dizzy.jpg" alt="Dizzy eyes after a throw" loading="lazy"><figcaption>After a throw</figcaption></figure>
+      <figure><img src="assets/shot-yes.jpg" alt="Shake to Decide: YES on the display" loading="lazy"><figcaption>Shake to Decide</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- ===== 3D modell ===== -->
+  <section id="modell" class="section">
+    <h2>The 3D model</h2>
+    <p class="section-lead">Made in Autodesk Fusion 360 – but not drawn with a mouse: the AI wrote a Python script that builds the model step by step. The first, 51-step concept grew into a manufacturable model of about 50 parts, with collision and assembly checks.</p>
+    <div class="specs">
+      <table>
+        <tr><th>Housing</th><td>9 × 9 × 9 cm, SLS-printed PA12, 9 mm fillets, matte graphite; split in two at the bottom (the inner sled slides in from below)</td></tr>
+        <tr><th>Front</th><td>Ø 33 mm round LCD display, surrounded by a glowing RGB “C”</td></tr>
+        <tr><th>Camera</th><td>in the opening of the C, with a privacy indicator light</td></tr>
+        <tr><th>Top</th><td>72 × 72 mm anodized aluminum plate, 2 microphones, Ø18 mm touch surface, 4 programmable buttons (one of them wooden: <i>Andor</i>)</td></tr>
+        <tr><th>Sides</th><td>stereo speaker grilles</td></tr>
+        <tr><th>Back</th><td>USB-C charging connector</td></tr>
+        <tr><th>Corners</th><td>8 orange rubber “bumpers” – that's why it can be thrown</td></tr>
+        <tr><th>Bottom</th><td>RGB light ring casting light onto the desk, rubber foot</td></tr>
+        <tr><th>Inside</th><td>Raspberry Pi Zero 2 W (Wi-Fi + Bluetooth), Voice Bonnet (2 microphones, stereo audio), 18650 battery, XIAO RP2040, motion sensor, vibration motor – all off-the-shelf modules</td></tr>
+      </table>
+    </div>
+    <div class="gallery">
+      <figure><img src="assets/fusion/thumb-iso-top-right.jpg" alt="Fusion 360: isometric view" loading="lazy"><figcaption>Fusion – isometric</figcaption></figure>
+      <figure><img src="assets/fusion/thumb-front.jpg" alt="Fusion 360: front view with the smiling face" loading="lazy"><figcaption>Front: display and C</figcaption></figure>
+      <figure><img src="assets/fusion/thumb-top.jpg" alt="Fusion 360: top view with the buttons" loading="lazy"><figcaption>Top: buttons, microphones</figcaption></figure>
+      <figure><img src="assets/fusion/thumb-back.jpg" alt="Fusion 360: rear view" loading="lazy"><figcaption>Back: USB-C</figcaption></figure>
+    </div>
+    <figure class="wide"><img src="assets/build-steps.png" alt="The model being built on the Fusion timeline, in six steps" loading="lazy"><figcaption>How it builds up while the script runs (the AI stepped through the Fusion timeline and saved an image of every step)</figcaption></figure>
+  </section>
+
+  <!-- ===== Hogyan készült ===== -->
+  <section id="hogyan" class="section">
+    <h2>How was it made?</h2>
+    <p class="section-lead">The point of the challenge wasn't only the result, but how I learn something new with the help of an AI. My tool was <b>Claude Code</b>.</p>
+
+    <ol class="timeline">
+      <li>
+        <h4>1 · The idea</h4>
+        <blockquote>“got an assignment, need some help with it … got any good ideas?”</blockquote>
+        <p>Out of four topic suggestions the C-Cube won: it fits the AI theme, and its shape is simple enough.</p>
+      </li>
+      <li>
+        <h4>2 · Concept and brainstorming</h4>
+        <blockquote>“maybe you have some more ideas … what if it had a little LCD display …”</blockquote>
+        <p>Joint brainstorming: I brought the jokes (a throwable stress ball, a dad-joke button, peeking, a camera), and the AI developed them into working features.</p>
+      </li>
+      <li>
+        <h4>3 · 3D model from code, checked via MCP</h4>
+        <blockquote>“isnt there an mcp for fusion360 either? look it up properly pls”</blockquote>
+        <p>The AI wrote a Fusion 360 Python script that builds the whole model. Through Fusion's official MCP server it ran the script itself, took pictures of the result, and found its own mistakes.</p>
+      </li>
+      <li>
+        <h4>4 · A cube you can manufacture and assemble</h4>
+        <blockquote>“make it easy to assemble … Treat these like gospel, like a standard.”</blockquote>
+        <p>The 80 mm cube became 90 mm: an inner sled, off-the-shelf modules (Raspberry Pi Zero 2 W), an SLS-printed housing, an anodized aluminum top plate, M2.5 screws everywhere. The AI checked measurable rules (at least 3 mm of clearance everywhere) and produced the cutting DXFs, the assembly guide and the market study.</p>
+      </li>
+      <li>
+        <h4>5 · The video – also from code</h4>
+        <blockquote>“ok lets goo, generate the video”</blockquote>
+        <p>An animated three.js scene with a live face and an exploded view, music and sound effects synthesized from code, stitched together with ffmpeg.</p>
+      </li>
+      <li>
+        <h4>6 · One AI as the other's ears</h4>
+        <blockquote>“sometimes theres these weird sounds in it, like AAAAAAAA”</blockquote>
+        <p>The narration is spoken by local AI voice models (F5-TTS, then XTTS-v2) on the computer's graphics card. Since the AI can't hear, a speech recognizer (Whisper) listens back to the candidates and picks the most accurate one. From these lessons the AI wrote itself a skill.</p>
+      </li>
+      <li>
+        <h4>7 · Simulator and phone app</h4>
+        <blockquote>“could you maybe write a program for it? that controls the c cube”</blockquote>
+        <p>A browser-based cube with a live face, buttons, movements, 25 dad jokes and a control app. Every command shows up in the protocol log. When run locally, you can even chat with it: the replies come from Claude.</p>
+      </li>
+      <li>
+        <h4>8 · The cube's own software</h4>
+        <blockquote>“maybe could you design a program for the PCB too that handles all this?”</blockquote>
+        <p>Python for the Raspberry Pi, CircuitPython for the XIAO RP2040, with simulated hardware and automated tests. An independent AI review still found 15 bugs, and we fixed them all.</p>
+      </li>
+      <li>
+        <h4>9 · Bonus: a Japanese commercial</h4>
+        <blockquote>“the usual fast cuts, sound effects, what youd think of when you think of a viral japanese ad”</blockquote>
+        <p>31 seconds, 11 beat-synced cuts, Japanese AI narration. Made with the same code-built video engine, in one afternoon.</p>
+      </li>
+      <li>
+        <h4>10 · This website</h4>
+        <p>An interactive 3D cube, videos, a simulator and the story of how it was made. Anyone can open it on GitHub Pages.</p>
+      </li>
+    </ol>
+
+    <h3 class="sub-h">Where I got stuck – and how we got past it</h3>
+    <div class="stuck">
+      <div><b>“There's no Fusion MCP”</b><p>The first search was too narrow. I asked again, and the more thorough search found it: there is an official one!</p></div>
+      <div><b>Freezing Fusion</b><p>A DXF export froze Fusion twice. The first time the AI waited silently; since then it speaks up right away, and won't try the same thing a third time.</p></div>
+      <div><b>A robotic voice, then an “AAA” voice</b><p>A machine voice, a free site with a watermark, a weak Hungarian model. In the end it became English XTTS-v2 on the graphics card, curated with Whisper.</p></div>
+      <div><b>“There's no graphics card”</b><p>A mistake: the AI only checked whether the installed program could see the card. When I asked, it turned out there's an RTX 2060, and voice generation became twenty times faster with it.</p></div>
+      <div><b>An overwritten model</b><p>An old script that ran by accident overwrote the saved model. It came back from git in minutes.</p></div>
+      <div><b>Safety</b><p>I do CAM for work in this same Fusion, so before every step the AI checked that the C-Cube document was the active one. And the company logo was removed from everywhere.</p></div>
+    </div>
+
+    <h3 class="sub-h">Tools</h3>
+    <ul class="tools">
+      <li>Claude Code (AI)</li><li>Autodesk Fusion 360 + Python API</li><li>Fusion MCP server</li><li>three.js</li><li>Node.js</li><li>ffmpeg</li><li>F5-TTS, XTTS-v2 (local AI voice)</li><li>Whisper (speech recognition)</li><li>Python, CircuitPython</li><li>Claude API</li><li>Git + GitHub Pages</li>
+    </ul>
+    <p class="center"><a class="btn" href="NAPLO.md">📝 The full log, with example prompts (in Hungarian)</a> <a class="btn" href="DESIGN.md">💡 Design concept (in Hungarian)</a></p>
+  </section>
+
+  <!-- ===== Letöltések ===== -->
+  <section id="letoltes" class="section">
+    <h2>Downloads</h2>
+    <div class="downloads">
+      <a href="3d/c-kocka.f3d" download><b>c-kocka.f3d</b><span>Fusion 360 archive</span></a>
+      <a href="3d/c-kocka.step" download><b>c-kocka.step</b><span>STEP – for any CAD program</span></a>
+      <a href="3d/c-kocka.stl" download><b>c-kocka.stl</b><span>STL – for 3D printing / viewing</span></a>
+      <a href="3d/fusion/CKocka/CKocka.py" download><b>CKocka.py</b><span>the Fusion script that builds the model</span></a>
+      <a href="video/c-kocka.mp4" download><b>c-kocka.mp4</b><span>the video (1080p)</span></a>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <p><span class="brand-c">C</span>-Cube · Designed by Zollo &amp; C (Claude) · AI Challenge 2026</p>
+  <p class="muted">Concept product – not for sale.</p>
+</footer>
+
+<script type="module" src="web/viewer.js"></script>
+</body>
+</html>

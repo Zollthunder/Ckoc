@@ -11,5 +11,8 @@
     "puppeteer-core": "^19.11.1",
     "three": "^0.160.0",
     "ws": "^8.17.1"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.9.0"
   }
 }

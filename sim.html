@@ -68,6 +68,19 @@
         <button class="act" id="tired">😮‍💨 Fáradt vagyok</button>
         <button class="act" id="call">📞 Bejövő hívás</button>
       </div>
+
+      <form class="talk" id="talk" autocomplete="off" aria-label="Beszélgetés a kockával">
+        <p class="panel-title">Beszélj hozzá</p>
+        <div class="talk-row">
+          <button type="button" class="mic" id="mic" title="Kattints rá, és mondd (vagy érintsd meg a kocka tetejét)">🎙️</button>
+          <input class="text" id="say" maxlength="300" placeholder="…vagy írd be, mit mondanál neki">
+          <button type="submit" class="btn primary small" id="send">Küldés</button>
+          <select id="lang" title="Milyen nyelven beszélsz hozzá? (A kocka angolul válaszol.)">
+            <option value="hu-HU">🇭🇺 magyarul</option><option value="en-US">🇬🇧 angolul</option>
+          </select>
+        </div>
+        <p class="talk-note" id="talkNote"></p>
+      </form>
     </div>
   </section>
 

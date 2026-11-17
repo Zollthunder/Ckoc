@@ -1,10 +1,18 @@
 // C-kocka szimulátor: a kocka "firmware"-e (arc, fények, hang, viselkedés) + a telefonos vezérlőapp.
 // Az app parancsokat küld a kockának (ugyanazon az oldalon, vagy külön ablakból BroadcastChannel-en át),
 // a kocka eseményeket küld vissza. Minden üzenet megjelenik a protokollnaplóban.
+import { LANG, T, applyStatic, addLangSwitch } from './i18n.js';
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const APP_ONLY = new URLSearchParams(location.search).has('app');
 if (APP_ONLY) document.body.classList.add('app-only');
+applyStatic(); addLangSwitch(document.querySelector('.nav nav'));
+// beágyazva (a főoldal iframe-jében): a magasságot elküldjük a szülőnek, hogy ne legyen belső görgetősáv
+if (new URLSearchParams(location.search).has('embed') && window.parent !== window) {
+  document.body.classList.add('embed');
+  const report = () => window.parent.postMessage({ ckockaHeight: document.documentElement.scrollHeight }, '*');
+  new ResizeObserver(report).observe(document.body); report();
+}
 const chan = 'BroadcastChannel' in window ? new BroadcastChannel('ckocka') : null;
 const store = {
   get(k, d) { try { const v = localStorage.getItem('ckocka.' + k); return v == null ? d : JSON.parse(v); } catch { return d; } },
@@ -151,18 +159,20 @@ function voiceChain() {           // a beszéd útja EGYSZER kötve: forrás -> 
 }
 const canSpeak = () => S.on && !S.flipped && !S.dnd;
 // say(id): a kocka kimondja a lines.json adott mondatát; a feliratban a "Captain" helyére a beállított megszólítás kerül
-async function say(id, { mouthAfter = 'smile', sub = null } = {}) {
+// sayText(text): szabad szöveg (pl. Claude válasza) – ehhez nincs előre generált hangfájl, a böngésző angol hangja mondja
+const say = (id, opts) => speak({ id, ...opts });
+const sayText = (text, opts) => speak({ text, ...opts });
+async function speak({ id = null, text = null, mouthAfter = 'smile', sub = null } = {}) {
   if (S.flipped || !S.on) return;
   if (S.dnd) { subtitle('📳 (Ne zavarj: csak finoman rezeg)'); vibrate(); return; }
-  await linesReady;
-  const text = LINES[id] || id;
-  log('kocka', 'speech.say', { id, text });
-  subtitle(sub || '“' + text.replace(/Captain/g, S.nick) + '”');
+  if (id) { await linesReady; text = LINES[id] || id; }
+  log('kocka', 'speech.say', id ? { id, text } : { text });
+  subtitle(sub || '“' + text.replace(/Captain/g, S.nick) + '”', Math.max(4200, 1500 + text.length * 75));
   ensureAudio(); stopVoice();
   F.talking = true;
   const token = ++sayToken;          // ha egy újabb mondat megszakítja ezt, a régi vége ne zárja be az új száját
   const p = persona();
-  const buf = S.voice ? await clip(id) : null;
+  const buf = S.voice && id ? await clip(id) : null;
   if (token !== sayToken) return;
   if (!canSpeak()) { F.talking = false; return; }   // betöltés közben megfordították / Ne zavarj / kikapcsolták
   await new Promise(res => {
@@ -192,7 +202,7 @@ function voiceLevel() {   // a száj nyitása a hang valódi hangereje szerint
   return Math.min(1, Math.sqrt(s / d.length) / 40);
 }
 function subtitle(txt, ms = 4200) {
-  const el = $('#subtitle'); el.textContent = txt; el.classList.add('on');
+  const el = $('#subtitle'); el.textContent = T(txt); el.classList.add('on');
   clearTimeout(subTimer); subTimer = setTimeout(() => el.classList.remove('on'), ms);
 }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -352,7 +362,7 @@ cubeEl?.addEventListener('pointerenter', async () => {
 // ------------------------------------------------------------------ viselkedés
 async function boot() {
   if (S.on) return;
-  ensureAudio(); S.on = true; cubeEl.classList.remove('off'); $('#power').textContent = '⏻ Kikapcsolás';
+  ensureAudio(); S.on = true; cubeEl.classList.remove('off'); $('#power').textContent = T('⏻ Kikapcsolás');
   log('kocka', 'power.on', {});
   SFX.boot(); F.mode = 'face'; F.mouth = 'smile';
   S.busy = true;
@@ -375,7 +385,7 @@ async function boot() {
 }
 function powerOff() {
   S.on = false; S.party = false; partyStop(); stopVoice(); newScene(); F.mode = 'off'; S.call = null;
-  cubeEl.classList.add('off'); $('#power').textContent = '⏻ Bekapcsolás'; $('#party').checked = false;
+  cubeEl.classList.add('off'); $('#power').textContent = T('⏻ Bekapcsolás'); $('#party').checked = false;
   log('kocka', 'power.off', {}); broadcastState();
 }
 async function needOn() { if (!S.on) await boot(); return !S.flipped; }
@@ -433,7 +443,7 @@ async function flipCube() {
   newScene();
   emit('event.orientation', { upsideDown: S.flipped, microphone: !S.flipped, camera: !S.flipped });
   if (S.flipped) {
-    stopVoice(); if (S.party) setParty(false);
+    stopVoice(); if (S.party) setParty(false); TALK.rec?.abort();
     $('#camLed').classList.remove('on'); subtitle('🔒 Fejjel lefelé: mikrofon és kamera kikapcsolva', 3000);
   } else subtitle('Mikrofon és kamera újra bekapcsolva', 2200);
   backToFace();
@@ -472,6 +482,7 @@ async function touch() {
   }
   if (S.dnd) return vibrate();
   if (S.busy) return;
+  if (TALK.ready && SR) return listen();   // ha él a beszélgetés, az érintés tényleg hallgatni kezd
   const sc = newScene();
   $('#touch').classList.add('listening'); F.mode = 'listen'; F.target = { x: 0, y: -0.7 };
   emit('event.touch', { action: 'listen' });
@@ -483,6 +494,117 @@ async function touch() {
   if (Math.random() < 0.5) { F.mode = 'text'; F.text = time; F.sub = ''; F.textSize = 84; F.textColor = null; await say('time', { sub: `“It's ${time}, ${S.nick}.”` }); await sleep(900); backToFace(sc); }
   else await say(`idle_${p.key}_${pick(3)}`);
 }
+// ------------------------------------------------------------------ beszélgetés Claude-dal
+// A böngésző felismeri, amit mondasz (vagy beírod), a helyi szerver (serve.js → talk.js) Claude-tól kér rá választ,
+// a kocka pedig kimondja. A kulcs a szerveren marad; a nyilvános oldalon (GitHub Pages) ez a rész nem él.
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const TALK = { ready: false, mock: false, reason: null, history: [], rec: null };
+const TALK_NOTES = {
+  offline: 'A beszélgetéshez a kocka „agya” kell: töltsd le a projektet, és indítsd el helyben a <code>node serve.js</code> paranccsal, Claude API-kulccsal. A nyilvános oldalon ez nem fut, mert a kulcs nem kerülhet egy weboldalba.',
+  'no-key': 'A szerver fut, de nincs Claude API-kulcs. Állítsd be az <code>ANTHROPIC_API_KEY</code> környezeti változót, és indítsd újra a <code>node serve.js</code>-t. Kulcs nélküli próbához: <code>CKOCKA_TALK_MOCK=1</code>.',
+  'old-node': 'A Claude SDK-hoz Node 18 vagy újabb kell, ezen a gépen régebbi fut.',
+  'no-sdk': 'Hiányzik a Claude SDK: futtasd az <code>npm install</code> parancsot, majd indítsd újra a szervert.',
+};
+function updateTalkUI() {
+  const ok = TALK.ready && !APP_ONLY;
+  $('#say').disabled = $('#send').disabled = !ok;
+  $('#mic').disabled = !ok || !SR;
+  let note = ok ? '' : T(TALK_NOTES[TALK.reason] || TALK_NOTES.offline);
+  if (ok && TALK.mock) note = T('Próbamód: a válaszok előre megírtak, nem Claude-tól jönnek.');
+  if (ok && !SR) note += (note ? ' ' : '') + T('Ez a böngésző nem ismeri a beszédfelismerést, írd be, mit mondanál.');
+  if (ok && !TALK.mock) note += (note ? ' ' : '') + T('A kocka angolul válaszol. Ha leveszed a hangját, a választ feliratként olvashatod.');
+  $('#talkNote').innerHTML = note;
+}
+async function talkStatus() {
+  try {
+    const r = await fetch('api/talk', { cache: 'no-store' });
+    if (!r.ok) throw new Error(r.status);
+    Object.assign(TALK, { reason: null }, await r.json());
+  } catch { TALK.ready = false; TALK.reason = 'offline'; }
+  updateTalkUI();
+}
+function listen() {
+  if (TALK.rec) { TALK.rec.stop(); return; }           // második kattintás: elég, feldolgozhatod
+  if (!SR || S.flipped || S.dnd || S.busy) return;
+  const rec = new SR();
+  rec.lang = $('#lang').value; rec.interimResults = true; rec.continuous = false; rec.maxAlternatives = 1;
+  let heard = '', err = null;
+  const sc = newScene();
+  TALK.rec = rec;
+  rec.onstart = () => {
+    $('#mic').classList.add('on'); $('#touch').classList.add('listening');
+    F.mode = 'listen'; F.target = { x: 0, y: -0.7 }; F.snap = false;
+    emit('event.listen', { lang: rec.lang });
+    subtitle('🎙️ Hallgatlak…', 8000);
+  };
+  rec.onresult = e => {
+    heard = [...e.results].map(r => r[0].transcript).join(' ').trim();
+    if (heard) subtitle('🎙️ ' + heard, 8000);
+  };
+  rec.onerror = e => { err = e.error; };
+  rec.onend = () => {
+    TALK.rec = null;
+    $('#mic').classList.remove('on'); $('#touch').classList.remove('listening');
+    F.target = F.pointer ? { ...F.pointer } : { x: 0, y: 0 };
+    backToFace(sc);
+    if (S.flipped) return;                               // fejjel lefelé: amit hallott, eldobjuk
+    if (heard) return converse(heard);
+    if (err === 'not-allowed' || err === 'service-not-allowed') subtitle('🔇 Nem kaptam engedélyt a mikrofonhoz. Gépelj, vagy engedélyezd a böngészőben.', 5000);
+    else if (err === 'network') subtitle('🔇 A böngésző beszédfelismerője most nem érhető el. Gépelj inkább!', 5000);
+    else if (err !== 'aborted') subtitle('🤷 Nem hallottam semmit.', 2200);
+  };
+  try { rec.start(); } catch { TALK.rec = null; }
+}
+async function converse(text) {
+  text = String(text || '').trim().slice(0, 300);
+  if (!text || !TALK.ready) return;
+  if (!(await needOn())) return;
+  if (S.dnd) return vibrate();
+  if (S.busy) { subtitle('Egy pillanat, még mondok valamit…', 1800); return; }
+  S.busy = true;
+  const sc = newScene();
+  stopVoice(); if (S.party) setParty(false);
+  TALK.history.push({ role: 'user', content: text });
+  emit('event.voice_query', { text });
+  // gondolkodik: felfelé néz, a fény lüktet
+  backToFace(sc); F.mouth = 'flat'; F.target = { x: 0.55, y: -0.65 }; cubeEl.classList.add('thinking');
+  subtitle(T('Te: „{0}”   🤔', text), 20000);
+  let res = null, why = '';
+  try {
+    const r = await fetch('api/talk', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ persona: S.persona, sliders: S.sliders, nick: S.nick, history: TALK.history }),
+    });
+    const d = await r.json().catch(() => ({}));
+    if (r.ok && d.reply) res = d; else why = d.reason || d.error || r.status;
+  } catch { why = 'hálózat'; }
+  cubeEl.classList.remove('thinking');
+  F.target = F.pointer ? { ...F.pointer } : { x: 0, y: 0 };
+  try {
+    if (sc !== sceneId || !canSpeak()) { TALK.history.pop(); return; }   // közben megfordították / kikapcsolták
+    if (!res) {
+      TALK.history.pop();
+      log('kocka', 'talk.error', { why });
+      F.mouth = 'worried'; subtitle(T('😵 Most nem értem el az agyamat ({0}). Próbáld újra!', why), 4000);
+      await sleep(2500); if (sc === sceneId) F.mouth = 'smile';
+      return;
+    }
+    TALK.history.push({ role: 'assistant', content: res.reply });
+    TALK.history = TALK.history.slice(-12);
+    emit('event.voice_reply', { text: res.reply, mood: res.mood });
+    F.mouth = res.mood;
+    await sayText(res.reply, { mouthAfter: res.mood });
+    await sleep(1500); if (sc === sceneId && F.mouth === res.mood) F.mouth = 'smile';
+  } finally { S.busy = false; }
+}
+if (!APP_ONLY) {
+  $('#talk').addEventListener('submit', e => { e.preventDefault(); const t = $('#say').value; $('#say').value = ''; converse(t); });
+  $('#mic').addEventListener('click', listen);
+  $('#lang').value = store.get('lang', navigator.language?.startsWith('hu') ? 'hu-HU' : 'en-US');
+  $('#lang').addEventListener('change', e => store.set('lang', e.target.value));
+  talkStatus();
+} else $('#talk').hidden = true;
+
 function setParty(on) {
   S.party = !!(on && S.on && !S.flipped && !S.dnd);
   $('#party').checked = S.party; cubeEl.classList.toggle('party', S.party);
@@ -537,7 +659,7 @@ function syncAppUI(st = S) {
   if (document.activeElement !== $('#nick')) $('#nick').value = st.nick;
   $$('.assign select').forEach(s => { s.value = st.assign[s.dataset.a]; });
   const bt = $('#bt');
-  bt.textContent = !st.on ? 'ᛒ kocka kikapcsolva' : st.flipped ? '🔒 mikrofon, kamera KI' : 'ᛒ csatlakoztatva';
+  bt.textContent = T(!st.on ? 'ᛒ kocka kikapcsolva' : st.flipped ? '🔒 mikrofon, kamera KI' : 'ᛒ csatlakoztatva');
   bt.classList.toggle('off', !st.on || st.flipped);
 }
 $$('#persona button').forEach(b => b.addEventListener('click', () => send('persona.set', { name: b.dataset.p })));
@@ -550,7 +672,7 @@ $$('#swatches button').forEach(b => b.addEventListener('click', () => send('led.
 $('#bright').addEventListener('input', e => send('led.brightness', { value: +e.target.value / 100 }));
 $('#nick').addEventListener('change', e => send('user.nickname', { name: e.target.value.trim() }));
 $$('.assign select').forEach(s => s.addEventListener('change', () => send('button.assign', { button: +s.dataset.a, sound: s.value })));
-$('#popout').addEventListener('click', () => window.open('sim.html?app', 'ckocka-app', 'width=440,height=900'));
+$('#popout').addEventListener('click', () => window.open('sim.html?app' + (LANG === 'en' ? '&lang=en' : ''), 'ckocka-app', 'width=440,height=900'));
 if (APP_ONLY) $('#popout').hidden = true;
 
 // csatorna: a kocka-oldal parancsot kap, az app-ablak állapotot

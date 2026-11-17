@@ -12,6 +12,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="alternate" hreflang="en" href="index-en.html">
 <link rel="stylesheet" href="web/site.css">
 <script type="importmap">{"imports":{"three":"https://unpkg.com/three@0.160.0/build/three.module.js","three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"}}</script>
 </head>
@@ -26,6 +27,7 @@
     <a href="#modell">3D modell</a>
     <a href="#hogyan">Hogyan készült</a>
     <a href="#letoltes">Letöltés</a>
+    <a href="index-en.html" hreflang="en" lang="en" title="In English">EN</a>
   </nav>
 </header>
 
@@ -124,7 +126,14 @@
       <div><span>✨</span><b>Saját</b><i>csúszkák az appban: humor, energia, szarkazmus…</i></div>
     </div>
 
-    <p class="center" style="margin:28px 0 8px"><a class="btn primary" href="sim.html">🎮 Próbáld ki a szimulátorban – arc, fények, gombok, személyiségek, app</a></p>
+    <h3 class="sub-h" id="probald">🎮 Próbáld ki itt helyben</h3>
+    <p class="section-lead">Kapcsold be, nyomkodd a gombjait, dobd el, vagy vezéreld a telefonos appból. Hangot is ad.</p>
+    <div class="sim-embed"><iframe id="simFrame" src="sim.html?embed" title="C-kocka szimulátor" loading="lazy" allow="microphone; autoplay"></iframe></div>
+    <p class="center" style="margin:18px 0 8px"><a class="btn" href="sim.html">↗ A szimulátor külön oldalon</a></p>
+    <script>
+      // a beágyazott szimulátor elküldi a magasságát, így nincs belső görgetősáv
+      addEventListener('message', e => { const h = e.data && e.data.ckockaHeight; if (e.source === document.getElementById('simFrame').contentWindow && h > 200) document.getElementById('simFrame').style.height = Math.ceil(h) + 'px'; });
+    </script>
 
     <div class="shots">
       <figure><img src="assets/shot-party.jpg" alt="Party mód: színes fények és hangszínkép a kijelzőn" loading="lazy"><figcaption>Party mód</figcaption></figure>
@@ -176,39 +185,59 @@
         <p>Közös brainstorming: én hoztam a poénokat (dobálható stresszlabda, favicc-gomb, leskelődés, kamera), az AI továbbgondolta őket működő funkcióvá.</p>
       </li>
       <li>
-        <h4>3 · 3D modell kódból</h4>
-        <blockquote>„Ezen a gépen van fusion360, ha esetleg tudod kezelni.”</blockquote>
-        <p>Az AI egy Fusion 360 Python szkriptet írt, ami felépíti a teljes modellt.</p>
+        <h4>3 · 3D modell kódból, ellenőrzés MCP-vel</h4>
+        <blockquote>„fusion360hoz sincs mcp? nézz utána kérlek alaposan”</blockquote>
+        <p>Az AI egy Fusion 360 Python szkriptet írt, ami felépíti a teljes modellt. A Fusion hivatalos MCP szerverén keresztül maga futtatta, képeket készített róla, és megtalálta a saját hibáit.</p>
       </li>
       <li>
-        <h4>4 · Ellenőrzés a Fusion MCP-vel</h4>
-        <blockquote>„fusion360hoz sincs mcp? nézz utána kérlek alaposan”</blockquote>
-        <p>Kiderült, hogy az Autodesknek van hivatalos, beépített MCP szervere. Ezzel az AI maga futtatott szkriptet, képeket készített, hibát talált és javított.</p>
+        <h4>4 · Gyártható, szerelhető kocka</h4>
+        <blockquote>„legyen könnyen szerelhető … Ezekre mint a szentírás tekints, mint standard.”</blockquote>
+        <p>A 80 mm-es kockából 90 mm-es lett: belső szán, kész modulok (Raspberry Pi Zero 2 W), SLS-nyomtatott ház, eloxált alu tetőlap, mindenhol M2,5-ös csavar. Az AI mérhető szabályokat ellenőrzött (mindenhol min. 3 mm hely), és elkészítette a vágási DXF-eket, a szerelési útmutatót és a piaci tanulmányt.</p>
       </li>
       <li>
         <h4>5 · Videó – szintén kódból</h4>
         <blockquote>„akkor lets goo, generáld a videót”</blockquote>
-        <p>Animált three.js jelenet élő arccal, Windows gépi hangok, saját szintetizált zene és hangeffektek, ffmpeg-gel összefűzve.</p>
+        <p>Animált three.js jelenet élő arccal és robbantott ábrával, kódból szintetizált zene és hangeffektek, ffmpeg-gel összefűzve.</p>
       </li>
       <li>
-        <h4>6 · Ez a weboldal</h4>
-        <p>Interaktív 3D kocka, videó, a történet – és GitHub Pages-en bárki megnyithatja.</p>
+        <h4>6 · Egy AI a másik füle</h4>
+        <blockquote>„néha vannak ilyen fura hangok benne, mint ÁÁÁÁÁÁÁÁ”</blockquote>
+        <p>A narrációt helyi AI-hangmodellek (F5-TTS, majd XTTS-v2) mondják a gép videókártyáján. Mivel az AI nem hall, egy beszédfelismerő (Whisper) hallgatja vissza a jelölteket, és a legpontosabbat választja. A tapasztalatokból az AI saját skillt írt magának.</p>
+      </li>
+      <li>
+        <h4>7 · Szimulátor és telefonos app</h4>
+        <blockquote>„esetleg egy programot tudnál írni hozzá? ami vezérli a c kockát”</blockquote>
+        <p>Böngészős kocka élő arccal, gombokkal, mozdulatokkal, 25 dad joke-kal és vezérlőappal. Minden parancs látszik a protokollnaplóban. Helyben futtatva már beszélgetni is lehet vele: a válaszokat Claude adja.</p>
+      </li>
+      <li>
+        <h4>8 · A kocka saját szoftvere</h4>
+        <blockquote>„esetleg a nyákra is tudnál tervezni egy progit ami ezeket kezeli?”</blockquote>
+        <p>Python a Raspberry Pi-re, CircuitPython a XIAO RP2040-re, szimulált hardverrel és automatikus tesztekkel. Egy független AI-átnézés még 15 hibát talált, mindet javítottuk.</p>
+      </li>
+      <li>
+        <h4>9 · Bónusz: japán reklám</h4>
+        <blockquote>„szokásos gyors vágások, hanghatások, amire az ember gondolna egy virális japán reklámra gondolva”</blockquote>
+        <p>31 másodperc, 11 vágás ütemre, japán AI-narráció. Ugyanazzal a kódból épülő videómotorral készült, egy délután alatt.</p>
+      </li>
+      <li>
+        <h4>10 · Ez a weboldal</h4>
+        <p>Interaktív 3D kocka, videók, szimulátor és a készítés története. GitHub Pages-en bárki megnyithatja.</p>
       </li>
     </ol>
 
     <h3 class="sub-h">Ahol elakadtam – és hogyan jutottunk túl rajta</h3>
     <div class="stuck">
-      <div><b>A szkriptmenü nem jött elő</b><p>A Fusion a kezdőoldalon nyílik meg – ott nincs Shift+S. Előbb meg kell nyitni egy tervet.</p></div>
-      <div><b>Hiányzott a hangszórórács</b><p>A Fusion a lap éleit is a vázlatba tette, így az egész oldal besüllyedt. Megoldás: él nélküli vázlat, csak a kis profilok kivágása.</p></div>
-      <div><b>„Nincs Fusion MCP”</b><p>Az első keresés túl szűk volt. Rákérdeztem, alaposabb keresés: van hivatalos!</p></div>
-      <div><b>Régi Node.js</b><p>A gépen Node 14 van – a modern csomagok nem mentek, ezért az AI saját, egyszerű megoldásokat írt.</p></div>
-      <div><b>Robotos hang</b><p>A természetes hangokhoz Azure-kulcs kellett volna, de a céges bejelentkezésen elakadtam – maradt a finomított gépi hang.</p></div>
-      <div><b>Biztonság</b><p>Ugyanebben a Fusionben CAM-ezek a munkához – az AI minden lépés előtt ellenőrizte, hogy a C-kocka dokumentum aktív-e.</p></div>
+      <div><b>„Nincs Fusion MCP”</b><p>Az első keresés túl szűk volt. Rákérdeztem, és az alaposabb keresés megtalálta: van hivatalos!</p></div>
+      <div><b>Lefagyó Fusion</b><p>Egy DXF-export kétszer is lefagyasztotta a Fusiont. Első alkalommal az AI csendben várt, azóta azonnal szól, és ugyanazt harmadszor nem próbálja meg.</p></div>
+      <div><b>Robotos, majd „ÁÁÁ”-zó hang</b><p>Gépi hang, ingyenes oldal vízjellel, gyenge magyar modell. Végül angol XTTS-v2 lett a videókártyán, Whisperrel válogatva.</p></div>
+      <div><b>„Nincs videókártya”</b><p>Tévedés volt: az AI csak azt nézte, látja-e a telepített program a kártyát. Rákérdezésre kiderült, hogy van egy RTX 2060, és ezzel hússzor gyorsabb lett a hanggenerálás.</p></div>
+      <div><b>Felülírt modell</b><p>Egy véletlenül lefutott régi szkript felülírta a mentett modellt. A gitből percek alatt visszajött.</p></div>
+      <div><b>Biztonság</b><p>Ugyanebben a Fusionben CAM-ezek a munkához, ezért az AI minden lépés előtt ellenőrizte, hogy a C-kocka dokumentuma aktív-e. A céglogó pedig mindenhonnan kikerült.</p></div>
     </div>
 
     <h3 class="sub-h">Eszközök</h3>
     <ul class="tools">
-      <li>Claude Code (AI)</li><li>Autodesk Fusion 360 + Python API</li><li>Fusion MCP szerver</li><li>three.js</li><li>Node.js</li><li>ffmpeg</li><li>Windows beszédszintézis</li><li>Git + GitHub Pages</li>
+      <li>Claude Code (AI)</li><li>Autodesk Fusion 360 + Python API</li><li>Fusion MCP szerver</li><li>three.js</li><li>Node.js</li><li>ffmpeg</li><li>F5-TTS, XTTS-v2 (helyi AI-hang)</li><li>Whisper (beszédfelismerés)</li><li>Python, CircuitPython</li><li>Claude API</li><li>Git + GitHub Pages</li>
     </ul>
     <p class="center"><a class="btn" href="NAPLO.md">📝 A teljes napló (példapromptokkal)</a> <a class="btn" href="DESIGN.md">💡 Tervezési koncepció</a></p>
   </section>
