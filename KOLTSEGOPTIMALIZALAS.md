@@ -10,6 +10,23 @@
 - **Elvek oszlop:** ✅ összhangban van a tervezési elvekkel · ⚠️ **ütközik** egy elvvel vagy egy korábbi döntéssel. Ezt csak Zollo jóváhagyásával lehet bevezetni.
 - **Kockázat:** alacsony / közepes / magas, és hogy mit kell kipróbálni.
 
+## Döntések (Zollo, 2026-11-17)
+| Javaslat | Döntés | Átvezetve |
+|---|---|---|
+| E1 Pi Zero 2 WH EU-s boltból, E4 általános USB-C, E9 1 m LED-szalag | ✅ elfogadva | AJANLATKERESEK.md, ELEKTRONIKA.md |
+| E2 érintés a XIAO-n, E3 rezgőmotor-modul | ✅ elfogadva (prototípuson kipróbálni) | AJANLATKERESEK.md, ELEKTRONIKA.md, SZERELES.md |
+| M6 mártásos színezés | ✅ elfogadva | AJANLATKERESEK.md, GYARTASI_TERV.md |
+| M5 gumilábak a gumitalp helyett | ✅ elfogadva | AJANLATKERESEK.md, GYARTASI_TERV.md, SZERELES.md |
+| E6 ReSpeaker + 1 hangszóró (mono) – **elvi eltérés jóváhagyva** | ✅ elfogadva | AJANLATKERESEK.md, ELEKTRONIKA.md, GYARTASI_TERV.md, SZERELES.md. **Nyitott:** a v2.0-n van-e JST hangszórókimenet (ha nincs, +~4 € erősítőmodul, a megtakarítás ~1 500 Ft-tal kisebb) |
+| S1/G5 saját NYÁK sorozatban – **elvi eltérés jóváhagyva** | ✅ 500 db fölött tervezhető | a prototípust nem érinti |
+| E5 töltőmodul a Pi-Ener-lite helyett | ❌ elvetve, **marad a Pi-Ener-lite** | – |
+| M2 kevesebb menetes betét | ❌ nem engedélyezve, maradnak a betétek | – |
+| M1, M3, M4, M7, M8, M10, B1, B2, G1–G4 | nyitott (nem volt kérdés) | – |
+
+**Az új kiindulás:** az AJANLATKERESEK.md végösszege a döntések átvezetése után **319 982 Ft nettó / 3 db = 106 661 Ft/db** (előtte 140 044 Ft/db).
+
+**Még nincs átvezetve (külön lépés kell hozzá):** a 3D modell és a DXF-ek (1 hangszórótartó, ReSpeaker-mikrofonfuratok a tetőlapon, gumitalp helyett gumilábak), a szerelési ábrák, a firmware (érintés `touchio`-val, rezgés PWM-mel, ReSpeaker hangpanel), valamint a weboldal és a videó szövegei.
+
 ---
 
 ## 1. Elektronika (a kockánkénti költség kb. 60%-a)

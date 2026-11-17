@@ -4,7 +4,7 @@
 
 Alapok: [ELEKTRONIKA.md](ELEKTRONIKA.md) (modulok), [GYARTASI_TERV.md](GYARTASI_TERV.md) (alkatrészek, anyagok), [SZERELES.md](SZERELES.md) (kötőelemek), [TERVEZESI_ELVEK.md](TERVEZESI_ELVEK.md) (költséghatékony, kész, polcról levehető alkatrészek).
 
-**Mit gyártunk házon belül:** SLS ház és tálca, FDM PETG/TPU alkatrészek, SLA gombsapkák, lézervágott akril és fa, CNC/lézer tetőlap. **Mit veszünk kívülről:** elektronikai modulok és apróságok, a tetőlap eloxálása (és esetleg az alapanyaga), PMMA, fa, EPDM, kötőelemek, festék.
+**Mit gyártunk házon belül:** SLS ház és tálca, FDM PETG/TPU alkatrészek, SLA gombsapkák, lézervágott akril és fa, CNC/lézer tetőlap. **Mit veszünk kívülről:** elektronikai modulok és apróságok, a tetőlap eloxálása (és esetleg az alapanyaga), PMMA, fa, gumilábak, kötőelemek, színezőfesték.
 
 ---
 
@@ -21,29 +21,29 @@ Alapok: [ELEKTRONIKA.md](ELEKTRONIKA.md) (modulok), [GYARTASI_TERV.md](GYARTASI_
 ### 1.1 Elektronika (kívülről)
 | # | Tétel | Db/kocka | Rendelt db | Egységár (nettó) | Összesen (nettó) | Forrás / beszállító | Forrás dátuma |
 |---|---|---|---|---|---|---|---|
-| 1 | Raspberry Pi Zero 2 W (RPI-ZERO2-W) | 1 | 3 | 12 133 Ft | 36 399 Ft | Hestore.hu, cikkszám 100.471.77 [O]; *alternatíva:* welectron.com 16,72 € nettó (≈ 6 521 Ft), de „hamarosan raktáron” | 2026-11-16 |
-| 2 | **Pi Zero 2 WH felár** (gyárilag forrasztott tüskesor; a fej nélküli Pi + saját forrasztás ütközne a „csatlakozók forrasztás helyett” elvvel) | 1 | 3 | ~2,5 € ≈ 975 Ft | 2 925 Ft | EU-s boltokban a WH kb. 3 € bruttóval drágább a W-nél (pl. Botland 16,99 € nettó) [K] | 2026-11-17 |
-| 3 | Adafruit Voice Bonnet (#4757, WM8960, 2 mikrofon, sztereó hangszórókimenet) | 1 | 3 | 23,07 € ≈ 8 997 Ft | 26 991 Ft | BerryBase.de, 27,45 € bruttó [O] – **jelenleg nem szállítható**; a DigiKey „Obsolete”-nek, a Botland „Discontinued”-nak jelöli [K]. **Döntés (2026-11-16): marad**, mert a termék elméleti, nem kerül gyártásba | 2026-11-16 |
+| 1 | Raspberry Pi **Zero 2 WH** (gyárilag forrasztott tüskesorral) | 1 | 3 | 16,99 € ≈ 6 626 Ft | 19 878 Ft | Botland, 16,99 € nettó [K]; *alternatíva:* BerryBase (WH), welectron (W, 16,72 €), Hestore (W, 12 133 Ft [O]). **Döntés (2026-11-17): EU-s boltból** (KOLTSEGOPTIMALIZALAS.md, E1) | 2026-11-17 |
+| 2 | ~~Tüskesor a Pi-hez~~ – a WH-ban gyárilag benne van (a saját forrasztás ütközne a „csatlakozók forrasztás helyett” elvvel) | – | – | – | 0 Ft | – | 2026-11-17 |
+| 3 | **Seeed ReSpeaker 2-Mics Pi HAT** (107100001, 2 mikrofon, **mono** hangszórókimenet) – az Adafruit Voice Bonnet (#4757, kifutott) helyett | 1 | 3 | ~10 € ≈ 3 900 Ft | 11 700 Ft | DigiKey/Farnell 9–11 € nettó, Hackster 12,90 USD [K]. **Döntés (2026-11-17): ReSpeaker + 1 hangszóró** (KOLTSEGOPTIMALIZALAS.md, E6). **Ellenőrizni:** a v2.0 (TLV320AIC3104 kodek) leírásaiban csak 3,5 mm-es jack szerepel; ha nincs rajta JST hangszórókimenet, kell mellé egy kész mono erősítőmodul (~4 €) | 2026-11-17 |
 | 4 | UPS panel Pi Zeróhoz: Pi-Ener-lite (USB-C, töltöttségmérő, RTC) | 1 | 3 | 35 USD ≈ 11 900 Ft | 35 700 Ft | Tindie (gyártó, Kínából szállít; „6 left in stock”) [O] | 2026-11-16 |
 | 5 | 18650 Li-ion cella, védett, 3000 mAh (KEEPPOWER ICR18650-3000P) | 1 | 3 | 4 932 Ft | 14 796 Ft | Hestore.hu, 100.442.96 [O] | 2026-11-16 |
 | 6 | Kerek kijelző 1,28", GC9A01, 240×240, SPI | 1 | 3 | 8,70 € ≈ 3 393 Ft | 10 179 Ft | eu.robotshop.com, Elecrow modul, 10,45 € bruttó [K]; a „kerek NYÁK-os” kivitelt ellenőrizni | 2026-11-16 |
 | 7 | Mini „spy” kameramodul OV5647, **Pi Zero (22 pólusú) szalagkábellel** – pl. **Arducam B006603** vagy **Pi Supply Spy Camera** (8,5 × 11,3 mm) | 1 | 3 | 5 000 Ft | 15 000 Ft | **becslés** [B] (Arducam mini modul ~10–11 USD [K]); a Kailap JAL-KH3-C20B-1B (OV5640) **nem jó**: DVP párhuzamos interfész, nem CSI | 2026-11-16 |
-| 8 | Hangszóró, 8 Ω, 2 W (VISATON K 36 WP, **Ø36 mm**) | 2 | 6 | 2 132 Ft | 12 792 Ft | Hestore.hu, 100.357.67 [O]; **Döntés (2026-11-16): ez kerül be**, a rögzítőgyűrű Ø36-ra módosul | 2026-11-16 |
+| 8 | Hangszóró, 8 Ω, 2 W (VISATON K 36 WP, **Ø36 mm**) | **1** | 3 | 2 132 Ft | 6 396 Ft | Hestore.hu, 100.357.67 [O]; **Döntés (2026-11-16): ez kerül be**, a rögzítőgyűrű Ø36-ra módosul; **(2026-11-17): kockánként 1 db (mono)** | 2026-11-17 |
 | 9 | WS2812 LED-gyűrű, 24 LED, **Ø66 mm** (NeoPixel Ring 24-kompatibilis) | 1 | 3 | 3 429 Ft | 10 287 Ft | Hestore.hu, WS2812-RING24/66, 100.410.10 [O] | 2026-11-16 |
-| 10 | S-alakú (síkban hajlítható) WS2812-es LED-szalag, 60 LED/m, ~110 mm/kocka | 0,11 m | 1 tekercs (5 m) | 7 500 Ft | 7 500 Ft | **becslés** [B]: a talált tekercsek 6 mm szélesek vagy SK6812 chipesek (pl. 5 m, ~17–22 USD [K]); pontos 5 mm/60 LED/m WS2812 ajánlatot nem találtam | 2026-11-16 |
+| 10 | S-alakú (síkban hajlítható) WS2812-es LED-szalag, 60 LED/m, ~110 mm/kocka | 0,11 m | **1 m** (3 kockához 0,33 m kell) | 2 500 Ft | 2 500 Ft | **becslés** [B]; **döntés (2026-11-17): 1 m-es kiszerelés**. A talált tekercsek 6 mm szélesek vagy SK6812 chipesek (pl. 5 m, ~17–22 USD [K]); pontos 5 mm/60 LED/m WS2812 ajánlatot nem találtam | 2026-11-16 |
 | 11 | Seeed XIAO RP2040 | 1 | 3 | 4,92 € ≈ 1 919 Ft | 5 757 Ft | TME (tme.eu), 5,95 € bruttó [K]; a Hestore-nál nincs | 2026-11-16 |
 | 12 | IMU: Adafruit LSM6DS3TR-C, STEMMA QT (#4503) | 1 | 3 | 8,56 € ≈ 3 338 Ft | 10 014 Ft | Mouser / DigiKey EU, 8,46–8,59 € nettó [K] | 2026-11-16 |
-| 13 | Rezgésvezérlő: Adafruit DRV2605L (#2305) | 1 | 3 | 9,37 € ≈ 3 654 Ft | 10 962 Ft | RS Components (EU), 9,37 € nettó [K] | 2026-11-16 |
-| 14 | Rezgőmotor (lapos ERM vagy LRA, ~10 mm) | 1 | 3 | 800 Ft | 2 400 Ft | **becslés** [B] | – |
-| 15 | Érintésérzékelő: Adafruit AT42QT1010 (#1374) | 1 | 3 | 5,14 € ≈ 2 005 Ft | 6 015 Ft | DigiKey.de, 5,14 € nettó [K] | 2026-11-16 |
+| 13 | **Rezgőmotor-modul** (lapos ERM motor + tranzisztoros meghajtó egy kis panelen, 3 tűs csatlakozó), a XIAO PWM-kimenetéről – az Adafruit DRV2605L helyett | 1 | 3 | ~1 € ≈ 400 Ft | 1 200 Ft | **becslés** [B]; **döntés (2026-11-17)** (KOLTSEGOPTIMALIZALAS.md, E3) | 2026-11-17 |
+| 14 | ~~Külön rezgőmotor~~ – a 13. tételben benne van | – | – | – | 0 Ft | – | 2026-11-17 |
+| 15 | **1 MΩ-os ellenállás** az érintőelektródához (a XIAO RP2040 maga érzékel, CircuitPython `touchio`) – az Adafruit AT42QT1010 helyett; a gombok prototípus-lapjára kerül | 1 | 10 | 10 Ft | 100 Ft | **becslés** [B]; **döntés (2026-11-17)** (KOLTSEGOPTIMALIZALAS.md, E2) | 2026-11-17 |
 | 16 | Nyomógomb 6×6 mm, THT (TACTS-6x6x7.3) | 4 | 20 | 22 Ft (10+ ár) | 440 Ft | Hestore.hu, 100.420.19 [O] | 2026-11-16 |
-| 17 | STEMMA QT / Qwiic kábel, 100 mm | 3 | 9 | 1,03 € ≈ 402 Ft | 3 618 Ft | elektronicavoorjou.nl, 1,25 € bruttó [K] | 2026-11-16 |
-| 18 | USB-C panelbe szerelhető hosszabbító (Adafruit #4218, 30 cm) | 1 | 3 | 13,25 € ≈ 5 168 Ft | 15 504 Ft | opencircuit.shop, 16,00 € bruttó [K] | 2026-11-16 |
+| 17 | STEMMA QT / Qwiic kábel, 100 mm (XIAO → IMU) | 1 | 3 | 1,03 € ≈ 402 Ft | 1 206 Ft | elektronicavoorjou.nl, 1,25 € bruttó [K] | 2026-11-16 |
+| 18 | USB-C panelbe szerelhető hosszabbító, **általános, 10–15 cm** (az Adafruit #4218 helyett; a tálca peremén a furatképet igazítani) | 1 | 3 | ~2 € ≈ 800 Ft | 2 400 Ft | **becslés** [B]; **döntés (2026-11-17)** (KOLTSEGOPTIMALIZALAS.md, E4) | 2026-11-17 |
 | 19 | microSD kártya, 32 GB, A1 (a Pi rendszeréhez; az ELEKTRONIKA.md-ből hiányzik) | 1 | 3 | 3 000 Ft | 9 000 Ft | **becslés** [B] | – |
 | 20 | CR1220 gombelem (a UPS panel RTC-jéhez, nincs a dobozban) | 1 | 3 | 300 Ft | 900 Ft | **becslés** [B] | – |
 | 21 | M2,5 távtartó-készlet (11 mm) + csavarok a Pi/Bonnet stackhez | – | 1 készlet | 3 000 Ft | 3 000 Ft | **becslés** [B] | – |
 | 22 | Kábelek, JST-SH/JST-PH csatlakozók, vezeték, prototípus-lap a gomboknak, öntapadós rézfólia | – | 3 készlet | 4 000 Ft | 12 000 Ft | **becslés** [B] | – |
-| | **Elektronika összesen** | | | | **252 179 Ft** | | |
+| | **Elektronika összesen** | | | | **172 453 Ft** | | |
 
 ### 1.2 Kötőelemek (kívülről)
 A [SZERELES.md](SZERELES.md) szerint kockánként: 25 db M2,5 menetes betét, 4 db M2,5×8 süllyesztett fejű (DIN 7991), 7 db M2,5×6 süllyesztett fejű, 10 db M2,5×6 hengeres fejű (DIN 912), 4 db M2,5×14 hengeres fejű.
@@ -62,11 +62,11 @@ A [SZERELES.md](SZERELES.md) szerint kockánként: 25 db M2,5 menetes betét, 4 
 | 27 | Opál PMMA (akril) 3 mm, kis tábla (C fénycsatorna, Ø66 diffúzor) | – | 1 tábla (500×250) | ≈ 2 550 Ft | 2 550 Ft | **becslés** cseh Hornbach-ár alapján (199 Kč bruttó, 500×250×3 mm opál [K]); magyar forintos árat nem találtam | 2026-11-16 |
 | 28 | Opál PMMA 2 mm, kis tábla (érintőbetét Ø17,8) | – | 1 | 2 000 Ft | 2 000 Ft | **becslés** [B] | – |
 | 29 | Bükk vagy tölgy, 2 mm (lemez/furnér; Andor fa betét Ø6,6) | – | 1 | 1 500 Ft | 1 500 Ft | **becslés** [B] (maradékból akár 0 Ft) | – |
-| 30 | EPDM gumilemez 1,5 mm, öntapadós (gumitalp Ø60) | – | 1 kis tábla | 3 000 Ft | 3 000 Ft | **becslés** [B] | – |
+| 30 | **Öntapadós gumiláb**, átlátszó (3M Bumpon-típus, ~Ø10 × 3 mm) – a Ø60-as EPDM gumitalp helyett | 4 | 16 | 50 Ft | 800 Ft | **becslés** [B]; **döntés (2026-11-17)** (KOLTSEGOPTIMALIZALAS.md, M5) | 2026-11-17 |
 | 31 | Semleges (neutrális) szilikon, víztiszta | – | 1 tubus | 2 500 Ft | 2 500 Ft | **becslés** [B] | – |
 | 32 | Ragasztó a TPU gumisarkokhoz | – | 1 | 2 000 Ft | 2 000 Ft | **becslés** [B] | – |
-| 33 | Festés házon belül: alapozó + matt grafit / soft-touch szórófesték az SLS házra | – | 1 készlet | 12 000 Ft | 12 000 Ft | **becslés** [B] (külső festővel kb. darabonként többe kerülne; lásd 3. fejezet) | – |
-| | **Külső szolgáltatás és alapanyag összesen** | | | | **56 182 Ft** | | |
+| 33 | **Mártásos színezés** házon belül: poliamidhoz való festék (fekete/grafit) + edény, szemcseszórás után – a szórófestés helyett | – | 1 készlet | 3 000 Ft | 3 000 Ft | **becslés** [B]; **döntés (2026-11-17)** (KOLTSEGOPTIMALIZALAS.md, M6) | 2026-11-17 |
+| | **Külső szolgáltatás és alapanyag összesen** | | | | **44 982 Ft** | | |
 
 ### 1.4 Házon belüli gyártás anyagköltsége (gépidő és energia nélkül)
 | # | Tétel | Anyag/kocka | Anyagár (nettó) | Kockánként | 3 db-ra | Forrás | Forrás dátuma |
@@ -81,29 +81,29 @@ A [SZERELES.md](SZERELES.md) szerint kockánként: 25 db M2,5 menetes betét, 4 
 | Beszállító | Becsült díj | Megjegyzés |
 |---|---|---|
 | Hestore (Pi, cellák, gyűrű, hangszórók, gombok) | 2 000 Ft | **becslés**; futárdíj |
-| EU-s disztribútor (Mouser / DigiKey / TME: XIAO, IMU, DRV2605L, AT42QT1010, Qwiic, USB-C) | 8 000 Ft | **becslés**; egy helyről rendelve egy bizonyos érték fölött gyakran ingyenes – ellenőrizni |
-| Voice Bonnet (EU-s bolt) | 3 120 Ft | **becslés** (~8 €) |
+| EU-s disztribútor (Mouser / DigiKey / TME: ReSpeaker, XIAO, IMU, rezgőmodul, Qwiic, USB-C) | 8 000 Ft | **becslés**; egy helyről rendelve egy bizonyos érték fölött gyakran ingyenes – ellenőrizni |
+| Botland (Pi Zero 2 WH; a ReSpeaker az EU-s disztribútori rendelésben) | 3 000 Ft | **becslés** |
 | Pi-Ener-lite (Tindie, Kínából) | 7 080 Ft | „from 9 USD” [O]; ~12 USD szállítás + vámkezelési díj **becslés**; az importÁFA a 27%-ban benne van |
 | LED-szalag | 1 700 Ft | **becslés** |
 | 3djake (menetes betétek) | 2 000 Ft | **becslés** |
 | metallshopper.de (alu) | 5 850 Ft | **becslés** (~15 €) |
-| Akril, fa, EPDM (hazai bolt) | 3 000 Ft | **becslés** |
+| Akril, fa (hazai bolt) | 3 000 Ft | **becslés** |
 | Eloxáló üzem (oda-vissza futár) | 4 000 Ft | **becslés** |
-| **Szállítás összesen** | **36 750 Ft** | |
+| **Szállítás összesen** | **36 630 Ft** | |
 
 ### 1.6 Végösszeg
 | | 3 db-ra | Kockánként |
 |---|---|---|
-| Elektronika | 252 179 Ft | 84 060 Ft |
+| Elektronika | 172 453 Ft | 57 484 Ft |
 | Kötőelemek | 11 478 Ft | 3 826 Ft |
-| Külső szolgáltatás és alapanyag | 56 182 Ft | 18 727 Ft |
+| Külső szolgáltatás és alapanyag | 44 982 Ft | 14 994 Ft |
 | Házon belüli anyag | 25 350 Ft | 8 450 Ft |
-| Szállítás | 36 750 Ft | 12 250 Ft |
-| **Részösszeg (nettó)** | **381 939 Ft** | **127 313 Ft** |
-| Tartalék, 10% (árfolyam, hiányzó apróságok, selejt) | 38 194 Ft | 12 731 Ft |
-| **Összesen nettó** | **420 133 Ft** | **140 044 Ft** |
-| ÁFA 27% | 113 436 Ft | 37 812 Ft |
-| **Összesen bruttó** | **533 569 Ft** | **177 856 Ft** |
+| Szállítás | 36 630 Ft | 12 210 Ft |
+| **Részösszeg (nettó)** | **290 893 Ft** | **96 964 Ft** |
+| Tartalék, 10% (árfolyam, hiányzó apróságok, selejt) | 29 089 Ft | 9 696 Ft |
+| **Összesen nettó** | **319 982 Ft** | **106 661 Ft** |
+| ÁFA 27% | 86 395 Ft | 28 798 Ft |
+| **Összesen bruttó** | **406 377 Ft** | **135 459 Ft** |
 
 **Az ÁFA kezelése:**
 - A hazai boltok (Hestore) nettó árat mutatnak, erre jön a **27%-os ÁFA**.
@@ -112,11 +112,13 @@ A [SZERELES.md](SZERELES.md) szerint kockánként: 25 db M2,5 menetes betét, 4 
 - Ha a vásárló ÁFA-levonásra jogosult, a valódi költség a **nettó** összeg; a bruttót a pénzügyi kerethez kell figyelembe venni.
 
 **A három legdrágább tétel (3 db-ra, nettó):**
-1. Raspberry Pi Zero 2 W – 36 399 Ft (Hestore; a welectron árával ~19 600 Ft lenne)
-2. Pi-Ener-lite UPS panel – 35 700 Ft (+ szállítás és importÁFA)
-3. Adafruit Voice Bonnet – 26 991 Ft (és a beszerzése bizonytalan)
+1. Pi-Ener-lite UPS panel – 35 700 Ft (+ szállítás és importÁFA; a kiváltását a 2026-11-17-i költségoptimalizálásnál elvetettük)
+2. Raspberry Pi Zero 2 WH – 19 878 Ft (EU-s boltból)
+3. 18650 cella – 14 796 Ft
 
 Utánuk jön az eloxálás (~25 000 Ft, becslés) és az SLS por (~20 400 Ft, becslés).
+
+*A 2026-11-17-i költségoptimalizálás jóváhagyott javaslatai ([KOLTSEGOPTIMALIZALAS.md](KOLTSEGOPTIMALIZALAS.md): E1, E2, E3, E4, E6, E9, M5, M6) már benne vannak a fenti táblázatokban. Előtte a végösszeg 420 133 Ft nettó volt (3 db).*
 
 ---
 
@@ -137,13 +139,15 @@ Egy asztali eszköz 3 db-os prototípus-sorozatához kérünk árajánlatot az a
 | 1 | Raspberry Pi Zero 2 W (RPI-ZERO2-W) | 1 GHz, 512 MB RAM, Wi-Fi, BT 4.2; **gyárilag forrasztott tüskesorral (Zero 2 WH)** | 3 db |
 | 2 | 18650 Li-ion cella, **védett** | ~3000 mAh, pl. ICR18650-3000P vagy egyenértékű, gomb- vagy laposfejű (kérjük, jelezze) | 3 db |
 | 3 | WS2812 LED-gyűrű | 24 LED, külső átmérő **66 mm** (pl. WS2812-RING24/66) | 3 db |
-| 4 | Hangszóró | kerek, **Ø36 mm**, 8 Ω, 2 W, legfeljebb 16 mm mély (VISATON K 36 WP vagy egyenértékű) | 6 db |
+| 4 | Hangszóró | kerek, **Ø36 mm**, 8 Ω, 2 W, legfeljebb 16 mm mély (VISATON K 36 WP vagy egyenértékű) | 3 db |
 | 5 | Nyomógomb | 6×6 mm, THT, SPST-NO, kb. 7 mm magas | 20 db |
 | 6 | microSD kártya | 32 GB, Class 10 / A1 | 3 db |
 | 7 | CR1220 gombelem | 3 V | 3 db |
 | 8 | Távtartó-készlet | M2,5, 11 mm, anya-anya vagy anya-apa, csavarokkal | 12 db + 12 csavar |
 | 9 | JST-SH (1,0 mm) és JST-PH (2,0 mm) előszerelt kábelek | 2–6 pólusú, 100–150 mm | kb. 20 db vegyesen |
 | 10 | Prototípus-lap (forrasztható) | kb. 30×70 mm | 3 db |
+| 11 | Ellenállás 1 MΩ | 0,25 W, THT | 10 db |
+| 12 | Öntapadós gumiláb | átlátszó, kb. Ø10 × 3 mm (3M Bumpon-típus) | 16 db |
 
 Kérjük, adja meg tételenként a nettó egységárat, a mennyiségi kedvezményt, a raktárkészletet (vagy a beszerzési időt), valamint a szállítási díjat. Ahol a kért típus nem elérhető, egyenértékű javaslatot is szívesen fogadunk.
 
@@ -166,20 +170,18 @@ Tisztelt Hölgyem / Uram!
 
 | # | Tétel | Gyártói cikkszám / adat | Mennyiség |
 |---|---|---|---|
-| 1 | Adafruit Voice Bonnet for Raspberry Pi | Adafruit **4757** (WM8960, 2 mikrofon, 2 hangszórókimenet) | 3 db |
-| 1/b | *Ha az 1. tétel nem kapható:* Seeed ReSpeaker 2-Mics Pi HAT | Seeed **107100001** – kérjük, jelezze, sztereó-e a hangszórókimenet | 3 db |
+| 1 | Seeed ReSpeaker 2-Mics Pi HAT | Seeed **107100001** – kérjük, jelezze a változatot (v1: WM8960 / v2.0: TLV320AIC3104), és hogy van-e rajta **JST hangszórókimenet** (nem csak 3,5 mm-es jack) | 3 db |
 | 2 | Seeed Studio XIAO RP2040 | Seeed **102010428** | 3 db |
 | 3 | Adafruit LSM6DS3TR-C 6-DoF IMU, STEMMA QT | Adafruit **4503** | 3 db |
-| 4 | Adafruit DRV2605L haptikus motorvezérlő | Adafruit **2305** | 3 db |
-| 5 | Rezgőmotor (lapos ERM vagy LRA) | ~10 mm, 3 V, pl. Adafruit 1201 vagy egyenértékű | 3 db |
-| 6 | Adafruit AT42QT1010 érintésérzékelő | Adafruit **1374** | 3 db |
-| 7 | STEMMA QT / Qwiic kábel, 100 mm | Adafruit **4210** | 9 db |
-| 8 | USB-C panelbe szerelhető hosszabbító, 30 cm | Adafruit **4218** | 3 db |
-| 9 | Kerek kijelző 1,28", GC9A01, 240×240, IPS, SPI | kerek NYÁK-os kivitel, Ø ~37,5 mm | 3 db |
-| 10 | Mini kameramodul OV5647 | Raspberry Pi Zero-hoz (22 pólusú, 0,5 mm-es FPC kábellel), kamerafej ~8,5 × 11,3 mm, fix fókusz (pl. Arducam B006603 vagy Pi Supply Spy Camera) | 3 db |
-| 11 | S-alakú (síkban hajlítható) címezhető LED-szalag | WS2812B vagy SK6812, 5 mm széles, 60 LED/m, 5 V | 1 m (vagy legkisebb kiszerelés) |
+| 4 | Rezgőmotor-modul | lapos ERM motor + tranzisztoros meghajtó egy panelen, 3,3–5 V, 3 tűs csatlakozó (PWM-bemenet) | 3 db |
+| 5 | STEMMA QT / Qwiic kábel, 100 mm | Adafruit **4210** | 3 db |
+| 6 | USB-C panelbe szerelhető hosszabbító | aljzat–dugó, **10–15 cm**, csavarfüles panelrögzítéssel | 3 db |
+| 7 | Kerek kijelző 1,28", GC9A01, 240×240, IPS, SPI | kerek NYÁK-os kivitel, Ø ~37,5 mm | 3 db |
+| 8 | Mini kameramodul OV5647 | Raspberry Pi Zero-hoz (22 pólusú, 0,5 mm-es FPC kábellel), kamerafej ~8,5 × 11,3 mm, fix fókusz (pl. Arducam B006603 vagy Pi Supply Spy Camera) | 3 db |
+| 9 | S-alakú (síkban hajlítható) címezhető LED-szalag | WS2812B vagy SK6812, 5 mm széles, 60 LED/m, 5 V | 1 m |
+| 10 | Raspberry Pi Zero 2 WH | gyárilag forrasztott tüskesorral (összehasonlításhoz; ha olcsóbb, mint a webboltban) | 3 db |
 
-Kérjük, adja meg tételenként a nettó egységárat EUR-ban, a raktárkészletet, a várható szállítási időt, az ingyenes szállítás értékhatárát és a szállítási díjat Magyarországra. Ha valamelyik tétel kifutott vagy nem rendelhető (különösen az Adafruit 4757), kérjük, jelezze, és ha van, javasoljon helyettesítőt.
+Kérjük, adja meg tételenként a nettó egységárat EUR-ban, a raktárkészletet, a várható szállítási időt, az ingyenes szállítás értékhatárát és a szállítási díjat Magyarországra. Ha valamelyik tétel kifutott vagy nem rendelhető (különösen a ReSpeaker hangszórókimenete), kérjük, jelezze, és ha van, javasoljon helyettesítőt.
 
 Kért ajánlatadási határidő: 2026-11-23. Kért szállítás: 2026-12-11-ig.
 Szállítási cím: [szállítási cím]
@@ -258,7 +260,7 @@ Köszönettel:
 
 ### 2.5 Alapanyag-kereskedő (akril, fa, gumi, alumínium)
 
-**Tárgy:** Árajánlatkérés – opál akril, fa és EPDM lemez lézervágáshoz, kis mennyiség
+**Tárgy:** Árajánlatkérés – opál akril és fa lemez lézervágáshoz, kis mennyiség
 
 Tisztelt Hölgyem / Uram!
 
@@ -269,8 +271,7 @@ Házon belüli lézervágáshoz kérünk árajánlatot az alábbi alapanyagokra:
 | 1 | Öntött PMMA (akril), **opál** fehér, fényáteresztő (kb. 30–50%) | **3 mm**, lézervágható | 1 db, kb. 500 × 250 mm |
 | 2 | Öntött PMMA, opál fehér | **2 mm** | 1 db, kb. 200 × 200 mm |
 | 3 | Bükk vagy tölgy, tömör vagy furnérozott rétegelt lemez | **2 mm**, lézervágható | 1 db, kb. 100 × 100 mm |
-| 4 | EPDM gumilemez, egyik oldalán öntapadós | **1,5 mm**, kb. 60 Shore A | 1 db, kb. 300 × 300 mm |
-| 5 | *Ha forgalmaznak:* alumíniumlemez **EN AW-5754** vagy **6082** | **2 mm**, védőfóliás, méretre vágva **80 × 80 mm** | 4 db |
+| 4 | *Ha forgalmaznak:* alumíniumlemez **EN AW-5754** vagy **6082** | **2 mm**, védőfóliás, méretre vágva **80 × 80 mm** | 4 db |
 
 Hulladék- és maradékdarabokat is szívesen veszünk, ha a méret megfelel. Kérjük, adja meg a nettó árat, a vágási díjat (ha van) és a szállítási vagy átvételi lehetőséget.
 
@@ -288,26 +289,27 @@ Köszönettel:
 ### Minimális rendelési mennyiségek, kiszerelések
 - **Hestore:** darabra is rendelhető, de 5+, 10+, 20+ ártörések vannak (pl. a 6×6-os gomb 50 Ft helyett 22 Ft 10+ db-nál). A Pi Zero 2 W-nél az 5+ ár 11 469 Ft, ezért **5 db rendelése** csak akkor érdemes, ha a tartalék kell.
 - **Menetes betétek:** 70 db-os csomag; 75 db kell + selejt, ezért 2 csomag.
-- **LED-szalag:** jellemzően csak 1 m-es vagy 5 m-es tekercsben kapható; 3 kockához 0,33 m kell.
-- **PMMA, EPDM, fa:** egész tábla vagy minimum vágási méret; érdemes **maradékot** kérni.
+- **LED-szalag:** jellemzően csak 1 m-es vagy 5 m-es tekercsben kapható; 3 kockához 0,33 m kell → **1 m-t rendelünk** (2026-11-17).
+- **PMMA, fa:** egész tábla vagy minimum vágási méret; érdemes **maradékot** kérni.
 - **Eloxálás:** kis darabszámnál a **minimális tételdíj** a döntő. Ha a 4 tetőlap mellé más eloxálandó munka is van, együtt olcsóbb. Ha a minimum díj nagyon magas, a natúr (színtelen) eloxálás vagy a festett/porszórt alu is szóba jöhet.
 
 ### Szállítási idők és beszerzési kockázatok
-- **Adafruit Voice Bonnet (4757):** a BerryBase-nél „nem szállítható”, a Botland „Discontinued”-nak, a DigiKey „Obsolete”-nek jelöli. **Döntés (2026-11-16): marad**, mert a C-kocka elméleti termék, nem kerül gyártásba; valós gyártásnál ez lenne a legnagyobb kockázat. Tartalék: Seeed ReSpeaker 2-Mics Pi HAT (~9–11 € nettó a DigiKey/Farnell találatai szerint [K]) – de előbb ellenőrizni kell a hangszórókimenetet (sztereó-e), a mikrofonok helyét (a tetőlap furataihoz) és a magasságot a modellben.
+- **Hangpanel:** az Adafruit Voice Bonnet (4757) kifutott (BerryBase: „nem szállítható”, Botland: „Discontinued”, DigiKey: „Obsolete”). **Döntés (2026-11-17): Seeed ReSpeaker 2-Mics Pi HAT + 1 hangszóró (mono).** A v1 (WM8960) több boltban már kifutott (SparkFun, Core Electronics); a v2.0 TLV320AIC3104 kodekes, és a leírásaiban csak 3,5 mm-es jack szerepel. **Rendelés előtt ellenőrizni:** van-e JST hangszórókimenet (ha nincs: kész mono erősítőmodul kell mellé, ~4 €), a mikrofonok helyét (a tetőlap furataihoz) és a magasságot a modellben.
 - **Pi-Ener-lite:** Kínából, a Tindie-n „6 left in stock”, kiküldés ~5 nap + nemzetközi szállítás (kb. 1–3 hét, **becslés**). Időben rendelni kell. Tartalék: Geekworm X306 (drágább, ~54 USD [K]) vagy DFRobot UPS HAT.
-- **Raspberry Pi Zero 2 W:** a Hestore-nál „az átlagosnál hosszabb szállítási idő”, a welectronnál „hamarosan raktáron”. Két helyről érdemes ajánlatot kérni.
+- **Raspberry Pi Zero 2 W(H):** a Botlandnél és a BerryBase-nél kevés darab látszik (2026-11-17), a Hestore-nál „az átlagosnál hosszabb szállítási idő”, a welectronnál „hamarosan raktáron”. Két helyről érdemes ajánlatot kérni.
 - **Mini kamera:** az Adafruit 1937-es „spy” kamera saját leírása szerint **nem Pi Zero-kompatibilis** a szalagkábele miatt; Pi Zero (22 pólusú) kábeles OV5647 modul kell, pl. Arducam B006603 vagy Pi Supply Spy Camera (8,5 × 11,3 mm). A Kailap JAL-KH3-C20B-1B (OV5640) sem jó: DVP párhuzamos interfészű, autofókuszos, 25 pólusú csatlakozóval.
 - **XIAO RP2040:** a Botland csak regisztrált cégeknek (B2B) ad el; a TME-nél és a Mouseren kapható.
 
 ### Kiváltható vagy olcsóbb alternatívák (a TERVEZESI_ELVEK.md szerint)
-- **Pi Zero 2 W máshonnan:** welectron 16,72 € nettó ≈ 6 521 Ft a Hestore 12 133 Ft-ja helyett → **~16 800 Ft megtakarítás 3 db-on**, ha van készlet.
-- **AT42QT1010 elhagyása:** a XIAO RP2040 szoftveresen (kapacitív érintés, pl. CircuitPython „touchio”) is tud egy érintőelektródát kezelni → kockánként ~2 000 Ft és egy modul kevesebb. Prototípuson kipróbálni.
-- **Adafruit-breakoutok helyett általános modulok** (DRV2605L, LSM6DS3): olcsóbbak, de a STEMMA QT csatlakozó gyakran hiányzik (ez ütközik a „csatlakozó forrasztás helyett” elvvel). Prototípushoz maradjon az Adafruit.
+- **Pi Zero 2 WH EU-s boltból:** **átvezetve** (2026-11-17).
+- **AT42QT1010 elhagyása (érintés a XIAO-n, `touchio`) és DRV2605L helyett rezgőmotor-modul:** **átvezetve** (2026-11-17). Az érintést a prototípuson ki kell próbálni a fém tetőlap alatt.
+- **Adafruit-breakoutok helyett általános modulok** (LSM6DS3): olcsóbbak, de a STEMMA QT csatlakozó gyakran hiányzik (ez ütközik a „csatlakozó forrasztás helyett” elvvel). Prototípushoz maradjon az Adafruit.
 - **LED-gyűrű:** a Hestore Ø66 mm-es WS2812-es gyűrűje (3 429 Ft) olcsóbb és itthon kapható; az eredeti Adafruit NeoPixel Ring 24 kb. 13–16 £ [K].
 - **Hangszóró:** **eldöntve (2026-11-16):** a Ø36 mm-es VISATON K 36 WP kerül be, a PETG rögzítőgyűrű Ø36-ra módosul (a 3D modellben még átvezetendő).
-- **USB-C hosszabbító:** a 4218-as 30 cm-es és ~5 200 Ft; egy rövidebb, olcsóbb panelbe szerelhető USB-C aljzat-dugó adapter is elég lehet – ellenőrizni a helyet.
+- **USB-C hosszabbító:** **átvezetve** (2026-11-17): általános, 10–15 cm-es; a tálca peremén ellenőrizni a furatképet és a 3 mm helyet.
 - **Tetőlap alapanyaga:** ha házon belül van 2 mm-es alu maradék, az alapanyag és a szállítás (~11 500 Ft) megspórolható.
-- **Festés:** házon belüli szórófestés (becslés ~12 000 Ft / 3 db) a külső festés helyett; az SLS PA12 festékkel be is színezhető (mártás), ami még olcsóbb.
+- **Felület:** **átvezetve** (2026-11-17): mártásos színezés a szórófestés helyett (~3 000 Ft / 3 db). Az élek kopását dobáspróbával ellenőrizni.
+- **Gumitalp:** **átvezetve** (2026-11-17): 4 db kész öntapadós gumiláb a Ø60-as EPDM talp helyett.
 
 ### Eltérések, amiket tisztázni kell
 - **Csavarméret:** **eldöntve (2026-11-16): mindenhol M2,5** (betétek Ø3,6-os furatba, a tetőlapon Ø2,8-es süllyesztett furat). A dokumentumok át vannak vezetve; a 3D modellben és a DXF-ekben még átvezetendő.
