@@ -19,15 +19,12 @@ A kocka **négy egységből** áll, amiket külön lehet összerakni és kiprób
 | Db | Elem | Hová |
 |---|---|---|
 | 26 | **M2,5 menetes betét** (beolvasztós, Ø3,6-os furatba, 4 mm hosszú) | tetőtartó 4, ház elöl 4, ház a tálcához 4, ház a hangszóróhoz 3, tálca a diffúzorhoz 3, szán lábai 4, szán jobb sín (IMU) 2, USB-C szorítólap 2 |
-| 4 | M2,5×8 süllyesztett fejű (ISO 10642 / DIN 7991) | tetőlap → tetőtartó |
-| 4 | M2,5×6 hengeres fejű (ISO 4762 / DIN 912) | előlapi tartó → ház |
-| 3 | M2,5×6 hengeres fejű | hangszóró-rögzítő gyűrű → ház |
-| 4 | M2,5×14 hengeres fejű | tálca → ház (alulról) |
-| 3 | M2,5×6 süllyesztett fejű | diffúzor → tálca |
-| 4 | M2,5×6 süllyesztett fejű | tálca → szán lábai (alulról) |
-| 4+ | M2,5 távtartó (11 mm) + csavar | Pi + ReSpeaker hangpanel |
-| 2 | M2,5×6 hengeres fejű | IMU → szán jobb sín (külső oldal) |
-| 2 | M2,5×8 süllyesztett fejű | ház hátfala (kívülről) → USB-C szorítólap |
+| **13** | **M2,5×8 süllyesztett fejű** (ISO 10642 / DIN 7991) | tetőlap → tetőtartó 4, ház hátfala (kívülről) → USB-C szorítólap 2, diffúzor → tálca 3, tálca → szán lábai (alulról) 4 |
+| **17** | **M2,5×6 hengeres fejű** (ISO 4762 / DIN 912) | előlapi tartó → ház 4, hangszóró-rögzítő gyűrű → ház 3, IMU → szán jobb sín 2, Pi + ReSpeaker távtartói 8 |
+| **4** | **M2,5×14 hengeres fejű** | tálca → ház (alulról) |
+| 4 | M2,5 távtartó, 11 mm, anya-anya | Pi + ReSpeaker hangpanel (a csavarjai a fenti M2,5×6-osok) |
+
+**3 féle csavar** (2026-11-17, KOLTSEGOPTIMALIZALAS.md M1): így nem lehet összekeverni őket. A ×8-as süllyesztett csavarhoz a diffúzornál és a szánlábaknál mélyebb a betétfurat (diffúzor: a tálca oszlopa 6,3 mm magas, a furat 5,6 mm; szánláb: 5 mm). A modellben minden csavar szára csak furatban fut, sehol nem ér ki és nem ütközik.
 
 A csavarhosszak a modellből számolt **javaslatok**, az első próbaszerelésnél ellenőrizni kell őket.
 
@@ -64,14 +61,14 @@ Minden nyomtatott alkatrészbe olvaszd be az M2,5-ös betéteket (a fenti tábl�
 ![A tálca alulról: a diffúzor 3 süllyesztett csavarral](szereles/kepek/02_talca_diffuzor.png)
 
 1. Az opál diffúzort tedd a tálca aljára, a süllyesztett oldala nézzen kifelé.
-2. Rögzítsd 3 db M2,5×6 süllyesztett fejű csavarral.
+2. Rögzítsd 3 db M2,5×8 süllyesztett fejű csavarral.
 3. A 4 öntapadós gumilábat zsírtalanítás után ragaszd a tálca aljára, a diffúzorcsavarok közé, egyenletesen elosztva.
 
 ## 3. Szán: elektronika
 ![A szán a tálcán, rajta az elektronika](szereles/kepek/03_szan_elektronika.png)
 
 1. A **NeoPixel gyűrűt** a tálca fényablaka fölé tedd (a LED-ek lefelé, a diffúzor felé nézzenek).
-2. A **szánt** tedd a tálcára, és alulról 4 db M2,5×6 süllyesztett csavarral húzd a lábaiba.
+2. A **szánt** tedd a tálcára, és alulról 4 db M2,5×8 süllyesztett csavarral húzd a lábaiba.
 3. A szán aljára: **XIAO RP2040, rezgőmotor-modul**. Az **IMU** függőlegesen a **jobb sín külső oldalára** kerül (alkatrész-oldal kifelé, a rögzítőfuratos él felül), 2 db M2,5×6 csavarral a sín betéteibe. A Qwiic kábelt (50 mm) a sín résén át vezesd a XIAO-hoz.
 4. A szán polcaira: **UPS panel + 18650 akku**, felette a **Raspberry Pi Zero 2 W**, rá 11 mm-es távtartókkal a **ReSpeaker hangpanel**.
 5. Kösd be a kábeleket: gyűrű → XIAO, IMU és rezgés → XIAO (I²C), XIAO → Pi (USB vagy UART), UPS → Pi táp. (Az USB-C hosszabbító a házban van, a 8. lépésben dugod be.)

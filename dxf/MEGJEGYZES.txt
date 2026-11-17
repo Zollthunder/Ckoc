@@ -38,3 +38,9 @@ IMU és USB-C áthelyezése (2026-11-17, Zollo jóváhagyásával) – tools/imu
   2 csavaroszlop + M2,5 betét a sínben (y 26,74; z -10,64 / -30,96), Qwiic kábelrés a sínben (y 17…24, z -5…1).
 - USB-C nyílás a ház hátfalában: 9,4 × 3,6 mm, közép y = 18; 2 db Ø2,8 + süllyesztés Ø5 (x = ±19). A régi nyílás (osztásvonal)
   és a tálca USB-C zsebei visszatöltve. Új PETG alkatrész: USB-C szorítólap (3d/nyomtatas/FDM_PETG/usb_c_szoritolap.stl).
+
+M1 + M7 (2026-11-17) – tools/m1_m7_fusion.py, a Fusionben, onnan exportálva:
+- Süllyesztett fejűből csak M2,5×8. Diffúzor: a tálca 3 oszlopa 6,3 mm magas, a betétfurat 5,6 mm; a szánban Ø10-es
+  kiszabadítás fölöttük (a (0; 22)-nél átmenő), a szán így oldalt és felül is 2,0 mm-re van. Szánláb: betétfurat 5 mm (eddig 3,7).
+  USB-C szorítólap: átmenő betétfurat. Mind a 13 süllyesztett csavar szára csak furatban fut (OCP-vel ellenőrizve).
+- Tetőlap: R1 a 4 sarokélen (modell és tetolap_alu_2mm.dxf).

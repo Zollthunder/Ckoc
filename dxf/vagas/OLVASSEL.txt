@@ -8,8 +8,9 @@ Andor_fabetet_fa_2mm (fa (bükk/tölgy) 2 mm – lézer, préselve az SLA sapká
 
 Megjegyzések:
 - Minden kontúr egyszer szerepel (nincs dupla vágás), zárt, mm-ben. Ellenőrzés: node tools/dxf_check.js
-- Tetőlap: 4 db Ø2,8 furat M2,5 süllyesztett fejű csavarhoz (DIN 7991) -> felülről 90°-os süllyesztés Ø5,0-re (a DXF ezt nem tartalmazza).
-- Diffúzor: 3 db Ø2,8 furat M2,5 süllyesztett csavarhoz -> ALULRÓL 90°-os süllyesztés Ø5,0-re.
+- Tetőlap: a 72 × 72-es kontúr sarkai R1 lekerekítésűek (2026-11-17).
+- Tetőlap: 4 db Ø2,8 furat M2,5×8 süllyesztett fejű csavarhoz (DIN 7991) -> felülről 90°-os süllyesztés Ø5,0-re (a DXF ezt nem tartalmazza).
+- Diffúzor: 3 db Ø2,8 furat M2,5×8 süllyesztett csavarhoz -> ALULRÓL 90°-os süllyesztés Ø5,0-re.
 - Gumitalp: 2026-11-17 óta nincs (nincs vágás). Helyette 4 kész, öntapadós, átlátszó gumiláb (Ø10 × 3 mm) a diffúzor alján,
   ebben a rajzban (±20,5; -19,0) és (±17,5; 21,5) középponttal – a csavarfejektől legalább 3 mm-re.
 - Tetőlap: 6 db Ø1,6 furat; ebből 2 hasznos a ReSpeaker 2-Mics Pi HAT mikrofonjai fölött (x = -6,34; y = -25,46 és 33,46; a v1 rajzából, a v2-re becsült),
