@@ -43,10 +43,10 @@ Alapok: [ELEKTRONIKA.md](ELEKTRONIKA.md) (modulok), [GYARTASI_TERV.md](GYARTASI_
 | 20 | CR1220 gombelem (a UPS panel RTC-jéhez, nincs a dobozban) | 1 | 3 | 300 Ft | 900 Ft | **becslés** [B] | – |
 | 21 | M2,5 távtartó-készlet (11 mm) + csavarok a Pi/Bonnet stackhez | – | 1 készlet | 3 000 Ft | 3 000 Ft | **becslés** [B] | – |
 | 22 | Kábelek, JST-SH/JST-PH csatlakozók, vezeték, prototípus-lap a gomboknak, öntapadós rézfólia | – | 3 készlet | 4 000 Ft | 12 000 Ft | **becslés** [B] | – |
-| 22/b | **GPIO 1→2 elosztó panel** (pl. Micro Connectors RAS-GP02 / GeeekPi, 40 tűs, két apa tüskesor) a Pi és a ReSpeaker közé: az egyik soron a ReSpeaker, a másikon Dupont-kábellel a kijelző és a XIAO soros vonala (KOMPATIBILITAS.md, 2. pont) | 1 | 3 | ~5 € ≈ 2 000 Ft | 6 000 Ft | **becslés** [B] | 2026-11-17 |
+| 22/b | ~~GPIO 1→2 elosztó panel~~ – nem kell: a kijelzőt a XIAO hajtja (döntés: 2026-11-17, KOMPATIBILITAS.md) | – | – | – | 0 Ft | – | 2026-11-17 |
 | 22/c | **Adafruit NeoDriver** (I2C → NeoPixel meghajtó, STEMMA QT, 5 V-os kimenet, csavaros sorkapocs) a 31 WS2812 LED-hez, egy láncban; + 1 db STEMMA QT kábel (IMU → NeoDriver) | 1 | 3 | ~7,50 USD + 1 € ≈ 2 950 Ft | 8 850 Ft | **becslés** [B]; a cikkszámot (5766?) rendelés előtt ellenőrizni | 2026-11-17 |
-| 22/d | ~~OTG kábel~~ – nem kell: a XIAO soros vonalon (UART) kapcsolódik a Pi-hez, Dupont-kábellel az elosztó panelről (a 22. tételben) | – | – | – | 0 Ft | – | 2026-11-17 |
-| | **Elektronika összesen** | | | | **188 446 Ft** | | |
+| 22/d | **OTG kábel**, micro-B 90°-os, lefelé forduló dugó (Pi) → USB-C (XIAO), rövid | 1 | 3 | ~2 € ≈ 800 Ft | 2 400 Ft | **becslés** [B] | 2026-11-17 |
+| | **Elektronika összesen** | | | | **184 846 Ft** | | |
 
 ### 1.2 Kötőelemek (kívülről)
 A [SZERELES.md](SZERELES.md) szerint kockánként: 25 db M2,5 menetes betét, 4 db M2,5×8 süllyesztett fejű (DIN 7991), 7 db M2,5×6 süllyesztett fejű, 10 db M2,5×6 hengeres fejű (DIN 912), 4 db M2,5×14 hengeres fejű.
@@ -97,16 +97,16 @@ A [SZERELES.md](SZERELES.md) szerint kockánként: 25 db M2,5 menetes betét, 4 
 ### 1.6 Végösszeg
 | | 3 db-ra | Kockánként |
 |---|---|---|
-| Elektronika | 188 446 Ft | 62 815 Ft |
+| Elektronika | 184 846 Ft | 61 615 Ft |
 | Kötőelemek | 11 478 Ft | 3 826 Ft |
 | Külső szolgáltatás és alapanyag | 44 982 Ft | 14 994 Ft |
 | Házon belüli anyag | 25 350 Ft | 8 450 Ft |
 | Szállítás | 36 630 Ft | 12 210 Ft |
-| **Részösszeg (nettó)** | **306 886 Ft** | **102 295 Ft** |
-| Tartalék, 10% (árfolyam, hiányzó apróságok, selejt) | 30 689 Ft | 10 230 Ft |
-| **Összesen nettó** | **337 575 Ft** | **112 525 Ft** |
-| ÁFA 27% | 91 145 Ft | 30 382 Ft |
-| **Összesen bruttó** | **428 720 Ft** | **142 907 Ft** |
+| **Részösszeg (nettó)** | **303 286 Ft** | **101 095 Ft** |
+| Tartalék, 10% (árfolyam, hiányzó apróságok, selejt) | 30 329 Ft | 10 110 Ft |
+| **Összesen nettó** | **333 615 Ft** | **111 205 Ft** |
+| ÁFA 27% | 90 076 Ft | 30 025 Ft |
+| **Összesen bruttó** | **423 691 Ft** | **141 230 Ft** |
 
 **Az ÁFA kezelése:**
 - A hazai boltok (Hestore) nettó árat mutatnak, erre jön a **27%-os ÁFA**.
