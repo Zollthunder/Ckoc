@@ -150,7 +150,7 @@ Nettó (ÁFA nélkül), 1 EUR = 390 Ft. Minden szám **becslés**.
 **Haszon a 100 db-os szériánál** (a PIACI_TANULMANY.md ára: **299 € bruttó** ≈ 116 600 Ft, ebből nettó 235 € ≈ 91 700 Ft):
 - **Közvetlen eladás (saját webshop, céges ajándék):** kb. **25 000–27 000 Ft (65–70 €) haszon darabonként**, ~28–30% bruttó árrés → 100 db-on kb. **2,6 millió Ft**.
 - **Webáruházon át (−20%):** a gyártóhoz kb. 73 300 Ft jut → kb. **7 000–9 000 Ft (~20 €) / db**, ~10–12% → vékony, ebben a darabszámban nem éri meg.
-- CE/RED tanúsítás (~8–15 e€) nincs benne. 100 db-ra ráosztva ez darabonként 80–150 € lenne, és az egész hasznot elvinné. Ezért a 100 db-os széria csak tanúsítás nélküli, nem forgalomba hozott változatként (például belső céges ajándékként) számol így. Ezt jogilag ellenőrizni kell.
+- **CE/RED nincs benne (~8–15 e€, a kiberbiztonsági követelményekkel inkább a felső sáv).** 100 db-ra ráosztva ez darabonként 80–150 € lenne, és az egész hasznot elvinné. **Fontos javítás (2026-11-17):** az EU szabályai szerint a kereskedelmi tevékenység keretében *ingyen* átadott termék (céges ajándék) is „forgalmazásnak” számít, ezért ehhez is CE kell. CE nélkül csak a belső kipróbálásra szánt prototípus és a „nem kapható” jelöléssel kiállított darab mehet. A 100 db-os számítás így csak akkor áll meg, ha a CE költségét nagyobb darabszám (1000+) vagy magasabb ár viseli. Jogi ellenőrzés kell.
 
 **A prototípus** önköltsége (~125 000 Ft) nagyjából a piaci ár kétszerese, ezért eladásra nem alkalmas, csak bemutatásra és kipróbálásra. Ha mégis árazni kellene: 30%-os árréssel kb. **180 000 Ft nettó ≈ 230 000 Ft bruttó** lenne.
 
