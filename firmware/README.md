@@ -146,7 +146,7 @@ Két változata van, a szoftver **mindkettőt** kezeli (a kodeket a `/proc/asoun
 | 4 gomb | XIAO D2, D3, D8, D9 → GND | belső felhúzó ellenállás |
 | Érintés: rézfólia-elektróda az érintőbetét alatt | XIAO D10 + **1 MΩ lehúzó ellenállás D10 → GND** (a gombok prototípus-lapján) | `touchio`; induláskor kalibrál (akkor ne érjen hozzá senki), utána lassan követi a hő- és páraváltozást. Lehúzó nélkül a XIAO digitális bemenetre vált: így tartalékként egy AT42QT1010 (aktív magas) visszadugható ide szoftvercsere nélkül |
 | Rezgőmotor-modul (ERM + tranzisztor, 3 tűs) | XIAO D6 (jel, PWM 20 kHz), VCC 3V3 (vagy 5 V), GND | `tick` (hallgat) és `buzz` (Ne zavarj) minta, rövid teljes erejű indítással |
-| LSM6DS3TR-C | XIAO D4 (SDA), D5 (SCL) – Qwiic | |
+| LSM6DS3TR-C | XIAO D4 (SDA), D5 (SCL) – Qwiic | függőlegesen a szán jobb sínjének külső oldalán: panel X → hátra, Y → fel, Z → jobbra. Az átszámolás a kocka tengelyeire egy helyen van: `firmware/xiao/reflex.py`, `IMU_AXES`. **Első élesztésnél:** álló kockánál a XIAO konzolján `cube_g (0.0, 1.0, 0.0)` körüli értéknek kell megjelennie; ha nem, a panel szitanyomata szerint a táblázatot kell átírni (a teszt ellenőrzi, hogy forgatás maradjon) |
 
 ## Mi nincs benne (még)
 

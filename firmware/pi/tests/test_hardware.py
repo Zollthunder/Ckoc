@@ -3,7 +3,7 @@
   Pi  : Seeed ReSpeaker 2-Mics Pi HAT v1 (WM8960) / v2.0 (TLV320AIC3104), mono   (hw_real.AlsaAudio, asound.conf, install.sh)
 Futtatás (a firmware/pi mappából):  python -m unittest discover -s tests -v
 """
-import json, os, subprocess, sys, tempfile, types, unittest
+import contextlib, io, json, os, subprocess, sys, tempfile, types, unittest
 from unittest import mock
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -120,8 +120,10 @@ class FakeXiao:
     """Hamis CircuitPython-modulok (board, touchio, pwmio, usb_cdc, …); a code.py végtelen ciklusát a hamis
     time.sleep állítja meg, és minden körben lefuttat egy „forgatókönyv”-lépést."""
 
-    def __init__(self, touch_raw, script, pulldown=True, steps=400):
+    def __init__(self, touch_raw, script, pulldown=True, steps=400, imu_g=None):
         self.t, self.steps, self.step = 0.0, steps, 0
+        self.imu_g = imu_g                                     # t -> gyorsulás g-ben, a KOCKA tengelyein (None: nincs IMU)
+        self.console = ''
         self.touch_raw, self.script, self.pulldown = touch_raw, script, pulldown
         self.out, self.inbox, self.duty_log, self.pwm = [], b'', [], None
 
@@ -199,7 +201,18 @@ class FakeXiao:
         m['neopixel'] = types.SimpleNamespace(NeoPixel=Pixels)
 
         m['busio'] = types.SimpleNamespace(I2C=lambda *a: object())
-        m['adafruit_lsm6ds'] = m['adafruit_lsm6ds.lsm6ds3trc'] = None   # nincs IMU: így is el kell indulnia
+        if fx.imu_g is None:
+            m['adafruit_lsm6ds'] = m['adafruit_lsm6ds.lsm6ds3trc'] = None   # nincs IMU: így is el kell indulnia
+        else:
+            class LSM6DS3TRC:                                  # a panel a SAJÁT tengelyein mér (m/s²)
+                def __init__(self, i2c):
+                    pass
+
+                @property
+                def acceleration(self):
+                    return tuple(v * 9.81 for v in reflex.to_panel(fx.imu_g(fx.t)))
+            m['adafruit_lsm6ds'] = types.SimpleNamespace()
+            m['adafruit_lsm6ds.lsm6ds3trc'] = types.SimpleNamespace(LSM6DS3TRC=LSM6DS3TRC)
 
         def sleep(dt):
             fx.t += dt + 0.002                                 # a kör maga is ~2 ms
@@ -212,11 +225,13 @@ class FakeXiao:
 
     def run(self):
         src = read(XIAO, 'code.py')
-        with mock.patch.dict(sys.modules, self.modules()):
+        out = io.StringIO()
+        with mock.patch.dict(sys.modules, self.modules()), contextlib.redirect_stdout(out):
             try:
                 exec(compile(src, 'code.py', 'exec'), {'__name__': '__main__'})
             except _Stop:
                 pass
+        self.console = out.getvalue()
         return self
 
     def send(self, obj):
@@ -233,7 +248,7 @@ class XiaoFirmwareTest(unittest.TestCase):
         fx = FakeXiao(touch, script, steps=330).run()
         hello = fx.out[0]
         self.assertEqual((hello['ev'], hello['fw'], hello['touch'], hello['haptic'], hello['imu']),
-                         ('hello', '1.1', 'touchio', True, False))
+                         ('hello', '1.2', 'touchio', True, False))
         self.assertEqual([e for e in fx.out if e['ev'] == 'touch'], [{'ev': 'touch'}] * 2)
         self.assertEqual((fx.pwm.pin, fx.pwm.frequency), ('D6', 20000))
         on = [t for t, d in fx.duty_log if d > 0]
@@ -253,6 +268,109 @@ class XiaoFirmwareTest(unittest.TestCase):
         src = read(XIAO, 'code.py')
         self.assertNotIn('adafruit_drv2605', src)
         self.assertNotIn('AT42QT1010 OUT', src)
+
+
+# ============================================================================ XIAO: az IMU tengelyei
+# A kocka 6 alaphelyzete: melyik lapja néz felfelé -> a nyugalmi gyorsulás a kocka tengelyein (+1 g a felfelé mutatón)
+FACE_UP = {
+    'teteje': (0, 1, 0), 'alja': (0, -1, 0),
+    'eleje': (0, 0, 1), 'hata': (0, 0, -1),
+    'jobb': (1, 0, 0), 'bal': (-1, 0, 0),
+}
+
+
+class ImuAxesTest(unittest.TestCase):
+    def test_board_axes_as_documented(self):
+        # ELEKTRONIKA.md: panel X -> hátra (-Z), panel Y -> fel (+Y), panel Z -> jobbra (+X)
+        self.assertEqual(reflex.to_cube((1, 0, 0)), (0, 0, -1))
+        self.assertEqual(reflex.to_cube((0, 1, 0)), (0, 1, 0))
+        self.assertEqual(reflex.to_cube((0, 0, 1)), (1, 0, 0))
+
+    def test_table_is_a_rotation(self):
+        # minden panel-tengely pontosan egyszer szerepel, és a determináns +1 (forgatás, nem tükrözés) – ha a valódi
+        # panel miatt átírják a táblázatot, ez fogja meg az elírást
+        axes = reflex.IMU_AXES
+        self.assertEqual(sorted(i for _, i in axes), [0, 1, 2])
+        m = [[sign if col == i else 0 for col in range(3)] for sign, i in axes]
+        det = (m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
+               + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]))
+        self.assertEqual(det, 1)
+
+    def test_roundtrip(self):
+        for v in list(FACE_UP.values()) + [(0.25, -0.5, 0.75)]:
+            self.assertEqual(reflex.to_cube(reflex.to_panel(v)), tuple(float(x) for x in v))
+
+    def test_upright_reads_plus_y_on_board(self):
+        # álló kockánál a függőleges panel Y tengelye mér +1 g-t (a régi, fekvő panelnél a Z mérte)
+        self.assertEqual(reflex.to_panel(FACE_UP['teteje']), (0.0, 1.0, 0.0))
+
+
+def flips(fx):
+    return [e['up'] for e in fx.out if e.get('ev') == 'imu' and e.get('kind') == 'flip']
+
+
+class XiaoImuTest(unittest.TestCase):
+    """A code.py a szimulált, függőlegesen álló panellel: minden helyzetben a kocka szerinti eseményeknek kell jönniük."""
+
+    def run_seq(self, seq):
+        """seq: [(helyzet neve, másodperc), …] – egymás után ezekbe fordítjuk a kockát."""
+        def g(t):
+            for name, dur in seq:
+                if t < dur:
+                    return FACE_UP[name]
+                t -= dur
+            return FACE_UP[seq[-1][0]]
+        total = sum(d for _, d in seq)
+        return FakeXiao(lambda t: 1000, lambda fx: None, steps=int(total / 0.012) + 1, imu_g=g).run()
+
+    def test_six_positions_from_upright(self):
+        for name in FACE_UP:
+            with self.subTest(fel=name):
+                fx = self.run_seq([('teteje', 1.0), (name, 1.5)])
+                self.assertTrue(fx.out[0]['imu'])
+                self.assertEqual(flips(fx), [True] if name == 'alja' else [],
+                                 'csak az alja-felül helyzet „fejjel lefelé”; oldalra fektetve nem némít')
+
+    def test_six_positions_from_upside_down(self):
+        for name in FACE_UP:
+            with self.subTest(fel=name):
+                fx = self.run_seq([('alja', 1.5), (name, 1.5)])
+                self.assertEqual(flips(fx), [True, False] if name == 'teteje' else [True],
+                                 'fejjel lefelé oldalra döntve némítva marad, csak talpra állítva oldódik')
+
+    def test_full_turn_round(self):
+        fx = self.run_seq([('teteje', 1), ('jobb', 1), ('alja', 1), ('bal', 1), ('eleje', 1), ('teteje', 1)])
+        self.assertEqual(flips(fx), [True, False])
+
+    def test_short_tilt_ignored(self):
+        fx = self.run_seq([('teteje', 1), ('alja', 0.3), ('teteje', 1)])   # 0,5 s-nál rövidebb: nem fordítás
+        self.assertEqual(flips(fx), [])
+
+    def test_console_shows_cube_g(self):
+        fx = self.run_seq([('teteje', 0.1)])
+        self.assertIn('cube_g (0.0, 1.0, 0.0)', fx.console)    # ezzel ellenőrizhető a valódi panel tengelyezése
+
+    def test_throw_and_shake_any_direction(self):
+        # a dobás és a rázás a gyorsulás nagyságát nézi: a panel tengelyezésétől és a kocka helyzetétől független
+        for axis in ((3, 0, 0), (0, 0, -3), (0, 3, 0)):
+            with self.subTest(becsapodas=axis):
+                def throw(t, axis=axis):
+                    if t < 0.5:
+                        return FACE_UP['jobb']
+                    if t < 0.7:
+                        return (0, 0, 0)                       # szabadesés
+                    if t < 0.73:
+                        return axis                            # becsapódás
+                    return FACE_UP['jobb']
+                fx = FakeXiao(lambda t: 1000, lambda fx: None, steps=100, imu_g=throw).run()
+                self.assertEqual([e['kind'] for e in fx.out if e.get('ev') == 'imu'], ['throw'])
+
+                def shake(t, axis=axis):
+                    if 0.5 < t < 1.3 and int(t * 25) % 2:
+                        return tuple(2.2 * v / 3 for v in axis)   # gyors, erős lökések
+                    return FACE_UP['teteje']
+                fx = FakeXiao(lambda t: 1000, lambda fx: None, steps=120, imu_g=shake).run()
+                self.assertIn('shake', [e['kind'] for e in fx.out if e.get('ev') == 'imu'])
 
 
 # ============================================================================ Pi: ReSpeaker 2-Mics Pi HAT

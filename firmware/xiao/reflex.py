@@ -54,6 +54,36 @@ class TouchDetector:
         return False
 
 
+# ------------------------------------------------------------------ az IMU tengelyei -> a kocka tengelyei
+# A kocka koordinátái: +X jobbra, +Y fel, +Z előre (a kijelző felé). Nyugalomban a gyorsulásmérő a felfelé mutató
+# tengelyen +1 g-t mér, tehát álló kockánál a kocka Y-ja ≈ +1 g, fejjel lefelé ≈ -1 g.
+#
+# Az LSM6DS3TR-C panel (2026-11-17 óta) FÜGGŐLEGESEN áll a szán jobb sínjének külső oldalán, alkatrész-oldallal kifelé
+# (ELEKTRONIKA.md):  panel X -> hátra (-Z),  panel Y -> fel (+Y),  panel Z -> jobbra (+X).
+#
+# AZ EGYETLEN HELY, ahol ez szerepel: ha a valódi panel szitanyomata mást mutat, csak ezt a táblázatot kell átírni.
+# Soronként: a kocka tengelye = előjel × a panel melyik tengelye (0: X, 1: Y, 2: Z).
+# Ellenőrzés a valódi kockán: álló helyzetben a 'hello' után a konzolra írt cube_g ≈ (0, +1, 0) legyen.
+IMU_AXES = (
+    (+1, 2),        # kocka X (jobbra) = +panel Z
+    (+1, 1),        # kocka Y (fel)    = +panel Y
+    (-1, 0),        # kocka Z (előre)  = -panel X
+)
+
+
+def to_cube(panel, axes=IMU_AXES):
+    """(ax, ay, az) a panel tengelyein -> ugyanaz a vektor a kocka tengelyein."""
+    return tuple(sign * panel[i] for sign, i in axes)
+
+
+def to_panel(cube, axes=IMU_AXES):
+    """A fordítottja (a tesztekhez): a kocka tengelyein adott vektor -> amit a panel mérne."""
+    out = [0.0, 0.0, 0.0]
+    for (sign, i), v in zip(axes, cube):
+        out[i] = sign * v
+    return tuple(out)
+
+
 # Rezgésminták a kész rezgőmotor-modulhoz (ERM motor + tranzisztor, PWM-mel hajtva): (kitöltés 0..1, időtartam s).
 # Az ERM motor lassan indul, ezért minden minta egy rövid, teljes erejű „rúgással” kezdődik.
 PATTERNS = {

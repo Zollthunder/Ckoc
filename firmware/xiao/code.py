@@ -11,17 +11,18 @@
 #       – a touchio lehúzó ellenállás nélkül nem indul; ilyenkor digitális bemenetként olvassuk, így tartalékként
 #         egy AT42QT1010 (aktív magas kimenet) is visszadugható ugyanide, szoftvercsere nélkül
 #   D6  rezgőmotor-modul jelbemenete (IN/SIG), PWM 20 kHz; a modul VCC-je 3V3 (vagy 5V), GND közös
-#   D4/D5  I2C (SDA/SCL) – Qwiic: LSM6DS3TR-C (IMU)
+#   D4/D5  I2C (SDA/SCL) – Qwiic: LSM6DS3TR-C (IMU) – függőlegesen a szán jobb sínjén; a tengelyek átszámolása
+#          egy helyen: reflex.IMU_AXES (a mozgásfelismerés már a kocka tengelyein dolgozik)
 #
 # Szükséges könyvtárak (circup install): neopixel, adafruit_lsm6ds, adafruit_debouncer, adafruit_ticks
-# A CIRCUITPY meghajtóra: boot.py, code.py és reflex.py (az érintés- és rezgéslogika, PC-n tesztelve)
+# A CIRCUITPY meghajtóra: boot.py, code.py és reflex.py (érintés, rezgés, IMU-tengelyek – PC-n tesztelve)
 # boot.py-ban: usb_cdc.enable(console=True, data=True)   – a „data” porton megy a JSON
 import json, math, time
 import board, digitalio, busio, neopixel, usb_cdc
 from adafruit_debouncer import Debouncer
-from reflex import TouchDetector, Buzzer, duty_u16
+from reflex import TouchDetector, Buzzer, duty_u16, to_cube
 
-FW = '1.1'
+FW = '1.2'
 RING_N, C_N = 24, 7
 
 ring = neopixel.NeoPixel(board.D0, RING_N, brightness=1.0, auto_write=False)
@@ -116,8 +117,8 @@ IMU = {'free_t': None, 'shake': [], 'down_since': None, 'upside': False, 'cool':
 def read_imu(now):
     if not imu:
         return
-    ax, ay, az = (v / 9.81 for v in imu.acceleration)     # g egységben
-    g = math.sqrt(ax * ax + ay * ay + az * az)
+    ax, ay, az = to_cube([v / 9.81 for v in imu.acceleration])   # g egységben, a KOCKA tengelyein (Y fel)
+    g = math.sqrt(ax * ax + ay * ay + az * az)                   # dobás, rázás: csak a nagyság számít (iránytól független)
     if now < IMU['cool']:
         return
     # dobás: szabadesés (< 0,3 g legalább 80 ms), majd becsapódás (> 2,5 g)
@@ -133,8 +134,9 @@ def read_imu(now):
         IMU['shake'] = [t for t in IMU['shake'] if now - t < 1.0] + [now]
         if len(IMU['shake']) >= 4:
             send({'ev': 'imu', 'kind': 'shake'}); IMU['shake'] = []; IMU['cool'] = now + 1.2
-    # fordítás hiszterézissel: fejjel lefelé, ha z < -0,8 g; vissza csak ha z > +0,5 g (oldalára fektetve marad, ami volt) – 0,5 s-ig tartósan
-    down = (az < -0.8) if not IMU['upside'] else not (az > 0.5)
+    # fordítás hiszterézissel: fejjel lefelé, ha a kocka Y-ja < -0,8 g; vissza csak ha > +0,5 g (oldalára fektetve
+    # marad, ami volt) – 0,5 s-ig tartósan. Fejjel lefelé a Pi némítja a mikrofont és kikapcsolja a kamerát.
+    down = (ay < -0.8) if not IMU['upside'] else not (ay > 0.5)
     if down != IMU['upside']:
         IMU['down_since'] = IMU['down_since'] or now
         if now - IMU['down_since'] > 0.5:
@@ -179,6 +181,8 @@ def read_touch(now):
 
 
 # ------------------------------------------------------------------ főciklus (~100 Hz)
+if imu:                                               # a konzolra: álló kockánál ≈ (0, 1, 0) – lásd reflex.IMU_AXES
+    print('cube_g', tuple(round(v / 9.81, 2) + 0.0 for v in to_cube(imu.acceleration)))   # +0.0: ne írjon -0.0-t
 send({'ev': 'hello', 'fw': FW, 'imu': imu is not None, 'haptic': motor is not None, 'touch': TOUCH_KIND,
       'upside': IMU['upside']})
 last_hello = time.monotonic()
