@@ -25,7 +25,7 @@ Az ESP32-S3-as tervhez a Bluetooth-kihangosítás miatt **egy második chip** é
 | 7 | Hangszóró | **1× VISATON K 36 WP, Ø36 mm, 8 Ω, 2 W** teljes sávú hangszóró | Ø 36 mm | a hangpanel mono kimenetére; a 40 mm-es helyett (döntés: 2026-11-16), a rögzítőgyűrű Ø36-ra módosul. **2026-11-17: 1 db** (90 mm-es kockán a sztereó hatás nem hallható); a másik oldal rácsa szellőzőként marad |
 | 8 | Alsó fénygyűrű | **NeoPixel Ring 24** (WS2812) | **Ø 66 mm** – pont a modell gyűrűjének mérete | |
 | 9 | C betű fénye | **S-alakú (síkban hajlítható) WS2812 LED-szalag**, 5 mm széles – a sima szalag síkban nem hajlik C alakba | kb. 110 mm (6–7 LED, 60 LED/m) | az előlapi tartó C bordáján fekszik, előtte az opál akril C |
-| 10 | „Kisegítő” mikrovezérlő | **Seeed XIAO RP2040** | 21 × 17,5 mm | LED-ek, gombok, IMU, rezgés valós időben; USB-n vagy UART-on a Pi-hez |
+| 10 | „Kisegítő” mikrovezérlő | **Seeed XIAO RP2040** | 21 × 17,5 mm | gombok, érintés, IMU, rezgés és **a kijelző (az arcot is ő rajzolja)** valós időben; a LED-eket a NeoDriveren át vezérli; **USB-n (OTG)** a Pi-hez (B döntés, 2026-11-17) |
 | 11 | Mozgásérzékelő | **LSM6DS3TR-C** (vagy hasonló) I2C panel, STEMMA QT / Qwiic csatlakozóval | ~25 × 18 mm | dobás, rázás, tájolás |
 | 12 | Rezgés | **Kész rezgőmotor-modul** (lapos ERM motor + tranzisztoros meghajtó, 3 tűs csatlakozó) | kicsi | „Ne zavarj” jelzések; a XIAO PWM-kimenetéről. A DRV2605L helyett (2026-11-17, E3) |
 | 13 | Érintés | **A XIAO RP2040 maga érzékel** (CircuitPython `touchio`) + rézfólia elektróda a Ø18 mm-es műanyag betét alatt + 1 MΩ lehúzó ellenállás a gombok prototípus-lapján | – | az AT42QT1010 helyett (2026-11-17, E2); a fém tetőlap alatt a prototípuson kipróbálni |
@@ -39,19 +39,19 @@ Az ESP32-S3-as tervhez a Bluetooth-kihangosítás miatt **egy második chip** é
 - **Felül:** ReSpeaker 2-Mics Pi HAT (a mikrofonok a tetőfuratok alatt), alatta a Pi Zero 2 WH.
 - **Középen:** a UPS panel a 18650-es akkuval (a stack hosszában, elölről hátra).
 - **Elöl:** a kerek kijelző, mellette a mini kamera a C nyílásában, a C mögött az S-alakú LED-szalag (a tartó C bordáján).
-- **Oldalt:** a 36 mm-es hangszóró az egyik rács mögött; a másik rács szellőző.
+- **Oldalt:** a 36 mm-es hangszóró a **bal** rács mögött; a jobb rács szellőző (B döntés, 2026-11-17).
 - **Alul:** a NeoPixel gyűrű, benne a XIAO RP2040 és a rezgőmotor-modul.
 - **Jobb oldalt, a szán sínjén kívül:** az IMU (függőlegesen, lásd lent).
 - **Bal oldalt, a szán sínjén kívül:** a NeoDriver (függőlegesen, lásd lent).
 - **Hátul:** az USB-C hosszabbító a ház hátfalában (közép 18 mm-rel az alj fölött), PETG szorítólappal.
 
-**IMU (2026-11-17 óta):** függőlegesen a szán **jobb sínjének külső oldalán** (a jobb hangszóró felőli oldalon). A NYÁK síkja függőleges, az alkatrész-oldal kifelé, jobbra néz (+X); a hosszanti él vízszintes, előre-hátra fut; a két rögzítőfuratos él felül van. A panel saját tengelyei a kockához képest (Y fel, eleje +Z, jobb +X): **panel X → hátra (−Z), panel Y → fel (+Y), panel Z → jobbra (+X)**. Ez a panel éleiből és a gyártói rajzból adódik; a chip tengelyjelölését a megvásárolt panel szitanyomatán ellenőrizni. **A firmware-ben (`firmware/xiao/code.py`, a `claude/confident-wilson-a057bb` ágon) a tengelyeket át kell számolni** (dobás, rázás, tájolás) – a firmware-t ez a változtatás nem módosította.
-Rögzítés: 2 db M2,5×6 csavar a szán sínjébe olvasztott betétekbe; a kábel **Adafruit 4397** (Qwiic → női Dupont, 150 mm; a XIAO-n nincs Qwiic), a sínbe vágott résen (y 17…24, z −5…1) át a XIAO tüskéire (3V3, GND, D4 = SDA, D5 = SCL). Az út kb. 40 mm, a kb. 110 mm-es ráhagyást a jobb sín külső oldalán, az IMU előtt (z −5…+20, a sín és a hangszóró között) laza hurokban, kábelkötegelővel a sín réséhez fogva kell elvezetni – ragasztás nélkül.
+**IMU (2026-11-17 óta):** függőlegesen a szán **jobb sínjének külső oldalán** (a jobb, szellőzőrács felőli oldalon). A NYÁK síkja függőleges, az alkatrész-oldal kifelé, jobbra néz (+X); a hosszanti él vízszintes, előre-hátra fut; a két rögzítőfuratos él felül van. A panel saját tengelyei a kockához képest (Y fel, eleje +Z, jobb +X): **panel X → hátra (−Z), panel Y → fel (+Y), panel Z → jobbra (+X)**. Ez a panel éleiből és a gyártói rajzból adódik; a chip tengelyjelölését a megvásárolt panel szitanyomatán ellenőrizni. **A firmware-ben (`firmware/xiao/code.py`, a `claude/confident-wilson-a057bb` ágon) a tengelyeket át kell számolni** (dobás, rázás, tájolás) – a firmware-t ez a változtatás nem módosította.
+Rögzítés: 2 db M2,5×6 csavar a szán sínjébe olvasztott betétekbe; a kábel **Adafruit 4397** (Qwiic → női Dupont, 150 mm; a XIAO-n nincs Qwiic), a sínbe vágott résen (y 17…24, z −5…1) át a XIAO tüskéire (3V3, GND, D4 = SDA, D5 = SCL). Az út kb. 40 mm, a kb. 110 mm-es ráhagyást a jobb sín külső oldalán, az IMU fölött (y 31…46, z −30…−10) laza hurokban, kábelkötegelővel a sín réséhez fogva kell elvezetni – ragasztás nélkül.
 - **A tető sarkaiban:** a 4 gomb kapcsolói; középen az érintőbetét alatt az elektróda.
 
 Képek: [iso](assets/fusion/modulok_iso.png) · [elöl](assets/fusion/modulok_elol.png) · [oldal](assets/fusion/modulok_oldal.png)
 
-**NeoDriver (Adafruit 5766, 2026-11-17):** függőlegesen a szán **bal sínjének külső oldalán** (ott már nincs hangszóró). A gyártói rajz szerint 25,4 × 25,4 mm, 4 db Ø2,5 furat; alkatrész-oldal kifelé (balra), a sorkapcsok felül (a LED-vezetékek felfelé lépnek ki, fölöttük kb. 9 mm szabad hely van az ívhez), a Qwiic csatlakozók előre és hátra néznek. 4 db M2,5×6 hengeres fejű csavar a sínbe olvasztott betétekbe. A Qwiic lánc az IMU második portjáról egy rövid QT–QT kábellel jön, a jobb és a bal sín résén át (bal: elöl, y 12…16,5, z 4…10).
+**NeoDriver (Adafruit 5766, 2026-11-17):** függőlegesen a szán **jobb sínjének külső oldalán, az IMU előtt** (a bal oldalon a hangszóró miatt nem fér el; B döntés). A gyártói rajz szerint 25,4 × 25,4 mm, 4 db Ø2,5 furat; 4 db M2,5×6 hengeres fejű csavar a sínbe olvasztott betétekbe. A Qwiic lánc az IMU második portjáról egy rövid QT–QT kábellel jön. Pontos koordináták: [dxf/MEGJEGYZES.txt](dxf/MEGJEGYZES.txt).
 
 ## Ami a modellben változott emiatt
 - A kocka **90 mm**-es lett (80 helyett), a tetőlap 72 mm, a gombok és a mikrofonfuratok ehhez igazodva kijjebb kerültek.
