@@ -37,8 +37,8 @@ Alapok: [ELEKTRONIKA.md](ELEKTRONIKA.md) (modulok), [GYARTASI_TERV.md](GYARTASI_
 | 14 | ~~Külön rezgőmotor~~ – a 13. tételben benne van | – | – | – | 0 Ft | – | 2026-11-17 |
 | 15 | **1 MΩ-os ellenállás** az érintőelektródához (a XIAO RP2040 maga érzékel, CircuitPython `touchio`) – az Adafruit AT42QT1010 helyett; a gombok prototípus-lapjára kerül | 1 | 10 | 10 Ft | 100 Ft | **becslés** [B]; **döntés (2026-11-17)** (KOLTSEGOPTIMALIZALAS.md, E2) | 2026-11-17 |
 | 16 | Nyomógomb 6×6 mm, THT (TACTS-6x6x7.3) | 4 | 20 | 22 Ft (10+ ár) | 440 Ft | Hestore.hu, 100.420.19 [O] | 2026-11-16 |
-| 17 | STEMMA QT / Qwiic kábel, 100 mm (XIAO → IMU) | 1 | 3 | 1,03 € ≈ 402 Ft | 1 206 Ft | elektronicavoorjou.nl, 1,25 € bruttó [K] | 2026-11-16 |
-| 18 | USB-C panelbe szerelhető hosszabbító, **általános, 10–15 cm** (az Adafruit #4218 helyett; a tálca peremén a furatképet igazítani) | 1 | 3 | ~2 € ≈ 800 Ft | 2 400 Ft | **becslés** [B]; **döntés (2026-11-17)** (KOLTSEGOPTIMALIZALAS.md, E4) | 2026-11-17 |
+| 17 | STEMMA QT / Qwiic → **női Dupont-aljzatok**, 150 mm (Adafruit **4397**, IMU → XIAO tüskéi; a XIAO-n nincs Qwiic, KOMPATIBILITAS.md 5.) | 1 | 3 | ~1,03 € ≈ 402 Ft | 1 206 Ft | a Qwiic–Qwiic kábel ára (elektronicavoorjou.nl, 1,25 € bruttó [K], 2026-11-16) – a 4397 árát ellenőrizni [B] | 2026-11-17 |
+| 18 | USB-C panelbe szerelhető hosszabbító, **általános, 10–15 cm** (az Adafruit #4218 helyett; a ház hátfalában, PETG szorítólappal – fül ≤ 31 × 2 mm, test ≤ 13 × 8 mm) | 1 | 3 | ~2 € ≈ 800 Ft | 2 400 Ft | **becslés** [B]; **döntés (2026-11-17)** (KOLTSEGOPTIMALIZALAS.md, E4) | 2026-11-17 |
 | 19 | microSD kártya, 32 GB, A1 (a Pi rendszeréhez; az ELEKTRONIKA.md-ből hiányzik) | 1 | 3 | 3 000 Ft | 9 000 Ft | **becslés** [B] | – |
 | 20 | CR1220 gombelem (a UPS panel RTC-jéhez, nincs a dobozban) | 1 | 3 | 300 Ft | 900 Ft | **becslés** [B] | – |
 | 21 | M2,5 távtartó-készlet (11 mm) + csavarok a Pi/Bonnet stackhez | – | 1 készlet | 3 000 Ft | 3 000 Ft | **becslés** [B] | – |
@@ -49,12 +49,12 @@ Alapok: [ELEKTRONIKA.md](ELEKTRONIKA.md) (modulok), [GYARTASI_TERV.md](GYARTASI_
 | | **Elektronika összesen** | | | | **184 846 Ft** | | |
 
 ### 1.2 Kötőelemek (kívülről)
-A [SZERELES.md](SZERELES.md) szerint kockánként: 25 db M2,5 menetes betét, 4 db M2,5×8 süllyesztett fejű (DIN 7991), 7 db M2,5×6 süllyesztett fejű, 10 db M2,5×6 hengeres fejű (DIN 912), 4 db M2,5×14 hengeres fejű.
+A [SZERELES.md](SZERELES.md) szerint kockánként (2026-11-17, M1: 3 féle csavar): 30 db M2,5 menetes betét, 13 db M2,5×8 süllyesztett fejű (DIN 7991), 21 db M2,5×6 hengeres fejű (DIN 912; ebből 8 a távtartókhoz), 4 db M2,5×14 hengeres fejű, 4 db M2,5×11 mm-es távtartó.
 
 | # | Tétel | Db/kocka | Rendelt db | Egységár (nettó) | Összesen (nettó) | Forrás / beszállító | Forrás dátuma |
 |---|---|---|---|---|---|---|---|
 | 23 | M2,5 beolvasztható menetes betét, sárgaréz, M2,5×4 (ruthex, 70 db/csomag) | 25 | 2 csomag (140 db) | 2 739 Ft/csomag | 5 478 Ft | **becslés** [B] az M2-es ár alapján (3djake.hu, M2: 3 478 Ft bruttó/csomag [O]) | 2026-11-16 |
-| 24 | M2,5 rozsdamentes (A2) csavarok, 4 féle (DIN 7991: M2,5×6, M2,5×8; DIN 912: M2,5×6, M2,5×14), 20–50 db-os csomagok | 25 | ~6 csomag | ~1 000 Ft/csomag | 6 000 Ft | **becslés** [B] (viszonyítás: Toolcraft M2,5×8, 20 db, 1 090 Ft bruttó az Árgép találata szerint [K]) | 2026-11-16 |
+| 24 | M2,5 rozsdamentes (A2) csavarok, **3 féle** (DIN 7991: M2,5×8; DIN 912: M2,5×6, M2,5×14), 20–50 db-os csomagok | 25 | ~6 csomag | ~1 000 Ft/csomag | 6 000 Ft | **becslés** [B] (viszonyítás: Toolcraft M2,5×8, 20 db, 1 090 Ft bruttó az Árgép találata szerint [K]) | 2026-11-16 |
 | | **Kötőelemek összesen** | | | | **11 478 Ft** | | |
 
 ### 1.3 Külső szolgáltatás és alapanyag
@@ -146,7 +146,7 @@ Egy asztali eszköz 3 db-os prototípus-sorozatához kérünk árajánlatot az a
 | 5 | Nyomógomb | 6×6 mm, THT, SPST-NO, kb. 7 mm magas | 20 db |
 | 6 | microSD kártya | 32 GB, Class 10 / A1 | 3 db |
 | 7 | CR1220 gombelem | 3 V | 3 db |
-| 8 | Távtartó-készlet | M2,5, 11 mm, anya-anya vagy anya-apa, csavarokkal | 12 db + 12 csavar |
+| 8 | Távtartó | M2,5, 11 mm, anya-anya (a csavarok a kötőelem-ajánlatból: M2,5×6 hengeres fejű) | 12 db |
 | 9 | JST-SH (1,0 mm) és JST-PH (2,0 mm) előszerelt kábelek | 2–6 pólusú, 100–150 mm | kb. 20 db vegyesen |
 | 10 | Prototípus-lap (forrasztható) | kb. 30×70 mm | 3 db |
 | 11 | Ellenállás 1 MΩ | 0,25 W, THT | 10 db |
@@ -177,8 +177,8 @@ Tisztelt Hölgyem / Uram!
 | 2 | Seeed Studio XIAO RP2040 | Seeed **102010428** | 3 db |
 | 3 | Adafruit LSM6DS3TR-C 6-DoF IMU, STEMMA QT | Adafruit **4503** | 3 db |
 | 4 | Rezgőmotor-modul | lapos ERM motor + tranzisztoros meghajtó egy panelen, 3,3–5 V, 3 tűs csatlakozó (PWM-bemenet) | 3 db |
-| 5 | STEMMA QT / Qwiic kábel, 100 mm | Adafruit **4210** | 3 db |
-| 6 | USB-C panelbe szerelhető hosszabbító | aljzat–dugó, **10–15 cm**, csavarfüles panelrögzítéssel | 3 db |
+| 5 | STEMMA QT / Qwiic → női Dupont-aljzatok, 150 mm | Adafruit **4397** | 3 db |
+| 6 | USB-C panelbe szerelhető hosszabbító | aljzat–dugó, **10–15 cm**, füles panelrögzítéssel; a fül legfeljebb 31 × 2 mm, a fül mögötti test legfeljebb 13 × 8 mm | 3 db |
 | 7 | Kerek kijelző 1,28", GC9A01, 240×240, IPS, SPI | kerek NYÁK-os kivitel, Ø ~37,5 mm | 3 db |
 | 8 | Mini kameramodul OV5647 | Raspberry Pi Zero-hoz (22 pólusú, 0,5 mm-es FPC kábellel), kamerafej ~8,5 × 11,3 mm, fix fókusz (pl. Arducam B006603 vagy Pi Supply Spy Camera) | 3 db |
 | 9 | S-alakú (síkban hajlítható) címezhető LED-szalag | WS2812B vagy SK6812, 5 mm széles, 60 LED/m, 5 V | 1 m |
@@ -242,11 +242,10 @@ Tisztelt Hölgyem / Uram!
 | # | Tétel | Szabvány / anyag | Mennyiség |
 |---|---|---|---|
 | 1 | Beolvasztható menetes betét, **M2,5**, hossz 3–4 mm, Ø3,6 mm-es furatba | sárgaréz, hőre beültethető (pl. ruthex M2,5×4 vagy egyenértékű) | 100 db |
-| 2 | Süllyesztett fejű imbuszcsavar **M2,5×8** | ISO 10642 / DIN 7991, A2 rozsdamentes | 20 db |
-| 3 | Süllyesztett fejű imbuszcsavar **M2,5×6** | ISO 10642 / DIN 7991, A2 | 30 db |
-| 4 | Hengeres fejű imbuszcsavar **M2,5×6** | ISO 4762 / DIN 912, A2 | 40 db |
-| 5 | Hengeres fejű imbuszcsavar **M2,5×14** | ISO 4762 / DIN 912, A2 | 20 db |
-| 6 | Távtartó **M2,5 × 11 mm** + M2,5×5 csavar | sárgaréz vagy nikkelezett | 12 + 24 db |
+| 2 | Süllyesztett fejű imbuszcsavar **M2,5×8** | ISO 10642 / DIN 7991, A2 rozsdamentes | 50 db |
+| 3 | Hengeres fejű imbuszcsavar **M2,5×6** | ISO 4762 / DIN 912, A2 | 70 db |
+| 4 | Hengeres fejű imbuszcsavar **M2,5×14** | ISO 4762 / DIN 912, A2 | 20 db |
+| 5 | Távtartó **M2,5 × 11 mm**, anya-anya | sárgaréz vagy nikkelezett | 12 db |
 
 A mennyiségek kis tartalékot tartalmaznak. Ha csak nagyobb csomagban árulják, kérjük, a legkisebb kiszerelést árazza. Fekete felületű (pl. fekete cinkezett vagy fekete rozsdamentes) változat a 2. tételből előnyt jelent, mert látszó felületre kerül.
 
@@ -291,7 +290,7 @@ Köszönettel:
 
 ### Minimális rendelési mennyiségek, kiszerelések
 - **Hestore:** darabra is rendelhető, de 5+, 10+, 20+ ártörések vannak (pl. a 6×6-os gomb 50 Ft helyett 22 Ft 10+ db-nál). A Pi Zero 2 W-nél az 5+ ár 11 469 Ft, ezért **5 db rendelése** csak akkor érdemes, ha a tartalék kell.
-- **Menetes betétek:** 70 db-os csomag; 75 db kell + selejt, ezért 2 csomag.
+- **Menetes betétek:** 70 db-os csomag; 90 db kell (3 × 30) + selejt, ezért 2 csomag (140 db).
 - **LED-szalag:** jellemzően csak 1 m-es vagy 5 m-es tekercsben kapható; 3 kockához 0,33 m kell → **1 m-t rendelünk** (2026-11-17).
 - **PMMA, fa:** egész tábla vagy minimum vágási méret; érdemes **maradékot** kérni.
 - **Eloxálás:** kis darabszámnál a **minimális tételdíj** a döntő. Ha a 4 tetőlap mellé más eloxálandó munka is van, együtt olcsóbb. Ha a minimum díj nagyon magas, a natúr (színtelen) eloxálás vagy a festett/porszórt alu is szóba jöhet. **Döntés (2026-11-17, M8):** a prototípus tetőlapjai más eloxálandó munkával együtt menjenek. A 25 000 Ft-os becslés a legrosszabb esetet mutatja.
@@ -309,7 +308,7 @@ Köszönettel:
 - **Adafruit-breakoutok helyett általános modulok** (LSM6DS3): olcsóbbak, de a STEMMA QT csatlakozó gyakran hiányzik (ez ütközik a „csatlakozó forrasztás helyett” elvvel). Prototípushoz maradjon az Adafruit.
 - **LED-gyűrű:** a Hestore Ø66 mm-es WS2812-es gyűrűje (3 429 Ft) olcsóbb és itthon kapható; az eredeti Adafruit NeoPixel Ring 24 kb. 13–16 £ [K].
 - **Hangszóró:** **eldöntve (2026-11-16):** a Ø36 mm-es VISATON K 36 WP kerül be, a PETG rögzítőgyűrű Ø36-ra módosul (a 3D modellben még átvezetendő).
-- **USB-C hosszabbító:** **átvezetve** (2026-11-17): általános, 10–15 cm-es; a tálca peremén ellenőrizni a furatképet és a 3 mm helyet.
+- **USB-C hosszabbító:** **átvezetve** (2026-11-17): általános, 10–15 cm-es; 2026-11-17 óta a ház hátfalában, szorítólappal (a fülfurat-távolság mindegy), a 3 mm hely a modellben ellenőrizve.
 - **Tetőlap alapanyaga:** ha házon belül van 2 mm-es alu maradék, az alapanyag és a szállítás (~11 500 Ft) megspórolható.
 - **Felület:** **átvezetve** (2026-11-17): mártásos színezés a szórófestés helyett (~3 000 Ft / 3 db). Az élek kopását dobáspróbával ellenőrizni.
 - **Gumitalp:** **átvezetve** (2026-11-17): 4 db kész öntapadós gumiláb a Ø60-as EPDM talp helyett.

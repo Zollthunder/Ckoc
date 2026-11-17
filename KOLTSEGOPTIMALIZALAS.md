@@ -22,8 +22,8 @@
 | E5 töltőmodul a Pi-Ener-lite helyett | ❌ elvetve, **marad a Pi-Ener-lite** | – |
 | M2 kevesebb menetes betét | ❌ nem engedélyezve, maradnak a betétek | – |
 | *A következő sorokban Zollo a döntést Claude-ra bízta („az optimalizálást rád bízom”, 2026-11-17). Elvvel ütköző javaslat nincs köztük.* | | |
-| M1 közös csavarméret | ✅ elfogadva: 3 féle csavar marad. Süllyesztett fejűből csak M2,5×8 (tetőlap, USB-C szorítólap, diffúzor, szánlábak), hengeres fejűből M2,5×6 (előlap, hangszóró, IMU) és M2,5×14 (tálca). A diffúzornál és a szánlábaknál ~1 mm-rel mélyebb vakfurat kell | a 3D-munkamenet vezeti át (modell, SZERELES.md, AJANLATKERESEK.md) |
-| M7 tetőlap: R1 sarok a DXF-ben, egy felfogás | ✅ elfogadva: ingyen van, és kiváltja a kézi sorjázást. A GYARTASI_TERV.md nyitott „R1 vagy sorjázás” kérdését is lezárja | a 3D-munkamenet vezeti át (DXF) |
+| M1 közös csavarméret | ✅ elfogadva: 3 féle csavar marad. Süllyesztett fejűből csak M2,5×8 (tetőlap, USB-C szorítólap, diffúzor, szánlábak), hengeres fejűből M2,5×6 (előlap, hangszóró, IMU) és M2,5×14 (tálca). A diffúzornál és a szánlábaknál ~1 mm-rel mélyebb vakfurat kell | ✅ átvezetve (2026-11-17): modell (Fusion), SZERELES.md, AJANLATKERESEK.md; a diffúzornál magasabb oszlop + kiszabadítás a szánban, lásd dxf/MEGJEGYZES.txt |
+| M7 tetőlap: R1 sarok a DXF-ben, egy felfogás | ✅ elfogadva: ingyen van, és kiváltja a kézi sorjázást. A GYARTASI_TERV.md nyitott „R1 vagy sorjázás” kérdését is lezárja | ✅ átvezetve (2026-11-17): modell és tetolap_alu_2mm.dxf, GYARTASI_TERV.md lezárva |
 | M8 eloxálás | ✅ prototípusnál: a 4 tetőlap **más eloxálandó munkával együtt** menjen (csak szervezés). ⏸ Sorozatnál az előeloxált lemez halasztva: a natúr vágott él más megjelenés, ezt a kész prototípuson érdemes megnézni | AJANLATKERESEK.md (megjegyzés) |
 | B1 összevont rendelés | ✅ elfogadva: ami lehet, az EU-s disztribútortól egy csomagban | AJANLATKERESEK.md (megjegyzés) |
 | B2 alu maradékból | ✅ elfogadva, ha van házon belül 2 mm-es **5754 vagy 6082** maradék. Ismeretlen ötvözetű maradék nem jó, mert foltos lesz az eloxálás | – (a költségvetésben a vásárolt lemez marad tartaléknak) |
@@ -34,7 +34,7 @@
 
 **Az új kiindulás:** az AJANLATKERESEK.md végösszege a döntések átvezetése után **319 982 Ft nettó / 3 db = 106 661 Ft/db** (előtte 140 044 Ft/db).
 
-**Még nincs átvezetve (külön lépés kell hozzá):** a 3D modell és a DXF-ek (1 hangszórótartó, ReSpeaker-mikrofonfuratok a tetőlapon, gumitalp helyett gumilábak), a szerelési ábrák, a firmware (érintés `touchio`-val, rezgés PWM-mel, ReSpeaker hangpanel), valamint a weboldal és a videó szövegei.
+**Átvezetve a STEP-be, az STL-ekbe és a DXF-ekbe (2026-11-17, Fusion nélkül, [tools/cost_pass_step.py](tools/cost_pass_step.py)):** 1 hangszóró + 1 rögzítőgyűrű, ReSpeaker-mikrofonfuratok, gumilábak a gumitalp helyett, USB-C zseb a tálcában, érintőpanel ki, rezgőmodul. A Fusion-modellbe (.f3d) is átvezetve ([tools/cost_pass_fusion.py](tools/cost_pass_fusion.py)), a STEP és az STL-ek onnan exportálva. **Még nincs átvezetve:** a szerelési ábrák, a firmware (érintés `touchio`-val, rezgés PWM-mel, ReSpeaker hangpanel), valamint a weboldal és a videó szövegei.
 
 ---
 

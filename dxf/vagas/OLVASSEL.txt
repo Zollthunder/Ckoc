@@ -4,13 +4,17 @@ tetolap_alu_2mm (alumínium 2 mm – CNC/lézer + eloxálás) – 72.0 × 2.0 ×
 C_fenycsatorna_opal_akril_3mm (opál akril 3 mm – lézer) – 44.0 × 48.2 × 3.0 mm
 erintobetet_opal_akril_2mm (opál akril 2 mm – lézer) – 17.8 × 2.0 × 17.8 mm
 fenygyuru_diffuzor_opal_akril_3mm (opál akril 3 mm – lézer) – 66.0 × 3.0 × 66.0 mm
-gumitalp_EPDM_1_5mm (EPDM gumi 1,5 mm – vízvágás/lézer) – 60.0 × 1.5 × 60.0 mm
 Andor_fabetet_fa_2mm (fa (bükk/tölgy) 2 mm – lézer, préselve az SLA sapkába) – 6.6 × 2.0 × 6.6 mm
 
 Megjegyzések:
 - Minden kontúr egyszer szerepel (nincs dupla vágás), zárt, mm-ben. Ellenőrzés: node tools/dxf_check.js
-- Tetőlap: 4 db Ø2,8 furat M2,5 süllyesztett fejű csavarhoz (DIN 7991) -> felülről 90°-os süllyesztés Ø5,0-re (a DXF ezt nem tartalmazza).
-- Diffúzor: 3 db Ø2,8 furat M2,5 süllyesztett csavarhoz -> ALULRÓL 90°-os süllyesztés Ø5,0-re. A gumitalp Ø5 lyukai a csavarfejek (Ø4,7) fölé esnek.
+- Tetőlap: a 72 × 72-es kontúr sarkai R1 lekerekítésűek (2026-11-17).
+- Tetőlap: 4 db Ø2,8 furat M2,5×8 süllyesztett fejű csavarhoz (DIN 7991) -> felülről 90°-os süllyesztés Ø5,0-re (a DXF ezt nem tartalmazza).
+- Diffúzor: 3 db Ø2,8 furat M2,5×8 süllyesztett csavarhoz -> ALULRÓL 90°-os süllyesztés Ø5,0-re.
+- Gumitalp: 2026-11-17 óta nincs (nincs vágás). Helyette 4 kész, öntapadós, átlátszó gumiláb (Ø10 × 3 mm) a diffúzor alján,
+  ebben a rajzban (±20,5; -19,0) és (±17,5; 21,5) középponttal – a csavarfejektől legalább 3 mm-re.
+- Tetőlap: 6 db Ø1,6 furat; ebből 2 hasznos a ReSpeaker 2-Mics Pi HAT mikrofonjai fölött (x = -6,34; y = -25,46 és 33,46; a v1 rajzából, a v2-re becsült),
+  4 díszítés (r = 21 mm). A hátsó mikrofonfurat a lap szélétől 1,7 mm-re van – CNC-vel/lézerrel rendben, kivágószerszámmal nem.
 - A betétek (C, érintőbetét) körben 0,1 mm-rel kisebbek a nyílásnál (illesztési hézag);
   lézernél a vágásrést (kerf) ne kompenzáld kifelé.
 - Rögzítés: a C és az érintőbetét belülről SEMLEGES (neutrális) szilikonnal körbe. Ecetszagú (acetoxi) szilikont ne – repeszti az akrilt.
