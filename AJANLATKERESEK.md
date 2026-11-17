@@ -49,7 +49,7 @@ Alapok: [ELEKTRONIKA.md](ELEKTRONIKA.md) (modulok), [GYARTASI_TERV.md](GYARTASI_
 | | **Elektronika összesen** | | | | **188 446 Ft** | | |
 
 ### 1.2 Kötőelemek (kívülről)
-A [SZERELES.md](SZERELES.md) szerint kockánként (2026-11-17, M1: 3 féle csavar): 26 db M2,5 menetes betét, 13 db M2,5×8 süllyesztett fejű (DIN 7991), 17 db M2,5×6 hengeres fejű (DIN 912; ebből 8 a távtartókhoz), 4 db M2,5×14 hengeres fejű, 4 db M2,5×11 mm-es távtartó.
+A [SZERELES.md](SZERELES.md) szerint kockánként (2026-11-17, M1: 3 féle csavar): 30 db M2,5 menetes betét, 13 db M2,5×8 süllyesztett fejű (DIN 7991), 21 db M2,5×6 hengeres fejű (DIN 912; ebből 8 a távtartókhoz), 4 db M2,5×14 hengeres fejű, 4 db M2,5×11 mm-es távtartó.
 
 | # | Tétel | Db/kocka | Rendelt db | Egységár (nettó) | Összesen (nettó) | Forrás / beszállító | Forrás dátuma |
 |---|---|---|---|---|---|---|---|
@@ -243,7 +243,7 @@ Tisztelt Hölgyem / Uram!
 |---|---|---|---|
 | 1 | Beolvasztható menetes betét, **M2,5**, hossz 3–4 mm, Ø3,6 mm-es furatba | sárgaréz, hőre beültethető (pl. ruthex M2,5×4 vagy egyenértékű) | 100 db |
 | 2 | Süllyesztett fejű imbuszcsavar **M2,5×8** | ISO 10642 / DIN 7991, A2 rozsdamentes | 50 db |
-| 3 | Hengeres fejű imbuszcsavar **M2,5×6** | ISO 4762 / DIN 912, A2 | 60 db |
+| 3 | Hengeres fejű imbuszcsavar **M2,5×6** | ISO 4762 / DIN 912, A2 | 70 db |
 | 4 | Hengeres fejű imbuszcsavar **M2,5×14** | ISO 4762 / DIN 912, A2 | 20 db |
 | 5 | Távtartó **M2,5 × 11 mm**, anya-anya | sárgaréz vagy nikkelezett | 12 db |
 
@@ -290,7 +290,7 @@ Köszönettel:
 
 ### Minimális rendelési mennyiségek, kiszerelések
 - **Hestore:** darabra is rendelhető, de 5+, 10+, 20+ ártörések vannak (pl. a 6×6-os gomb 50 Ft helyett 22 Ft 10+ db-nál). A Pi Zero 2 W-nél az 5+ ár 11 469 Ft, ezért **5 db rendelése** csak akkor érdemes, ha a tartalék kell.
-- **Menetes betétek:** 70 db-os csomag; 78 db kell (3 × 26) + selejt, ezért 2 csomag.
+- **Menetes betétek:** 70 db-os csomag; 90 db kell (3 × 30) + selejt, ezért 2 csomag (140 db).
 - **LED-szalag:** jellemzően csak 1 m-es vagy 5 m-es tekercsben kapható; 3 kockához 0,33 m kell → **1 m-t rendelünk** (2026-11-17).
 - **PMMA, fa:** egész tábla vagy minimum vágási méret; érdemes **maradékot** kérni.
 - **Eloxálás:** kis darabszámnál a **minimális tételdíj** a döntő. Ha a 4 tetőlap mellé más eloxálandó munka is van, együtt olcsóbb. Ha a minimum díj nagyon magas, a natúr (színtelen) eloxálás vagy a festett/porszórt alu is szóba jöhet. **Döntés (2026-11-17, M8):** a prototípus tetőlapjai más eloxálandó munkával együtt menjenek. A 25 000 Ft-os becslés a legrosszabb esetet mutatja.

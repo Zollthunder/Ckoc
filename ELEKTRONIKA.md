@@ -42,6 +42,7 @@ Az ESP32-S3-as tervhez a Bluetooth-kihangosítás miatt **egy második chip** é
 - **Oldalt:** a 36 mm-es hangszóró az egyik rács mögött; a másik rács szellőző.
 - **Alul:** a NeoPixel gyűrű, benne a XIAO RP2040 és a rezgőmotor-modul.
 - **Jobb oldalt, a szán sínjén kívül:** az IMU (függőlegesen, lásd lent).
+- **Bal oldalt, a szán sínjén kívül:** a NeoDriver (függőlegesen, lásd lent).
 - **Hátul:** az USB-C hosszabbító a ház hátfalában (közép 18 mm-rel az alj fölött), PETG szorítólappal.
 
 **IMU (2026-11-17 óta):** függőlegesen a szán **jobb sínjének külső oldalán** (a jobb hangszóró felőli oldalon). A NYÁK síkja függőleges, az alkatrész-oldal kifelé, jobbra néz (+X); a hosszanti él vízszintes, előre-hátra fut; a két rögzítőfuratos él felül van. A panel saját tengelyei a kockához képest (Y fel, eleje +Z, jobb +X): **panel X → hátra (−Z), panel Y → fel (+Y), panel Z → jobbra (+X)**. Ez a panel éleiből és a gyártói rajzból adódik; a chip tengelyjelölését a megvásárolt panel szitanyomatán ellenőrizni. **A firmware-ben (`firmware/xiao/code.py`, a `claude/confident-wilson-a057bb` ágon) a tengelyeket át kell számolni** (dobás, rázás, tájolás) – a firmware-t ez a változtatás nem módosította.
@@ -49,6 +50,8 @@ Rögzítés: 2 db M2,5×6 csavar a szán sínjébe olvasztott betétekbe; a káb
 - **A tető sarkaiban:** a 4 gomb kapcsolói; középen az érintőbetét alatt az elektróda.
 
 Képek: [iso](assets/fusion/modulok_iso.png) · [elöl](assets/fusion/modulok_elol.png) · [oldal](assets/fusion/modulok_oldal.png)
+
+**NeoDriver (Adafruit 5766, 2026-11-17):** függőlegesen a szán **bal sínjének külső oldalán** (ott már nincs hangszóró). A gyártói rajz szerint 25,4 × 25,4 mm, 4 db Ø2,5 furat; alkatrész-oldal kifelé (balra), a sorkapcsok felül (a LED-vezetékek felfelé lépnek ki, fölöttük kb. 9 mm szabad hely van az ívhez), a Qwiic csatlakozók előre és hátra néznek. 4 db M2,5×6 hengeres fejű csavar a sínbe olvasztott betétekbe. A Qwiic lánc az IMU második portjáról egy rövid QT–QT kábellel jön, a jobb és a bal sín résén át (bal: elöl, y 12…16,5, z 4…10).
 
 ## Ami a modellben változott emiatt
 - A kocka **90 mm**-es lett (80 helyett), a tetőlap 72 mm, a gombok és a mikrofonfuratok ehhez igazodva kijjebb kerültek.

@@ -44,3 +44,6 @@ M1 + M7 (2026-11-17) – tools/m1_m7_fusion.py, a Fusionben, onnan exportálva:
   kiszabadítás fölöttük (a (0; 22)-nél átmenő), a szán így oldalt és felül is 2,0 mm-re van. Szánláb: betétfurat 5 mm (eddig 3,7).
   USB-C szorítólap: átmenő betétfurat. Mind a 13 süllyesztett csavar szára csak furatban fut (OCP-vel ellenőrizve).
 - Tetőlap: R1 a 4 sarokélen (modell és tetolap_alu_2mm.dxf).
+
+NeoDriver (2026-11-17) – tools/neodriver_fusion.py, a Fusionben: NYÁK x -22,5…-24,1, y 11,5…36,9, z -24…1,4 (bal sín külső oldala);
+4 csavaroszlop + M2,5 betét (y 14,04 / 26,74; z -21,46 / -1,14), Qwiic-rés a bal sínben (y 12…16,5, z 4…10).
