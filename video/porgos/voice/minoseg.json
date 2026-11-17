@@ -1,0 +1,322 @@
+{
+ "P01": {
+  "text": "This is C-Cube: a palm-sized AI assistant for your desk. Always in a good mood.",
+  "chosen": "P01_0.wav",
+  "score": 1.0,
+  "heard": "This is C -Cube, a palm -sized AI assistant for your desk, always in a good mood.",
+  "candidates": [
+   {
+    "file": "P01_0.wav",
+    "score": 1.0,
+    "heard": "This is C -Cube, a palm -sized AI assistant for your desk, always in a good mood.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P01_1.wav",
+    "score": 1.0,
+    "heard": "This is C -Cube, a palm -sized AI assistant for your desk, always in a good mood.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P01_2.wav",
+    "score": 1.0,
+    "heard": "This is C -Cube, a palm -sized AI assistant for your desk, always in a good mood.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P01_3.wav",
+    "score": 1.0,
+    "heard": "This is C -Cube, a palm -sized AI assistant for your desk, always in a good mood.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "P02": {
+  "text": "I designed it together with an AI, in just a few days.",
+  "chosen": "P02_0.wav",
+  "score": 1.0,
+  "heard": "I designed it together with an AI in just a few days.",
+  "candidates": [
+   {
+    "file": "P02_0.wav",
+    "score": 1.0,
+    "heard": "I designed it together with an AI in just a few days.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P02_1.wav",
+    "score": 1.0,
+    "heard": "I designed it together with an AI in just a few days.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P02_2.wav",
+    "score": 1.0,
+    "heard": "I designed it together with an AI in just a few days.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P02_3.wav",
+    "score": 1.0,
+    "heard": "I designed it together with an AI in just a few days.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "P04": {
+  "text": "The AI wrote a program that builds the 3D model in Fusion.",
+  "chosen": "P04_0.wav",
+  "score": 1.0,
+  "heard": "The AI wrote a program that builds the 3D model in Fusion.",
+  "candidates": [
+   {
+    "file": "P04_0.wav",
+    "score": 1.0,
+    "heard": "The AI wrote a program that builds the 3D model in Fusion.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P04_1.wav",
+    "score": 1.0,
+    "heard": "The AI wrote a program that builds the 3D model in Fusion.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P04_2.wav",
+    "score": 1.0,
+    "heard": "The AI wrote a program that builds the 3D model in Fusion.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P04_3.wav",
+    "score": 0.931,
+    "heard": "The AI wrote a program that builds the three -model infusion.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "P05": {
+  "text": "Bugs? We found them together, and fixed them.",
+  "chosen": "P05_0.wav",
+  "score": 1.0,
+  "heard": "Bugs, we found them together and fixed them.",
+  "candidates": [
+   {
+    "file": "P05_0.wav",
+    "score": 1.0,
+    "heard": "Bugs, we found them together and fixed them.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P05_1.wav",
+    "score": 1.0,
+    "heard": "Bugs. We found them together and fixed them.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P05_2.wav",
+    "score": 1.0,
+    "heard": "Bugs? We found them together and fixed them.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P05_3.wav",
+    "score": 1.0,
+    "heard": "Bugs? We found them together and fixed them.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "P06": {
+  "text": "Then the AI reviewed the model by itself, and even picked the colors.",
+  "chosen": "P06_0.wav",
+  "score": 1.0,
+  "heard": "Then the AI reviewed the model by itself, and even picked the colors.",
+  "candidates": [
+   {
+    "file": "P06_0.wav",
+    "score": 1.0,
+    "heard": "Then the AI reviewed the model by itself, and even picked the colors.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P06_1.wav",
+    "score": 1.0,
+    "heard": "Then the AI reviewed the model by itself, and even picked the colors.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P06_2.wav",
+    "score": 1.0,
+    "heard": "Then the AI reviewed the model by itself and even picked the colors.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P06_3.wav",
+    "score": 1.0,
+    "heard": "Then the AI reviewed the model by itself and even picked the colors.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "P07": {
+  "text": "Every step went into the log.",
+  "chosen": "P07_0.wav",
+  "score": 1.0,
+  "heard": "Every step went into the log.",
+  "candidates": [
+   {
+    "file": "P07_0.wav",
+    "score": 1.0,
+    "heard": "Every step went into the log.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P07_1.wav",
+    "score": 1.0,
+    "heard": "Every step went into the log.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P07_2.wav",
+    "score": 1.0,
+    "heard": "Every step went into the log.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P07_3.wav",
+    "score": 1.0,
+    "heard": "Every step went into the log.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "P08": {
+  "text": "Round display. Camera. Two mics. Stereo speakers. RGB lights. Battery. And rubber corners. Why? You'll see.",
+  "chosen": "P08_0.wav",
+  "score": 1.0,
+  "heard": "Round display, camera, two mics, stereo speakers, RGB lights, battery, and rubber corners, why, you'll see.",
+  "candidates": [
+   {
+    "file": "P08_0.wav",
+    "score": 1.0,
+    "heard": "Round display, camera, two mics, stereo speakers, RGB lights, battery, and rubber corners, why, you'll see.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P08_1.wav",
+    "score": 1.0,
+    "heard": "Round display, camera, two mics, stereo speakers, RGB lights, battery, and rubber corners. Why? You'll see.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P08_2.wav",
+    "score": 1.0,
+    "heard": "Round display, camera, two mics, stereo speakers, RGB lights, battery, and rubber corners. Why? You'll see.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P08_3.wav",
+    "score": 1.0,
+    "heard": "Round display, camera, two mics, stereo speakers, RGB lights, battery, and rubber corners. Why, you'll see.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "P10": {
+  "text": "Do not disturb? It just buzzes gently.",
+  "chosen": "P10_0.wav",
+  "score": 1.0,
+  "heard": "Do not disturb. It just buzzes gently.",
+  "candidates": [
+   {
+    "file": "P10_0.wav",
+    "score": 1.0,
+    "heard": "Do not disturb. It just buzzes gently.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P10_1.wav",
+    "score": 1.0,
+    "heard": "Do not disturb. It just buzzes gently.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P10_2.wav",
+    "score": 1.0,
+    "heard": "Do not disturb, it just buzzes gently.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P10_3.wav",
+    "score": 1.0,
+    "heard": "Do not disturb. It just buzzes gently.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "P11": {
+  "text": "It pairs with your phone, and works as a speakerphone.",
+  "chosen": "P11_0.wav",
+  "score": 1.0,
+  "heard": "It pairs with your phone and works as a speakerphone.",
+  "candidates": [
+   {
+    "file": "P11_0.wav",
+    "score": 1.0,
+    "heard": "It pairs with your phone and works as a speakerphone.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P11_1.wav",
+    "score": 1.0,
+    "heard": "It pairs with your phone and works as a speakerphone.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P11_2.wav",
+    "score": 1.0,
+    "heard": "It pairs with your phone and works as a speakerphone.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P11_3.wav",
+    "score": 1.0,
+    "heard": "It pairs with your phone and works as a speakerphone.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "P15": {
+  "text": "New: cat mode. Pet the roof, and it purrs.",
+  "chosen": "P15_0.wav",
+  "score": 1.0,
+  "heard": "New. Cat mode. Pet the roof, and it purrs.",
+  "candidates": [
+   {
+    "file": "P15_0.wav",
+    "score": 1.0,
+    "heard": "New. Cat mode. Pet the roof, and it purrs.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P15_1.wav",
+    "score": 1.0,
+    "heard": "New. Cat mode. Pet the roof and it purrs.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P15_2.wav",
+    "score": 1.0,
+    "heard": "New, cat mode, pet the roof, and it purrs.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "P15_3.wav",
+    "score": 1.0,
+    "heard": "New. Cat mode. Pet the roof, and it purrs.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ }
+}

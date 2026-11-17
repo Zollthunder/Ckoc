@@ -234,3 +234,55 @@ TikTok/Reels/Shorts-formátum (1080×1920) a kocka új cat mode-járól. Pörgő
   1. `node tools/catmode_audio.js`
   2. `node tools/build_catmode_scene.js`
   3. `node tools/render_video.js full --page scene_catmode.html --audio video/catmode/audio_mix_catmode.wav --out video/c-kocka_catmode_short.mp4`
+
+## „Pörgős” bemutató (1:52) – `video/c-kocka_bemutato_porgos.mp4`
+
+Az eredeti 2:56-os bemutatóvideó tömörebb, gyorsabb változata.
+- **Tartalom:** ugyanazok a funkciók és ugyanaz a sorrend: ébredés, mi ez, hogyan készült, közelről, szórakoztat, segít, vigyáz rád, személyiségek, zárás. A zárás előtt egy új **cat mode**-blokk jön (kb. 8 mp): macskafülek kiugranak és miaú, közeli kép a macskaarcról, aztán egy kéz megsimogatja a tetőt, a kocka dorombol, a rezgéstől hullámok futnak az asztalon, végül még egy miaú.
+- **Hogyan készül:** a kép az eredeti jelenet, változtatás nélkül, egy **vágólista** alapján összerakva (`video/porgos/edl_porgos.json`). Kimarad az üresjárat a mondatok között. A csendes képek (bekapcsolás, címkártyák, leskelődés) 1,6–2,7-szer gyorsabban futnak, a narráció alatti képek pedig a rövidebb mondatokhoz gyorsulnak. Minden vágás ütemre esik: 120 BPM, nyolcadok.
+- **Ritmus:** minden vágásnál egy rövid „zoom-ütés” és egy halvány villanás jelzi a váltást, a zene is gyorsabb (110 helyett 120 BPM).
+- **Hossz:** 112 mp. Csak a beszéd kb. 83 mp, mert minden funkció és a kocka összes poénja benne maradt. 100 mp alá funkciót kellene kihagyni, például a „Cheers you up” részt vagy a nyitó „Coffee loaded…” mondatot.
+- **Narráció:**
+  - **Újraírt mondatok:** tíz tömörebb mondat, XTTS-v2 „Ludvig Milivoj” stúdióhanggal, ugyanazzal, mint az eredetiben. Mondatonként 4 felvétel készült, a Whisper választott, mind a tíz 1,00 pontot kapott: `video/porgos/voice/minoseg.json`.
+  - **Változatlanul maradt:** N09, N12, N13, N14, a favicc és a kocka saját mondatai.
+  - **Kimaradt:** a C02/C03 („Welcome back, Captain… Not that I was counting.”) és az N03 (ez beleolvadt a P02-be).
+  - **Ellenőrzés:** a végső keverékből a Whisper minden mondatot jó sorrendben visszaír.
+
+**A narráció szövege (jóváhagyásra):**
+
+| idő | ki | szöveg |
+|---|---|---|
+| 0:01.0 | 🤖 kocka | Coffee loaded. Brain booting. Let's do this. |
+| 0:06.0 | 🎙️ narrátor (új) | This is C-Cube: a palm-sized AI assistant for your desk. Always in a good mood. |
+| 0:12.6 | 🎙️ narrátor (új) | I designed it together with an AI, in just a few days. |
+| 0:15.8 | 🎙️ narrátor (új) | The AI wrote a program that builds the 3D model in Fusion. |
+| 0:19.5 | 🎙️ narrátor (új) | Bugs? We found them together, and fixed them. |
+| 0:22.5 | 🎙️ narrátor (új) | Then the AI reviewed the model by itself, and even picked the colors. |
+| 0:27.3 | 🎙️ narrátor (új) | Every step went into the log. |
+| 0:29.1 | 🎙️ narrátor (új) | Round display. Camera. Two mics. Stereo speakers. RGB lights. Battery. And rubber corners. Why? You'll see. |
+| 0:40.3 | 🎙️ narrátor (eredeti) | With music, the lights dance too. |
+| 0:44.0 | 🪵 favicc | What do you call a tree that fits in your hand? |
+| 0:48.5 | 🪵 favicc | A palm tree! |
+| 0:56.6 | 🤖 kocka | Ouch! |
+| 0:59.0 | 🤖 kocka | That's 14 throws today. Coffee break? |
+| 1:06.3 | 🤖 kocka | Yes. Obviously. |
+| 1:09.1 | 🎙️ narrátor (új) | Do not disturb? It just buzzes gently. |
+| 1:12.3 | 🎙️ narrátor (új) | It pairs with your phone, and works as a speakerphone. |
+| 1:16.0 | 🤖 kocka | Hey, you look tired. Want to hear a terrible joke? |
+| 1:20.8 | 🎙️ narrátor (eredeti) | Turn it upside down, and the microphone and camera switch off. |
+| 1:24.3 | 🤖 kocka | Good morning, sunshine! |
+| 1:26.5 | 🤖 kocka | Breathe in. The emails can wait. |
+| 1:29.8 | 🤖 kocka | Let's gooooo! |
+| 1:30.8 | 🤖 kocka | Oh great. Monday. |
+| 1:33.5 | 🎙️ narrátor (eredeti) | Or build your own. |
+| 1:35.6 | 🎙️ narrátor (új) | New: cat mode. Pet the roof, and it purrs. |
+| 1:43.0 | 🎙️ narrátor (eredeti) | C-Cube. A little friend for your desk. And my first project made together with an AI. |
+| 1:48.9 | 🤖 kocka | See you tomorrow, Captain! |
+
+**Újragenerálás:**
+1. Ha az új mondatok változnak: `xtts_generate.py` és `pick_best.py` (video-narration skill), `video/porgos/lines_porgos.json` alapján, a kimenet `video/porgos/voice/`.
+2. `node tools/build_porgos.js` – idővonal (`video/porgos/timeline_porgos.json`) és jelenet (`video/scene_porgos.html`).
+3. `node tools/audio_mix.js --tl video/porgos/timeline_porgos.json --out video/porgos/audio_mix_porgos.wav` – ugyanaz a hangkeverő, mint az eredetinél. Az eredeti videó hangsávja bitre azonos maradt.
+4. `node tools/render_video.js full --page scene_porgos.html --audio video/porgos/audio_mix_porgos.wav --out video/c-kocka_bemutato_porgos.mp4`
+
+A Fusion-képsor (`video/fusion_build/`) és a régi hangfájlok (`video/voice/*.wav`) gitignore-oltak, ezért a renderhez a fő checkoutban kell lenniük.

@@ -1,0 +1,12 @@
+[
+ {"id": "P01", "replaces": "N01", "text": "This is C-Cube: a palm-sized AI assistant for your desk. Always in a good mood."},
+ {"id": "P02", "replaces": "N02+N03", "text": "I designed it together with an AI, in just a few days."},
+ {"id": "P04", "replaces": "N04", "text": "The AI wrote a program that builds the 3D model in Fusion."},
+ {"id": "P05", "replaces": "N05", "text": "Bugs? We found them together, and fixed them."},
+ {"id": "P06", "replaces": "N06", "text": "Then the AI reviewed the model by itself, and even picked the colors."},
+ {"id": "P07", "replaces": "N07", "text": "Every step went into the log."},
+ {"id": "P08", "replaces": "N08", "text": "Round display. Camera. Two mics. Stereo speakers. RGB lights. Battery. And rubber corners. Why? You'll see."},
+ {"id": "P10", "replaces": "N10", "text": "Do not disturb? It just buzzes gently."},
+ {"id": "P11", "replaces": "N11", "text": "It pairs with your phone, and works as a speakerphone."},
+ {"id": "P15", "replaces": "new", "text": "New: cat mode. Pet the roof, and it purrs."}
+]

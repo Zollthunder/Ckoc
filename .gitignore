@@ -47,3 +47,7 @@ video/hu_retro/voice48/
 
 # cat mode rövid klip: újragenerálható keverék
 video/catmode/audio_mix_catmode.wav
+
+# pörgős bemutató: újragenerálható köztes fájlok
+video/porgos/audio_mix_porgos.wav
+video/porgos/voice48/

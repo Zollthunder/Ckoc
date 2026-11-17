@@ -1,11 +1,15 @@
 // A videó teljes hangsávja kódból: saját szintetizált zene + hangeffektek + gépi hangok, elnémítással (ducking).
 // Nincs külső zene, így jogdíjproblémák sincsenek.
 // Használat: node tools/audio_mix.js  ->  video/audio_mix.wav
+//   más idővonallal: node tools/audio_mix.js --tl video/porgos/timeline_porgos.json --out video/porgos/audio_mix_porgos.wav
+//   (az idővonalban: bpm, és a mondatoknál file/dur, ha nem a video/voice-ból jönnek)
 const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const TL = JSON.parse(fs.readFileSync(path.join(ROOT, 'video/timeline.json'), 'utf8'));
+const ARG = k => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : null; };
+const TL = JSON.parse(fs.readFileSync(path.join(ROOT, ARG('tl') || 'video/timeline.json'), 'utf8'));
+const OUT = ARG('out') || 'video/audio_mix.wav';
 const DUR = JSON.parse(fs.readFileSync(path.join(ROOT, 'video/voice/durations.json'), 'utf8'));
 const SR = 48000;
 const N = Math.ceil(TL.duration * SR);
@@ -69,7 +73,7 @@ function crash(buf, t0, gain) {
 }
 
 // ---------- zene ----------
-const BPM = 110, BEAT = 60 / BPM, BAR = BEAT * 4;
+const BPM = TL.bpm || 110, BEAT = 60 / BPM, BAR = BEAT * 4;
 // C - G - Am - F (vidám pop-akkordmenet)
 const CHORDS = [[60, 64, 67], [55, 59, 62], [57, 60, 64], [53, 57, 60]];
 const STEALTH = [[57, 60, 64], [52, 55, 59]]; // Am - Em a lopakodáshoz
@@ -112,6 +116,29 @@ for (let bar = 0; bar * BAR < TL.duration; bar++) {
 }
 
 // ---------- hangeffektek ----------
+// cat mode: miaú (fűrész mozgó formánsokkal: „i” -> „a” -> „u”) és dorombolás (~26 Hz-es lüktetés, légzésnyi hullámzás,
+// mint a kocka synth.purr()-je, egy hallható zörejsávval kiegészítve) – ugyanaz, mint tools/catmode_audio.js-ben
+function bpf() { let x1 = 0, x2 = 0, y1 = 0, y2 = 0; return (x, f, q) => { const w = TAU * f / SR, al = Math.sin(w) / (2 * q), a0 = 1 + al, b0 = al / a0, b2 = -al / a0, a1 = -2 * Math.cos(w) / a0, a2 = (1 - al) / a0; const y = b0 * x + b2 * x2 - a1 * y1 - a2 * y2; x2 = x1; x1 = x; y2 = y1; y1 = y; return y; }; }
+const curve = (pts, u) => { for (let i = 1; i < pts.length; i++) if (u <= pts[i][0]) { const [a, va] = pts[i - 1], [b, vb] = pts[i]; return va + (vb - va) * (u - a) / (b - a); } return pts[pts.length - 1][1]; };
+function meowSynth(t0, g, pitch = 1, len = 0.62) {
+  const f1 = bpf(), f2 = bpf(), f3 = bpf(); let ph = 0;
+  add(out, t0, t => {
+    const u = t / len, f0 = pitch * curve([[0, 560], [0.22, 860], [0.55, 760], [1, 470]], u) * (1 + 0.025 * Math.sin(TAU * 6.5 * t) * Math.min(1, u * 3));
+    ph += f0 / SR; const src = 2 * (ph % 1) - 1;
+    const v = f1(src * 0.7 + Math.sin(TAU * ph) * 0.3, curve([[0, 420], [0.3, 950], [0.7, 800], [1, 450]], u) * pitch, 5) + f2(src, curve([[0, 2500], [0.3, 1700], [0.7, 1200], [1, 900]], u) * pitch, 7) * 0.7 + f3(src, 3300 * pitch, 9) * 0.25;
+    return v * Math.min(1, t / 0.03) * Math.pow(Math.max(0, 1 - u), 0.6) * 1.6;
+  }, len, g, 0);
+}
+function purrSynth(t0, dur, g) {
+  const nb = bpf(), nb2 = bpf();
+  add(out, t0, t => {
+    const n = rnd(), rasp = nb(n, 260, 1.1) * 2.2 + nb2(n, 520, 1.6) * 0.9;
+    const body = Math.sin(TAU * 55 * t) * 0.5 + Math.sin(TAU * 110 * t) * 0.35 + Math.sin(TAU * 165 * t) * 0.12;
+    const am = Math.pow(0.5 + 0.5 * Math.sin(TAU * 26 * t), 3), ph = (t % 1.6) / 1.6;
+    const br = ph < 0.42 ? 0.55 * Math.sqrt(Math.abs(Math.sin(Math.PI * ph / 0.42))) : ph >= 0.5 ? Math.sqrt(Math.abs(Math.sin(Math.PI * (ph - 0.5) / 0.5))) : 0;
+    return (rasp + body) * am * (0.25 + 0.75 * br) * Math.min(1, t * 4, (dur - t) * 3);
+  }, dur, g, 0);
+}
 const SFX = {
   boot(t0) { let ph = 0; add(out, t0, t => { const f = 180 + 700 * Math.min(1, t / 1.2); ph += TAU * f / SR; return Math.sin(ph) * Math.min(1, t * 4) * Math.exp(-Math.max(0, t - 1.0) * 4); }, 1.8, 0.15); SFX.sparkle(t0 + 1.1); },
   sparkle(t0) { [84, 88, 91, 96, 100].forEach((n, i) => pluck(out, t0 + i * 0.06, n, 0.08, (i - 2) * 0.25, 0.25)); },
@@ -130,9 +157,13 @@ const SFX = {
   shake(t0) { add(out, t0, t => rnd() * (0.5 + 0.5 * Math.sin(TAU * 12 * t)) * Math.min(1, t * 8) * Math.min(1, (2 - t) * 4), 2.0, 0.12); },
   buzz(t0) { add(out, t0, t => Math.sin(TAU * 170 * t) * (0.6 + 0.4 * Math.sign(Math.sin(TAU * 170 * t))) * (t % 0.25 < 0.17 ? 1 : 0), 0.5, 0.18); },
   ring(t0) { for (const d of [0, 1.4]) add(out, t0 + d, t => (Math.sin(TAU * 1000 * t) + Math.sin(TAU * 1400 * t)) * 0.5 * (Math.sin(TAU * 20 * t) > 0 ? 1 : 0.2) * Math.min(1, t * 30), 1.0, 0.1); },
+  tick(t0) { add(out, t0, t => Math.sin(TAU * (900 - 500 * t / 0.05) * t) * Math.exp(-t * 60), 0.06, 0.12); },
+  rub(t0) { let lp = 0; add(out, t0, t => { lp += 0.12 * (rnd() - lp); return lp * 3 * Math.sin(Math.PI * t / 2.4) * (0.6 + 0.4 * Math.sin(TAU * 0.85 * t)); }, 2.4, 0.25, -0.2); },
+  meow(t0) { meowSynth(t0, 0.5); },
+  purr(t0, e) { purrSynth(t0, (e && e.len) || 3.2, 0.55); },
   powerdown(t0) { let ph = 0; add(out, t0, t => { ph += TAU * (600 * Math.exp(-t * 2.5) + 60) / SR; return Math.sin(ph) * Math.min(1, (1.2 - t) * 4); }, 1.2, 0.2); },
 };
-for (const s of TL.sfx) SFX[s.id](s.t);
+for (const s of TL.sfx) { if (!SFX[s.id]) throw new Error('ismeretlen hanghatás: ' + s.id); SFX[s.id](s.t, s); }
 
 // ---------- gépi hangok + zene halkítása alattuk ----------
 function readWav(file) {
@@ -146,11 +177,11 @@ function readWav(file) {
 }
 const duck = new Float32Array(N).fill(1);
 for (const v of TL.voices) {
-  const a = readWav(path.join(ROOT, 'video/voice', v.id + '.wav'));
+  const a = readWav(path.join(ROOT, v.file || path.join('video/voice', v.id + '.wav')));
   const s0 = Math.floor(v.t * SR);
-  const g = v.id.startsWith('N') ? 1.15 : 1.0;
+  const g = /^[NP]/.test(v.id) ? 1.15 : 1.0;
   for (let i = 0; i < a.length && s0 + i < N; i++) { L[s0 + i] += a[i] * g; R[s0 + i] += a[i] * g; }
-  const d = DUR[v.id];
+  const d = v.dur || DUR[v.id];
   for (let k = Math.floor((v.t - 0.25) * SR); k < Math.floor((v.t + d + 0.35) * SR) && k < N; k++) if (k >= 0) duck[k] = 0.3;
 }
 // a halkítás simítása
@@ -166,5 +197,5 @@ buf.write('RIFF', 0); buf.writeUInt32LE(36 + N * 4, 4); buf.write('WAVEfmt ', 8)
 buf.writeUInt16LE(1, 20); buf.writeUInt16LE(2, 22); buf.writeUInt32LE(SR, 24); buf.writeUInt32LE(SR * 4, 28); buf.writeUInt16LE(4, 32); buf.writeUInt16LE(16, 34);
 buf.write('data', 36); buf.writeUInt32LE(N * 4, 40);
 for (let k = 0; k < N; k++) { buf.writeInt16LE(Math.round(L[k] * norm * 32767), 44 + k * 4); buf.writeInt16LE(Math.round(R[k] * norm * 32767), 46 + k * 4); }
-fs.writeFileSync(path.join(ROOT, 'video/audio_mix.wav'), buf);
-console.log('Kész: video/audio_mix.wav', TL.duration + ' s', 'csúcs: ' + peak.toFixed(2));
+fs.writeFileSync(path.join(ROOT, OUT), buf);
+console.log('Kész: ' + OUT, TL.duration + ' s', 'csúcs: ' + peak.toFixed(2));
