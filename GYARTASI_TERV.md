@@ -86,7 +86,7 @@ A kocka **dobálható**. Egy alumínium ház nehéz és kemény, ami kockázatos
 - a C fénycsatorna, az érintőbetét és a kijelzőablak **pontosan akkora volt, mint a nyílás** (0 mm hézag) → most körben 0,1 mm-rel kisebbek (C: 44,0 mm, betét: Ø17,8, ablak: Ø32,8),
 - a gyorsabb DXF-exporthoz a vázlatok számítása halasztott (a régi export ~30 percig tartott).
 
-**Rendben:** tetőlap furatai (4× Ø2,2 csavar, 4× Ø8,2 gomb a Ø7,6 sapkához, Ø18 érintés, 6× Ø1,6 mikrofon), a mikrofonok hangútja (a tetőtartóban Ø6 csatorna a két Bonnet-mikrofon fölé), USB-C az osztásvonalon (a tálcával együtt lefelé kicsúszik), a hangszórók és a tálcacsavarok hozzáférése.
+**Rendben:** tetőlap furatai (4× Ø2,2 csavar, 4× Ø8,2 gomb a Ø7,6 sapkához, Ø18 érintés, 6× Ø1,6 mikrofon), a mikrofonok hangútja (2026-11-17 óta a ReSpeaker két mikrofonja fölé: elöl Ø6, hátul Ø3 csatorna a tetőtartóban, hátul Ø2 furat a ház peremén), USB-C az osztásvonalon (a tálcával együtt lefelé kicsúszik), a hangszórók és a tálcacsavarok hozzáférése.
 
 **Beépítve Zollo döntése alapján** ([tools/apply_fixes.py](tools/apply_fixes.py), a folyamat utolsó lépése):
 1. **Gombsapkák:** SLA sapka **szárral és gallérral**. A fej Ø7,6 a tetőlap Ø8,2-es furatában ül, 1 mm-rel kiáll. A Ø9,6-os gallér a tetőlap alatt tartja a sapkát. A Ø3,5-ös szár 0,1 mm-re van a kapcsoló tetejétől. A ház peremében Ø10,6-os kiszabadítás van a gallérnak. **Andor-gomb:** ugyanilyen SLA alap, a tetejébe préselve egy **Ø6,6 × 2 mm-es fa betét** (`Andor_fabetet_fa_2mm.dxf`).
@@ -97,6 +97,6 @@ A kocka **dobálható**. Egy alumínium ház nehéz és kemény, ami kockázatos
 5. **C-akril és érintőbetét:** **semleges (neutrális) szilikonnal**, belülről körbe. A szilikon rugalmas, így dobáskor elnyeli az ütést, és késsel kivágható, ha cserélni kell. A C 3 mm-es, kívül egy síkban van a fallal, belül 0,5 mm-rel kilóg, hogy a szilikon megfogja. Ecetszagú (acetoxi) szilikont nem szabad használni, mert repeszti az akrilt, és korrodálja az elektronikát.
 
 **Apróság / ellenőrizni a valódi alkatrészen:**
-- a Pi és a Voice Bonnet közt a modellben 13 mm van, a szabványos tüskesor 11 mm → a valóságban 2 mm-rel több hely marad a tetőtartó alatt,
-- a hangpanel (2026-11-17 óta ReSpeaker 2-Mics Pi HAT) két mikrofonjának pontos helye: ehhez igazítsuk a tetőlap 2 „hasznos” mikrofonfuratát (a többi 4 díszítés),
+- a Pi és a hangpanel közt a modellben 13 mm van, a szabványos tüskesor 11 mm → a valóságban 2 mm-rel több hely marad a tetőtartó alatt,
+- **ReSpeaker 2-Mics Pi HAT (2026-11-17, átvezetve):** a mikrofonok helye a gyártó Eagle-fájljából (a panel sarkától 3,05 / 61,98 × 21,34 mm). A tüskesor a bal (−X) oldalon, így a tetőlap 2 hasznos furata x = −6,34-nél, z = +25,46 és −33,46-nál van; a hátsó a 60 × 60-as tetőnyíláson kívül esik, ezért a ház peremén Ø2 hangfurat van. Magasság: 1,6 mm NYÁK + legfeljebb 6 mm alkatrész (gomb 5,0 mm) → a tetőtartóig **3,9 mm** hely marad (+2 mm a rövidebb tüskesor miatt). **Ha a HAT-ot fordítva tesszük fel, a furatok nem esnek a mikrofonok fölé.**
 - a tetőlap sarkai élesek (72×72) – eloxálás előtt sorjázni, vagy R1 lekerekítés.

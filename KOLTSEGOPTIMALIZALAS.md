@@ -25,7 +25,7 @@
 
 **Az új kiindulás:** az AJANLATKERESEK.md végösszege a döntések átvezetése után **319 982 Ft nettó / 3 db = 106 661 Ft/db** (előtte 140 044 Ft/db).
 
-**Még nincs átvezetve (külön lépés kell hozzá):** a 3D modell és a DXF-ek (1 hangszórótartó, ReSpeaker-mikrofonfuratok a tetőlapon, gumitalp helyett gumilábak), a szerelési ábrák, a firmware (érintés `touchio`-val, rezgés PWM-mel, ReSpeaker hangpanel), valamint a weboldal és a videó szövegei.
+**Átvezetve a STEP-be, az STL-ekbe és a DXF-ekbe (2026-11-17, Fusion nélkül, [tools/cost_pass_step.py](tools/cost_pass_step.py)):** 1 hangszóró + 1 rögzítőgyűrű, ReSpeaker-mikrofonfuratok, gumilábak a gumitalp helyett, USB-C zseb a tálcában, érintőpanel ki, rezgőmodul. **A Fusion-modell (.f3d) még a régi** (a teendők: [dxf/MEGJEGYZES.txt](dxf/MEGJEGYZES.txt)). **Még nincs átvezetve:** a szerelési ábrák, a firmware (érintés `touchio`-val, rezgés PWM-mel, ReSpeaker hangpanel), valamint a weboldal és a videó szövegei.
 
 ---
 
