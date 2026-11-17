@@ -492,51 +492,10 @@ function orbit(angle, dist, height, target = V3(0, 4, 0)) {
 }
 function shot(pos, target, fov = 32) { return { pos, target, fov }; }
 
-// ================================================================ „CAT MODE” – függőleges (9:16) rövid klip forgatókönyve és képi elemei
-// (a fenti rész a fő videó jelenetéből jön: a kocka modellje, anyagai, fényei és az arc rajzolása)
-// Pörgős, ~1 s-os vágások 120 BPM-re, nagy, vastag feliratok végig (sokan hang nélkül nézik), a végén hurokba illő zárás:
-// az utolsó képkocka ugyanaz a „sima arc”, amivel a klip kezdődik.
-const CUTS = TL.cuts.map((c, i) => ({ ...c, end: (TL.cuts[i + 1] || { t: TL.duration }).t }));
-const cutAt = t => CUTS.find(c => t >= c.t && t < c.end) || CUTS[CUTS.length - 1];
+// Közös macskás elemek (cat mode): a macskaarc a kijelzőn és a simogató kéz. Használja: tools/build_catmode_scene.js, tools/build_porgos_scene.js
+// (a fő videó jelenetének motorja után illesztve: THREE, scene, clamp elérhető)
 const TAU = Math.PI * 2;
-const hash = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
-const popScale = (u, a, len = 0.22) => { const k = clamp((u - a) / len); return k <= 0 ? 0 : k < 1 ? Math.sin(k * Math.PI / 2) + 0.35 * Math.sin(k * Math.PI) : 1; };
-const FB = '"Segoe UI Black", "Arial Black", "Segoe UI", "Segoe UI Emoji", sans-serif';
 const CATC = { eye: '#c4f06e', nose: '#ff8caa', ear: '#783c50' };
-const PLAIN = '#78e6ff';
-
-// ---------------------------------------------------------------- háttér: puha színátmenet + lassan úszó mancsnyomok
-const bgCanvas = document.createElement('canvas'); bgCanvas.width = 540; bgCanvas.height = 960;
-const bgCtx = bgCanvas.getContext('2d');
-const bgTex = new THREE.CanvasTexture(bgCanvas); bgTex.colorSpace = THREE.SRGBColorSpace;
-scene.background = bgTex; scene.fog = null; desk.visible = false;
-
-function paw(g, x, y, r, rot) {
-  g.save(); g.translate(x, y); g.rotate(rot); g.beginPath();
-  g.ellipse(0, r * 0.35, r * 0.62, r * 0.5, 0, 0, TAU);
-  for (const [dx, dy] of [[-0.62, -0.32], [-0.22, -0.68], [0.22, -0.68], [0.62, -0.32]]) { g.moveTo(dx * r + r * 0.22, dy * r); g.ellipse(dx * r, dy * r, r * 0.22, r * 0.28, 0, 0, TAU); }
-  g.fill(); g.restore();
-}
-function drawBg(b, t) {
-  const g = bgCtx, w = 540, h = 960;
-  const gr = g.createLinearGradient(0, 0, w * 0.3, h); gr.addColorStop(0, b.c1); gr.addColorStop(1, b.c2);
-  g.fillStyle = gr; g.fillRect(0, 0, w, h);
-  if (b.rays) {                                   // napsugaras „ütés” a nagy pillanatokra
-    g.save(); g.globalAlpha = 0.18; g.fillStyle = '#ffffff'; const cx = w / 2, cy = h * (b.cy ?? 0.45), n = 16, rot = t * 0.6;
-    for (let i = 0; i < n; i++) { const a0 = rot + i * TAU / n; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(a0) * 1400, cy + Math.sin(a0) * 1400); g.lineTo(cx + Math.cos(a0 + TAU / n / 2) * 1400, cy + Math.sin(a0 + TAU / n / 2) * 1400); g.closePath(); g.fill(); }
-    g.restore();
-  }
-  if (b.paws !== false) {
-    g.save(); g.fillStyle = b.pawCol || 'rgba(255,255,255,0.16)';
-    for (let i = 0; i < 22; i++) {
-      const x = (hash(i) * w * 1.2 + Math.sin(t * 0.7 + i) * 10) % (w * 1.2) - w * 0.1;
-      const y = ((hash(i + 3) * h * 1.2 - t * 45 * (0.5 + hash(i + 9))) % (h * 1.2) + h * 1.2) % (h * 1.2) - h * 0.1;
-      paw(g, x, y, 14 + hash(i + 5) * 14, hash(i + 11) * TAU);
-    }
-    g.restore();
-  }
-  bgTex.needsUpdate = true;
-}
 
 // ---------------------------------------------------------------- a macskaarc a kocka kijelzőjén (ugyanaz, mint a XIAO-n / a szimulátorban)
 // A 240 px-es XIAO-rajz koordinátái, 512 px-es kijelzőképre nagyítva. Mezők: purr, perk (fülhegyezés), pop (a fülek kiugrása),
@@ -582,6 +541,51 @@ const hand = new THREE.Group();
   const th = new THREE.Mesh(new THREE.CapsuleGeometry(0.45, 1.7, 8, 16), skin); th.rotation.set(Math.PI / 2, 0, 0.9); th.position.set(-2.2, -0.15, -0.6); th.rotation.y = 0.6; hand.add(th);
   hand.traverse(m => { m.castShadow = true; });
   hand.visible = false; scene.add(hand);
+}
+
+
+// ================================================================ „CAT MODE” – függőleges (9:16) rövid klip forgatókönyve és képi elemei
+// (a fenti rész a fő videó jelenetéből jön: a kocka modellje, anyagai, fényei és az arc rajzolása)
+// Pörgős, ~1 s-os vágások 120 BPM-re, nagy, vastag feliratok végig (sokan hang nélkül nézik), a végén hurokba illő zárás:
+// az utolsó képkocka ugyanaz a „sima arc”, amivel a klip kezdődik.
+const CUTS = TL.cuts.map((c, i) => ({ ...c, end: (TL.cuts[i + 1] || { t: TL.duration }).t }));
+const cutAt = t => CUTS.find(c => t >= c.t && t < c.end) || CUTS[CUTS.length - 1];
+const hash = i => { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const popScale = (u, a, len = 0.22) => { const k = clamp((u - a) / len); return k <= 0 ? 0 : k < 1 ? Math.sin(k * Math.PI / 2) + 0.35 * Math.sin(k * Math.PI) : 1; };
+const FB = '"Segoe UI Black", "Arial Black", "Segoe UI", "Segoe UI Emoji", sans-serif';
+const PLAIN = '#78e6ff';
+
+// ---------------------------------------------------------------- háttér: puha színátmenet + lassan úszó mancsnyomok
+const bgCanvas = document.createElement('canvas'); bgCanvas.width = 540; bgCanvas.height = 960;
+const bgCtx = bgCanvas.getContext('2d');
+const bgTex = new THREE.CanvasTexture(bgCanvas); bgTex.colorSpace = THREE.SRGBColorSpace;
+scene.background = bgTex; scene.fog = null; desk.visible = false;
+
+function paw(g, x, y, r, rot) {
+  g.save(); g.translate(x, y); g.rotate(rot); g.beginPath();
+  g.ellipse(0, r * 0.35, r * 0.62, r * 0.5, 0, 0, TAU);
+  for (const [dx, dy] of [[-0.62, -0.32], [-0.22, -0.68], [0.22, -0.68], [0.62, -0.32]]) { g.moveTo(dx * r + r * 0.22, dy * r); g.ellipse(dx * r, dy * r, r * 0.22, r * 0.28, 0, 0, TAU); }
+  g.fill(); g.restore();
+}
+function drawBg(b, t) {
+  const g = bgCtx, w = 540, h = 960;
+  const gr = g.createLinearGradient(0, 0, w * 0.3, h); gr.addColorStop(0, b.c1); gr.addColorStop(1, b.c2);
+  g.fillStyle = gr; g.fillRect(0, 0, w, h);
+  if (b.rays) {                                   // napsugaras „ütés” a nagy pillanatokra
+    g.save(); g.globalAlpha = 0.18; g.fillStyle = '#ffffff'; const cx = w / 2, cy = h * (b.cy ?? 0.45), n = 16, rot = t * 0.6;
+    for (let i = 0; i < n; i++) { const a0 = rot + i * TAU / n; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(a0) * 1400, cy + Math.sin(a0) * 1400); g.lineTo(cx + Math.cos(a0 + TAU / n / 2) * 1400, cy + Math.sin(a0 + TAU / n / 2) * 1400); g.closePath(); g.fill(); }
+    g.restore();
+  }
+  if (b.paws !== false) {
+    g.save(); g.fillStyle = b.pawCol || 'rgba(255,255,255,0.16)';
+    for (let i = 0; i < 22; i++) {
+      const x = (hash(i) * w * 1.2 + Math.sin(t * 0.7 + i) * 10) % (w * 1.2) - w * 0.1;
+      const y = ((hash(i + 3) * h * 1.2 - t * 45 * (0.5 + hash(i + 9))) % (h * 1.2) + h * 1.2) % (h * 1.2) - h * 0.1;
+      paw(g, x, y, 14 + hash(i + 5) * 14, hash(i + 11) * TAU);
+    }
+    g.restore();
+  }
+  bgTex.needsUpdate = true;
 }
 
 // ---------------------------------------------------------------- idő -> állapot

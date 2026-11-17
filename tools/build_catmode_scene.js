@@ -21,7 +21,7 @@ s = once(s, [
 { const [i, j] = cut('const EX = (() => {', '})();'); s = s.slice(0, i) + 'const EX = { a: 0, b: 0, c: 0, d: 0, word: () => 0 };' + s.slice(j + 5); }
 // 3) a régi forgatókönyv és képfeliratok helyére a klipé
 { const [i, j] = cut('// ---------------------------------------------------------------- az idő -> állapot', 'function renderAt(t) {');
-  s = s.slice(0, i) + fs.readFileSync(path.join(V, 'catmode', 'scene_catmode_part.js'), 'utf8').replace(/\r\n/g, '\n') + '\n' + s.slice(j); }
+  s = s.slice(0, i) + ['cat_shared.js', 'scene_catmode_part.js'].map(f => fs.readFileSync(path.join(V, 'catmode', f), 'utf8').replace(/\r\n/g, '\n')).join('\n') + '\n' + s.slice(j); }
 // 4) renderAt: háttér, simogató kéz, rázkódás, új feliratok, villanás
 s = once(s, [
   ["  const s = stateAt(t);\n  camera.position.copy(s.cam.pos);", "  const s = stateAt(t);\n  drawBg(s.bg, t);\n  camera.position.copy(s.cam.pos);"],
