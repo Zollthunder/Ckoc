@@ -75,6 +75,15 @@ def draw_leds(now):
         for i in range(RING_N):
             ring[i] = hsv(L['hue'] + i * 15 + now * 40, b * L['flash'])
         cstrip.fill(hsv(L['hue'] + 180, b * L['flash']))
+    elif mode == 'listen':                            # hallgat: a gyűrű lassan „lélegzik”
+        v = b * (0.45 + 0.4 * math.sin(now * 3.2))
+        ring.fill(hsv(L['hue'], v)); cstrip.fill(hsv(L['hue'], b))
+    elif mode == 'think':                             # gondolkodik: körbefutó fénycsík a gyűrűn
+        head = now * 14
+        for i in range(RING_N):
+            k = max(0.0, 1 - ((head - i) % RING_N) / 6)
+            ring[i] = hsv(L['hue'], b * (0.08 + 0.9 * k))
+        cstrip.fill(hsv(L['hue'], b * 0.5))
     else:
         ring.fill(hsv(L['hue'], b * 0.85)); cstrip.fill(hsv(L['hue'], b))
     if L['camled']:                                   # a kamera jelzőfénye: a C-szalag utolsó LED-je zöld (mindig látszik, ha a kamera figyel)

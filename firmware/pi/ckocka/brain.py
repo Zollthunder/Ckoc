@@ -1,11 +1,12 @@
 """A C-kocka „agya”: viselkedés és állapotgép – a webes szimulátor (web/sim.js) logikájának Python-változata.
 
-Bemenetek:  XIAO események (gombok, érintés, IMU), app-parancsok (WebSocket), kamera (helyben).
+Bemenetek:  XIAO események (gombok, érintés, IMU), app-parancsok (WebSocket), kamera (helyben),
+            beszélgetés (talk.py: ébresztőszó / érintés -> beszédfelismerés -> Claude -> beszédszintézis).
 Kimenetek:  arc a kijelzőn, hang, LED-ek és rezgés (XIAO-n át), események az appnak.
 """
 import asyncio, json, logging, os, random, time
 
-from . import protocol, state as st_mod, synth
+from . import protocol, state as st_mod, synth, talk as talk_mod
 from .face import FaceRenderer, FaceState
 
 log = logging.getLogger('ckocka')
@@ -31,8 +32,9 @@ class JokeBag:
 
 
 class Cube:
-    def __init__(self, hw, settings=True):
+    def __init__(self, hw, settings=True, talk=None):
         self.hw = hw
+        self.talk = talk                      # talk.Talk vagy None (akkor érintésre a régi viselkedés: idő / mondat)
         self.s = st_mod.State()
         if settings:
             st_mod.load(self.s)
@@ -73,10 +75,11 @@ class Cube:
         for fn in list(self.listeners):
             fn(msg)
 
-    def lights(self):
-        """A LED-ek állapota a XIAO-nak: szín, fényerő és üzemmód az állapotból számolva."""
+    def lights(self, activity=None):
+        """A LED-ek állapota a XIAO-nak: szín, fényerő és üzemmód az állapotból számolva.
+        activity: 'listen' / 'think' a beszélgetés alatt (ha épp nincs fontosabb: ki, Ne zavarj, fejjel lefelé, party)."""
         s = self.s
-        mode = 'off' if not s.on else 'dim' if (s.upside_down or s.dnd) else 'party' if s.party else 'solid'
+        mode = 'off' if not s.on else 'dim' if (s.upside_down or s.dnd) else 'party' if s.party else activity or 'solid'
         self.hw.mcu.send({'cmd': 'leds', 'hue': round(s.hue), 'bright': round(s.bright, 2), 'mode': mode})
 
     def buzz(self):
@@ -249,6 +252,100 @@ class Cube:
             await asyncio.sleep(1.8)
             self.back_to_face(sc)
 
+    async def say_text(self, text, mouth_after='smile'):
+        """Szabad szöveg kimondása (a Claude válasza) a helyi beszédszintézissel."""
+        s = self.s
+        if not s.on or s.upside_down:
+            return
+        if s.dnd:
+            self.buzz()
+            return
+        log.info('mondja (AI): %s', text)
+        self.emit('speech.say', id='ai', text=text)
+        self._say_token += 1
+        token = self._say_token
+        self.hw.audio.stop()
+        played = False
+        if s.voice:
+            try:
+                path = await self.talk.voice.synth(text, s.base_persona())
+                if token == self._say_token and self.can_speak():
+                    await self.hw.audio.play_clip(path, 1.0)
+                played = True
+            except Exception:
+                log.exception('beszédszintézis hiba – a válasz csak az appban jelenik meg')
+        if not played:
+            await asyncio.sleep(0.6 + len(text) * 0.055)
+        if token == self._say_token:
+            self.face.mouth = mouth_after
+
+    async def converse(self, trigger='touch'):
+        """Egy kérdés–válasz kör: hallgat -> felismeri -> gondolkodik (Claude) -> beszél.
+        Fejjel lefelé nem hallgat; Ne zavarj módban csak rezeg; ha bármi közbejön (fordítás, kikapcsolás, új jelenet),
+        a kör csendben véget ér."""
+        s = self.s
+        if not self.talk or s.upside_down or s.busy:
+            return
+        if s.dnd:
+            return self.buzz()
+        sc = self.new_scene()
+
+        def alive():
+            return sc == self._scene and self.can_speak()
+
+        async def scene():
+            if trigger == 'wake':
+                self.emit('event.wake')
+                self.hw.mcu.send({'cmd': 'haptic', 'pattern': 'tick'})
+            self.emit('event.touch' if trigger == 'touch' else 'speech.listen', action='listen')
+            self.face.mode, self.face.look = 'listen', [0.0, -0.7]
+            self.lights('listen')
+            try:
+                pcm = await self.talk.ears.record()
+                self.face.look = [0.0, 0.0]
+                if not alive():
+                    return
+                text = (await self.talk.stt.transcribe(pcm)).strip() if pcm else ''
+                if not alive():
+                    return
+                if not text:
+                    log.info('nem hallott semmit')
+                    self.face.mouth = 'flat'
+                    self.back_to_face(sc)
+                    self.lights()
+                    await asyncio.sleep(0.8)
+                    self.face.mouth = 'smile'
+                    return
+                log.info('hallotta: %s', text)
+                self.emit('speech.heard', text=text)
+                self.face.mode = 'think'
+                self.lights('think')
+                try:
+                    reply = (await self.talk.dialog.ask(self.talk.mind, s, text)).text
+                except talk_mod.MindError as e:
+                    log.warning('Claude: %s', e)
+                    reply = e.spoken
+                if not alive():
+                    return
+                self.back_to_face(sc)
+                self.lights()
+                await self.say_text(reply)
+            finally:
+                self.face.look = [0.0, 0.0]
+                if sc == self._scene and self.face.mode in ('listen', 'think'):
+                    self.back_to_face(sc)
+                self.lights()
+        await self._busy(scene())
+
+    async def wake_loop(self):
+        """Ébresztőszó: ugyanaz, mint az érintés – de csak ha a kocka be van kapcsolva, és épp nem beszél."""
+        while True:
+            await self.talk.ears.wake()
+            s = self.s
+            if s.on and not s.upside_down and not s.dnd and not s.busy and not s.party and self.hw.audio.level() < 0.02:
+                log.info('ébresztőszó')
+                await self.converse('wake')
+
     async def touch(self):
         s = self.s
         if s.upside_down:
@@ -262,10 +359,12 @@ class Cube:
             return self.buzz()
         if s.busy:
             return
+        if self.talk:                                      # valódi beszélgetés (talk.py)
+            return await self.converse('touch')
         sc = self.new_scene()
         self.emit('event.touch', action='listen')
         self.face.mode, self.face.look = 'listen', [0.0, -0.7]
-        await asyncio.sleep(1.6)                           # itt indulna a beszédfelismerés (helyben vagy felhőben – beállítás kérdése)
+        await asyncio.sleep(1.6)                           # beszélgetés nélkül (nincs kulcs / modell): csak úgy tesz, mintha hallgatna
         self.face.look = [0.0, 0.0]
         if sc != self._scene:
             return
@@ -337,6 +436,8 @@ class Cube:
         mute = getattr(self.hw.audio, 'set_capture', None)
         if mute:
             mute(on)
+        if self.talk:
+            self.talk.ears.enable(on)                    # a folyamatban lévő felvétel is üresen ér véget
 
     def set_party(self, on):
         s = self.s
@@ -456,6 +557,8 @@ class Cube:
             self.power_off()
         elif type_ == 'persona.set':
             s.persona = d['name']
+            if self.talk:
+                self.talk.dialog.reset()                 # új személyiség: új beszélgetés (más a rendszerprompt)
             if d['name'] != 'custom':
                 s.hue = st_mod.PERSONA_HUE[d['name']]
             self.face.persona = s.base_persona()
@@ -535,7 +638,8 @@ class Cube:
             asyncio.ensure_future(self.on_mcu(ev))
 
     def start(self):
-        self._tasks += [asyncio.ensure_future(self._guard(f, f.__name__)) for f in (self.face_loop, self.mcu_loop, self.peek_loop)]
+        loops = [self.face_loop, self.mcu_loop, self.peek_loop] + ([self.wake_loop] if self.talk else [])
+        self._tasks += [asyncio.ensure_future(self._guard(f, f.__name__)) for f in loops]
         self.lights()
 
     def stop(self):

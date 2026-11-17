@@ -73,15 +73,26 @@ class AlsaAudio(hal.Audio):
         self.device, self.card = device, card
         self._lvl, self._proc, self._music, self._lock, self._gen = 0.0, None, None, threading.Lock(), 0
 
-    def _play_pcm(self, path, rate, gen):
+    @staticmethod
+    def _decode(path):
+        """MP3 (előre generált mondatok) vagy WAV (a Piper válaszai) -> mono 16 bites PCM és mintavétel."""
+        if path.lower().endswith('.wav'):
+            import wave
+            with wave.open(path, 'rb') as w:
+                sr, ch, raw = w.getframerate(), w.getnchannels(), w.readframes(w.getnframes())
+            pcm = np.frombuffer(raw, dtype='<i2')
+            return (pcm.reshape(-1, ch).mean(axis=1).astype('<i2') if ch > 1 else pcm), sr
         dec = subprocess.run(['mpg123', '-q', '-m', '-r', '24000', '-s', path], capture_output=True)
-        pcm = np.frombuffer(dec.stdout, dtype='<i2')
+        return np.frombuffer(dec.stdout, dtype='<i2'), 24000
+
+    def _play_pcm(self, path, rate, gen):
+        pcm, sr = self._decode(path)
         with self._lock:
             if gen != self._gen:                         # dekódolás közben leállították
                 return
-            self._proc = subprocess.Popen(['aplay', '-q', '-D', self.device, '-f', 'S16_LE', '-c', '1', '-r', str(int(24000 * rate))],
+            self._proc = subprocess.Popen(['aplay', '-q', '-D', self.device, '-f', 'S16_LE', '-c', '1', '-r', str(int(sr * rate))],
                                           stdin=subprocess.PIPE)
-        proc, step = self._proc, int(24000 * rate * 0.05)
+        proc, step = self._proc, int(sr * rate * 0.05)
         try:
             for i in range(0, len(pcm), step):
                 if proc.poll() is not None or gen != self._gen:

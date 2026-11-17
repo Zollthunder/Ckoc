@@ -1,7 +1,8 @@
 """A C-kocka szoftverének indítása.
 
   Raspberry Pi-n:     python3 -m ckocka
-  PC-n, hardver nélkül: python -m ckocka --sim                (interaktív: írd be: 1-4, t, throw, shake, flip, call, q)
+  PC-n, hardver nélkül: python -m ckocka --sim                (interaktív: írd be: 1-4, t, throw, shake, flip, call, q,
+                                                              ask <angol mondat>, hey <angol mondat>)
   Bemutató:           python -m ckocka --sim --demo --frames out/   (végigmegy a funkciókon, a kijelző képeit PNG-be menti)
 """
 import argparse, asyncio, logging, os, sys
@@ -23,6 +24,7 @@ async def demo(cube, mcu):
         ('dobás', lambda: mcu.inject({'ev': 'imu', 'kind': 'throw'}), 5),
         ('rázás: YES/NO', lambda: mcu.inject({'ev': 'imu', 'kind': 'shake'}), 4),
         ('app: party mód', lambda: cube.command_json('{"type":"mode.party","data":{"on":true}}'), 3),
+        ('érintés + kérdés: beszélgetés (kulcs nélkül a szimulált ész felel)', lambda: ask(cube, mcu, 'What should I do this afternoon?'), 6),
         ('fejjel lefelé: adatvédelem', lambda: mcu.inject({'ev': 'imu', 'kind': 'flip', 'up': True}), 2),
         ('vissza', lambda: mcu.inject({'ev': 'imu', 'kind': 'flip', 'up': False}), 2),
         ('app: Ne zavarj', lambda: cube.command_json('{"type":"mode.dnd","data":{"on":true}}'), 1),
@@ -39,6 +41,41 @@ async def demo(cube, mcu):
         await asyncio.sleep(wait)
 
 
+def ask(cube, mcu, text, wake=False):
+    """Szimuláció: valaki megszólítja a kockát (érintéssel vagy ébresztőszóval) és ezt mondja."""
+    if not cube.talk:
+        print('A beszélgetés ki van kapcsolva (--talk off).')
+        return
+    cube.talk.ears.hear(text)
+    if wake:
+        cube.talk.ears.wake_word()
+    else:
+        mcu.inject({'ev': 'touch'})
+
+
+def make_talk(a):
+    """A beszélgetés összerakása: ész = Claude (ha van ANTHROPIC_API_KEY), különben szimulációban a kulcs nélküli SimMind."""
+    if a.talk == 'off':
+        return None
+    from . import claude
+    log = logging.getLogger('ckocka')
+    mind = None
+    if a.talk == 'claude' or (a.talk == 'auto' and claude.has_key()):
+        try:
+            mind = claude.ClaudeMind()
+        except ImportError:
+            log.warning('az "anthropic" csomag nincs telepítve (pip install anthropic) – Claude nélkül')
+    if not claude.has_key() and a.talk != 'sim':
+        log.warning('nincs ANTHROPIC_API_KEY környezeti változó – %s', 'szimulált válaszok' if a.sim else 'beszélgetés nélkül')
+    if a.sim:
+        from . import talk_sim
+        return talk_sim.make(mind, a.speed)
+    if mind is None:
+        return None                                  # a Pi-n kulcs nélkül: érintésre a régi viselkedés (idő / mondat)
+    from . import talk_real
+    return talk_real.make(mind)
+
+
 async def main(a):
     if a.sim:
         from . import hw_sim
@@ -46,7 +83,7 @@ async def main(a):
     else:
         from . import hw_real
         hw = hw_real.make(a.voice or '/opt/ckocka/voice')
-    cube = Cube(hw, settings=not a.demo)
+    cube = Cube(hw, settings=not a.demo, talk=make_talk(a))
     cube.start()
     tasks = []
     if not a.no_api:
@@ -65,7 +102,8 @@ async def main(a):
 
 async def interactive(cube, mcu):
     loop = asyncio.get_running_loop()
-    print('Parancsok: 1-4 (gombok), t (érintés), throw, shake, flip, unflip, call, cmd {json}, q')
+    print('Parancsok: 1-4 (gombok), t (érintés), throw, shake, flip, unflip, call, cmd {json}, q\n'
+          '           ask <mondat> (érintés + kérdés), hey <mondat> (ébresztőszó + kérdés) – angolul')
     while True:
         line = (await loop.run_in_executor(None, sys.stdin.readline)).strip()
         if line in ('q', ''):
@@ -82,6 +120,8 @@ async def interactive(cube, mcu):
             mcu.inject({'ev': 'imu', 'kind': 'flip', 'up': line == 'flip'})
         elif line == 'call':
             asyncio.ensure_future(cube.incoming_call())
+        elif line.startswith(('ask ', 'hey ')):
+            ask(cube, mcu, line[4:], wake=line.startswith('hey '))
         elif line.startswith('cmd '):
             print(await cube.command_json(line[4:]))
     cube.stop()
@@ -96,6 +136,9 @@ def run():
     p.add_argument('--speed', type=float, default=1.0, help='szimulációban a mondatok időtartamának szorzója')
     p.add_argument('--port', type=int, default=8765)
     p.add_argument('--no-api', action='store_true')
+    p.add_argument('--talk', choices=('auto', 'claude', 'sim', 'off'), default='auto',
+                   help='beszélgetés: auto = Claude, ha van ANTHROPIC_API_KEY (szimulációban különben szimulált ész); '
+                        'sim = mindig szimulált ész; off = nincs')
     p.add_argument('-v', '--verbose', action='store_true')
     a = p.parse_args()
     if a.demo and not a.sim:

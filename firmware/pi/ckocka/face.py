@@ -1,6 +1,6 @@
 """A kerek kijelző (GC9A01, 240×240) arca – Pillow-val rajzolva, a webes szimulátor arcával azonos üzemmódokkal.
 
-Üzemmódok: off, face, listen, dizzy, text, eq, privacy, dnd, call.
+Üzemmódok: off, face, listen, think, dizzy, text, eq, privacy, dnd, call.
 A render() egy RGB képet ad; a kijelző-meghajtó (vagy a szimuláció) teszi ki.
 """
 import math, random
@@ -95,6 +95,17 @@ class FaceRenderer:
             k = 0.3 + 0.7 * max(0.0, math.sin(t * 6 - i))
             col = tuple(int(v * k) for v in eye)
             d.ellipse([c - 23 + i * 18, c + 40, c - 13 + i * 18, c + 50], fill=col)
+
+    def _think(self, d, fs, c, ex, ey, eye, t):
+        """Gondolkodik (a Claude válaszára vár): felfelé néz, a feje fölött három pont kering."""
+        mouth, fs.mouth = fs.mouth, 'flat'
+        self._face(d, fs, c, 10, -9, eye, t)
+        fs.mouth = mouth
+        for i in range(3):
+            a = t * 4 + i * 2.1
+            k = 0.35 + 0.65 * (i + 1) / 3
+            x, y = c + 58 + math.cos(a) * 12, c - 72 + math.sin(a) * 7
+            d.ellipse([x - 5, y - 5, x + 5, y + 5], fill=tuple(int(v * k) for v in eye))
 
     def _dizzy(self, d, fs, c, ex, ey, eye, t):
         for sx in (-1, 1):
