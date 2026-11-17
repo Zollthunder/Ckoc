@@ -17,18 +17,18 @@ Az ESP32-S3-as tervhez a Bluetooth-kihangosítás miatt **egy második chip** é
 | # | Funkció | Kész modul | Méret | Megjegyzés |
 |---|---|---|---|---|
 | 1 | Agy, Wi-Fi, Bluetooth | **Raspberry Pi Zero 2 W** | 65 × 30 mm | 4 magos, klasszikus BT + BLE |
-| 2 | Hang: 2 mikrofon + **sztereó** hangszóró-kimenet | **Adafruit Voice Bonnet** (WM8960 kodek) | 65 × 30 mm | a Pi tetejére dugható; **2 mikrofon** a tetőfuratok alatt. A gyártó már kivezette, de a C-kocka elméleti termék, ezért marad (döntés: 2026-11-16) |
+| 2 | Hang: 2 mikrofon + **mono** hangszóró-kimenet | **Seeed ReSpeaker 2-Mics Pi HAT** | 65 × 30 mm | a Pi tetejére dugható; **2 mikrofon** a tetőfuratok alatt (a helyük más, mint a Voice Bonneten → a tetőlap 2 hasznos mikrofonfuratát igazítani). Az Adafruit Voice Bonnet kifutott; **döntés: 2026-11-17** ([KOLTSEGOPTIMALIZALAS.md](KOLTSEGOPTIMALIZALAS.md), E6). **v2.0** (TLV320AIC3104 kodek): a kapcsolási rajz szerint TPA2005D1 mono erősítő van rajta (~1,4 W / 8 Ω, 5 V-ról), 2 tűs, 2,0 mm-es hangszórócsatlakozóval; külön erősítő nem kell. Raspberry Pi OS-en a `respeaker-2mic-v2_0` overlay kell |
 | 3 | Akku + töltés + táp | **18650-es UPS panel Pi Zeróhoz** (pl. **Pi-Ener-lite**: USB-C, töltöttségmérő, RTC; vagy **Geekworm X306**) | Pi Zero méret + 18650 cella | rugós érintkezőkkel a Pi alá; kb. 2,5 A kimenet |
 | 4 | Akku cella | **18650 Li-ion, védett, ~3000 mAh** | Ø 18,6 × 65 mm | TPU bölcsőben |
 | 5 | Kerek kijelző | **1,28" kerek IPS, GC9A01, 240×240, kerek NYÁK-os változat** | Ø 37,5 mm | látható terület Ø 32,4 mm; SPI |
 | 6 | Kamera | **mini „spy” kameramodul, OV5647, Pi Zero (22 pólusú, 0,5 mm) szalagkábellel**, pl. **Arducam B006603** vagy **Pi Supply Spy Camera** | kamerafej kb. 8,5 × 8,5 – 8,5 × 11,3 mm | a nagy Pi kameramodul nem fér el a kijelző mellett. Az Adafruit 1937 kábele nem Pi Zero-s; a Kailap JAL-KH3-C20B-1B (OV5640) DVP párhuzamos interfészű, ezért egyik sem jó |
-| 7 | Hangszórók | 2× **VISATON K 36 WP, Ø36 mm, 8 Ω, 2 W** teljes sávú hangszóró | Ø 36 mm | a Voice Bonnet két kimenetére; a 40 mm-es helyett (döntés: 2026-11-16), a rögzítőgyűrű Ø36-ra módosul |
+| 7 | Hangszóró | **1× VISATON K 36 WP, Ø36 mm, 8 Ω, 2 W** teljes sávú hangszóró | Ø 36 mm | a hangpanel mono kimenetére; a 40 mm-es helyett (döntés: 2026-11-16), a rögzítőgyűrű Ø36-ra módosul. **2026-11-17: 1 db** (90 mm-es kockán a sztereó hatás nem hallható); a másik oldal rácsa szellőzőként marad |
 | 8 | Alsó fénygyűrű | **NeoPixel Ring 24** (WS2812) | **Ø 66 mm** – pont a modell gyűrűjének mérete | |
 | 9 | C betű fénye | **S-alakú (síkban hajlítható) WS2812 LED-szalag**, 5 mm széles – a sima szalag síkban nem hajlik C alakba | kb. 110 mm (6–7 LED, 60 LED/m) | az előlapi tartó C bordáján fekszik, előtte az opál akril C |
-| 10 | „Kisegítő” mikrovezérlő | **Seeed XIAO RP2040** | 21 × 17,5 mm | LED-ek, gombok, IMU, rezgés valós időben; USB-n vagy UART-on a Pi-hez |
+| 10 | „Kisegítő” mikrovezérlő | **Seeed XIAO RP2040** | 21 × 17,5 mm | gombok, érintés, IMU, rezgés és **a kijelző (az arcot is ő rajzolja)** valós időben; a LED-eket a NeoDriveren át vezérli; **USB-n (OTG)** a Pi-hez (B döntés, 2026-11-17) |
 | 11 | Mozgásérzékelő | **LSM6DS3TR-C** (vagy hasonló) I2C panel, STEMMA QT / Qwiic csatlakozóval | ~25 × 18 mm | dobás, rázás, tájolás |
-| 12 | Rezgés | **DRV2605L** panel + kis rezgőmotor (LRA vagy ERM) | ~20 × 18 mm | „Ne zavarj” jelzések |
-| 13 | Érintés | **AT42QT1010** érintőpanel + rézfólia elektróda a Ø18 mm-es műanyag betét alatt | kicsi | egy kimenet → XIAO |
+| 12 | Rezgés | **Kész rezgőmotor-modul** (lapos ERM motor + tranzisztoros meghajtó, 3 tűs csatlakozó) | kicsi | „Ne zavarj” jelzések; a XIAO PWM-kimenetéről. A DRV2605L helyett (2026-11-17, E3) |
+| 13 | Érintés | **A XIAO RP2040 maga érzékel** (CircuitPython `touchio`) + rézfólia elektróda a Ø18 mm-es műanyag betét alatt + 1 MΩ lehúzó ellenállás a gombok prototípus-lapján | – | az AT42QT1010 helyett (2026-11-17, E2); a fém tetőlap alatt a prototípuson kipróbálni |
 | 14 | 4 gomb | 4× **6×6 mm-es nyomógomb** (kis NYÁK-modulon), SLA sapkák szárral és gallérral; az Andor-gomb tetején préselt fa betét | 6 × 6 mm | a XIAO bemeneteire |
 | 15 | Rendszer-tároló | **microSD kártya, 32 GB, A1** | – | a Pi Zero 2 W operációs rendszeréhez és programjaihoz |
 | 16 | Óraelem | **CR1220 gombelem** | Ø 12,5 mm | a UPS panel valós idejű órájához (RTC); a panelhez nem jár |
@@ -36,24 +36,34 @@ Az ESP32-S3-as tervhez a Bluetooth-kihangosítás miatt **egy második chip** é
 **Kábelezés:** az I2C eszközök (IMU, rezgés) **STEMMA QT / Qwiic** csatlakozós kábelekkel láncba fűzhetők, forrasztás nélkül. A többi rövid vezetékkel, egy kis prototípus-lapon gyűjtve.
 
 ## Elrendezés a kockában (Fusion: „Elektronika (vazlat)” komponens)
-- **Felül:** Voice Bonnet (a mikrofonok a tetőfuratok alatt), alatta a Pi Zero 2 W.
+- **Felül:** ReSpeaker 2-Mics Pi HAT (a mikrofonok a tetőfuratok alatt), alatta a Pi Zero 2 WH.
 - **Középen:** a UPS panel a 18650-es akkuval (a stack hosszában, elölről hátra).
 - **Elöl:** a kerek kijelző, mellette a mini kamera a C nyílásában, a C mögött az S-alakú LED-szalag (a tartó C bordáján).
-- **Oldalt:** a két 36 mm-es hangszóró, a rácsok mögött.
-- **Alul:** a NeoPixel gyűrű, benne a XIAO RP2040, az IMU és a rezgéspanel.
+- **Oldalt:** a 36 mm-es hangszóró a **bal** rács mögött; a jobb rács szellőző (B döntés, 2026-11-17).
+- **Alul:** a NeoPixel gyűrű, benne a XIAO RP2040 és a rezgőmotor-modul.
+- **Jobb oldalt, a szán sínjén kívül:** az IMU (függőlegesen, lásd lent).
+- **Bal oldalt, a szán sínjén kívül:** a NeoDriver (függőlegesen, lásd lent).
+- **Hátul:** az USB-C hosszabbító a ház hátfalában (közép 18 mm-rel az alj fölött), PETG szorítólappal.
+
+**IMU (2026-11-17 óta):** függőlegesen a szán **jobb sínjének külső oldalán** (a jobb, szellőzőrács felőli oldalon). A NYÁK síkja függőleges, az alkatrész-oldal kifelé, jobbra néz (+X); a hosszanti él vízszintes, előre-hátra fut; a két rögzítőfuratos él felül van. A panel saját tengelyei a kockához képest (Y fel, eleje +Z, jobb +X): **panel X → hátra (−Z), panel Y → fel (+Y), panel Z → jobbra (+X)**. Ez a panel éleiből és a gyártói rajzból adódik; a chip tengelyjelölését a megvásárolt panel szitanyomatán ellenőrizni. **A firmware-ben (`firmware/xiao/code.py`, a `claude/confident-wilson-a057bb` ágon) a tengelyeket át kell számolni** (dobás, rázás, tájolás) – a firmware-t ez a változtatás nem módosította.
+Rögzítés: 2 db M2,5×6 csavar a szán sínjébe olvasztott betétekbe; a kábel **Adafruit 4397** (Qwiic → női Dupont, 150 mm; a XIAO-n nincs Qwiic), a sínbe vágott résen (y 17…24, z −5…1) át a XIAO tüskéire (3V3, GND, D4 = SDA, D5 = SCL). Az út kb. 40 mm, a kb. 110 mm-es ráhagyást a jobb sín külső oldalán, az IMU fölött (y 31…46, z −30…−10) laza hurokban, kábelkötegelővel a sín réséhez fogva kell elvezetni – ragasztás nélkül.
 - **A tető sarkaiban:** a 4 gomb kapcsolói; középen az érintőbetét alatt az elektróda.
 
 Képek: [iso](assets/fusion/modulok_iso.png) · [elöl](assets/fusion/modulok_elol.png) · [oldal](assets/fusion/modulok_oldal.png)
 
+**NeoDriver (Adafruit 5766, 2026-11-17):** függőlegesen a szán **jobb sínjének külső oldalán, az IMU előtt** (a bal oldalon a hangszóró miatt nem fér el; B döntés). A gyártói rajz szerint 25,4 × 25,4 mm, 4 db Ø2,5 furat; 4 db M2,5×6 hengeres fejű csavar a sínbe olvasztott betétekbe. A Qwiic lánc az IMU második portjáról egy rövid QT–QT kábellel jön. Pontos koordináták: [dxf/MEGJEGYZES.txt](dxf/MEGJEGYZES.txt).
+
 ## Ami a modellben változott emiatt
 - A kocka **90 mm**-es lett (80 helyett), a tetőlap 72 mm, a gombok és a mikrofonfuratok ehhez igazodva kijjebb kerültek.
 - A **kamerafurat** 22 mm-ről **26 mm-re** került a középtől (a C nyílásán belül maradt), így 3 mm hely marad a kerek kijelzőpanel mellett.
-- Az alsó kis panelek (XIAO, IMU, rezgés) a LED-gyűrű fölé kerültek, hogy ne legyenek szorosan mellette.
+- Az alsó kis panelek (XIAO, rezgés) a LED-gyűrű fölé kerültek, hogy ne legyenek szorosan mellette.
+- 2026-11-17: az IMU a jobb sín külső oldalára, az USB-C nyílás az osztásvonalról a ház hátfalába került, mert egy valódi USB-C hosszabbító anyavége a szán fedélzetébe és az IMU-ba ütközött volna (Zollo jóváhagyásával).
 
 ## Eldöntött kérdések
 - Bluetooth-kihangosító: **kell** → a Pi Zero 2 W beépítve tudja (nem kell második chip).
 - Akku: **18650-es cella**, TPU bölcsőben.
-- Mikrofonok: **kevesebb** → 2 db (a Voice Bonneten).
+- Mikrofonok: **kevesebb** → 2 db (a hangpanelen).
+- Költségoptimalizálás (2026-11-17): Pi Zero 2 WH EU-s boltból, ReSpeaker + 1 hangszóró, érintés a XIAO-n, rezgőmotor-modul, általános USB-C hosszabbító. **A Pi-Ener-lite UPS panel marad.** Részletek: [KOLTSEGOPTIMALIZALAS.md](KOLTSEGOPTIMALIZALAS.md).
 - Érintés a fém tetőn: **szigetelt műanyag betét** + elektróda.
 - Hangulatfelismerés: **egyszerűsítve** (a Pi-n ez könnyebb is, mint az ESP32-n).
 - Kiegészítő NYÁK-ok és nagyobb kocka megengedett (most nem kell).
@@ -69,3 +79,11 @@ Nagyobb darabszámnál a kész modulok helyett **egy saját NYÁK** olcsóbb leh
 1. **Gyártási rajzok átbeszélése:** melyik alkatrész miből, hogyan készül (vágás, marás, nyomtatás).
 2. **Költségoptimalizálás:** árak, alternatívák, mi hagyható el vagy oldható meg olcsóbban.
 3. Prototípus: a modulok beszerzése és összerakása.
+
+## Kompatibilitás-ellenőrzés (2026-11-17)
+Részletek és források: [KOMPATIBILITAS.md](KOMPATIBILITAS.md). A legfontosabbak:
+- **Kijelző (B döntés, 2026-11-17): a XIAO RP2040 hajtja** (SPI: D8 SCK, D10 MOSI, D9 DC; CS → GND, RST és háttérvilágítás → 3,3 V), az arcot is a XIAO rajzolja, a Pi csak állapotot küld. Az eredetileg tervezett Pi-s bekötés: `mipi-dbi-spi` overlay, SPI0 CE0 (GPIO8), DC = GPIO25, RST = GPIO27, BL = GPIO22 vagy fixen 3,3 V. A gyári `gc9a01` overlay nem jó (a háttérvilágítást a GPIO18-ra, az I2S órajelére tenné). A ReSpeaker APA102 LED-jei ugyanezen az SPI-n vannak, és chip select nélkül a kijelző adatától villoghatnak → próba, szükség esetén a két LED-tüske leválasztása. A GPIO-elosztó panel helyett végül a B döntés lett (lásd fent): a Pi tüskesorát csak a ReSpeaker használja.
+- **XIAO RP2040:** a **gyárilag forrasztott** változat; az IMU-hoz **Adafruit 4397** kábel (Qwiic → női Dupont); a Pi-hez **USB-n (OTG)**, 90°-os micro-B dugóval (a hangszóró ezért a bal rács mögé kerül); az érintéshez 1 MΩ-os lehúzó ellenállás.
+- **WS2812 LED-ek:** **Adafruit NeoDriver** (I2C → NeoPixel, 5 V-os kimenet) a Qwiic láncon, az IMU után; egyetlen lánc (gyűrű + C); a LED-ek 5 V-ja közvetlenül a UPS-ről, fényerőkorlát ≤ 30%.
+- **Pi-Ener-lite:** 2,5 A kimenet, **1 A fix töltőáram** (nem 0,5 A), a GPIO4 a UPS-é (külső táp jelzése).
+- **ReSpeaker v2.0:** a `respeaker-2mic-v2_0` overlayt a Seeed repójából kell lefordítani.

@@ -10,7 +10,7 @@ PARTS = {
 
     'Erinto betet': ('erintobetet_opal_akril_2mm', 'felul', 'opál akril 2 mm – lézer'),
     'RGB fenygyuru': ('fenygyuru_diffuzor_opal_akril_3mm', 'felul', 'opál akril 3 mm – lézer'),
-    'Gumitalp': ('gumitalp_EPDM_1_5mm', 'felul', 'EPDM gumi 1,5 mm – vízvágás/lézer'),
+    # 'Gumitalp' (EPDM 1,5 mm) 2026-11-17 óta nincs: helyette 4 kész öntapadós gumiláb (KOLTSEGOPTIMALIZALAS.md, M5)
     'Andor fa betet': ('Andor_fabetet_fa_2mm', 'felul', 'fa (bükk/tölgy) 2 mm – lézer, préselve az SLA sapkába'),
 }
 

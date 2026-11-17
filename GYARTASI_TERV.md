@@ -13,7 +13,7 @@ A kocka **dobálható**. Egy alumínium ház nehéz és kemény, ami kockázatos
 ## Alkatrészek és gyártási módjuk
 | # | Alkatrész | Anyag | Gyártás | Rajz | Megjegyzés |
 |---|---|---|---|---|---|
-| 1 | **Ház** (5 oldal egyben, alul nyitott) | PA12 (SLS/MJF), festett | 3D nyomtatás (szolgáltató) | 3D (STEP) | benne nyomtatva: hangszórórács, C horony, kijelző- és kameraablak, menetes betétek helye; falvastagság 2,5 mm |
+| 1 | **Ház** (5 oldal egyben, alul nyitott) | PA12 (SLS/MJF), szemcseszórt + mártással színezett (2026-11-17) | 3D nyomtatás (szolgáltató) | 3D (STEP) | benne nyomtatva: hangszórórács, C horony, kijelző- és kameraablak, menetes betétek helye; falvastagság 2,5 mm |
 | 2 | **Alsó lap / szánalap** | PETG vagy PA12 | 3D nyomtatás | 3D | erre épül a belső szán; 4 csavarral rögzül a házhoz |
 | 3 | **Belső szán** (alváz) | PETG (FDM) | 3D nyomtatás (házon belül is) | 3D | M2,5 menetes betétek a moduloknak |
 | 4 | **Tetőlap** 72×72×2 mm | alumínium (EN AW-5754 vagy 6082) | **lézervágás vagy CNC marás** + eloxálás | **DXF** | furatok: 6 mikrofon, 4 gomb, Ø18 betét |
@@ -24,7 +24,7 @@ A kocka **dobálható**. Egy alumínium ház nehéz és kemény, ami kockázatos
 | 9 | **Gombsapkák** (4 db, szárral + gallérral) | gyanta (SLA) | 3D nyomtatás | 3D (STL) | 3 színes + az Andor-gomb alapja |
 | 10 | **Andor fa betét** Ø6,6 × 2 | fa (bükk/tölgy) | **lézervágás** | **DXF** | préselve az SLA sapka tetejébe |
 | 11 | **Gumisarkok** (8 db) | TPU 95A, narancs | 3D nyomtatás | 3D | ragasztva (az egyetlen ragasztás) |
-| 12 | **Gumitalp** Ø60 | EPDM gumilemez 1,5 mm vagy TPU | **vízvágás / lézervágás** vagy nyomtatás | **DXF** | |
+| 12 | **Gumilábak** (4 db) | kész, öntapadós, átlátszó (3M Bumpon-típus) | vásárolt | — | a Ø60-as EPDM gumitalp helyett (2026-11-17, [KOLTSEGOPTIMALIZALAS.md](KOLTSEGOPTIMALIZALAS.md) M5); a diffúzorcsavarok közé |
 | 13 | **Akkubölcső** | TPU | 3D nyomtatás | 3D | ütéscsillapítás |
 | 14 | **Előlapi tartó** (kijelző + kamera + C LED-szalag) | PETG | 3D nyomtatás | 3D | egy csatlakozóval a főegységhez |
 | 15 | **Tetőtartó** (gombok + elektróda) | PETG | 3D nyomtatás | 3D | egy csatlakozóval |
@@ -33,7 +33,7 @@ A kocka **dobálható**. Egy alumínium ház nehéz és kemény, ami kockázatos
 **Megjegyzés:** a 2D-s akril és fa alkatrészek (5, 6, 7, 8, 10) **egy lézervágott táblából** kijöhetnek, ami gyors és olcsó.
 
 ## Szerelési sorrend (a szán koncepcióval)
-1. A szánra: UPS + akku (bölcső), Pi Zero 2 W, Voice Bonnet, XIAO + IMU + rezgés, LED-gyűrű a diffúzorral.
+1. A szánra: UPS + akku (bölcső), Pi Zero 2 WH, ReSpeaker hangpanel, XIAO + IMU + rezgőmodul, LED-gyűrű a diffúzorral.
 2. Előlapi tartóra: kijelző, kamera, C LED-szalag → egy kábel.
 3. Tetőtartóra: 4 gomb, érintőelektróda → egy kábel.
 4. **Kipróbálás a házon kívül**, minden csatlakoztatva.
@@ -49,7 +49,7 @@ A kocka **dobálható**. Egy alumínium ház nehéz és kemény, ami kockázatos
 ## Javaslat a házra (Claude véleménye)
 **SLS PA12 ház + eloxált alumínium tetőlap** – „hibrid prémium”:
 - a ház SLS-sel, házon belül, szerszám nélkül, a lekerekített formával együtt; **kb. 120 g**, így dobálva sem veszélyes,
-- **igényes felület:** szemcseszórás + mélyfekete/grafit színezés, vagy alapozó + **soft-touch** festék; a C horony, a rács és az ablakok élei élesek maradnak,
+- **igényes felület:** szemcseszórás + mélyfekete/grafit színezés (**2026-11-17: ez lett, mártással**; a festékréteg nem eszi meg a 0,1 mm-es illesztéseket), vagy alapozó + **soft-touch** festék; a C horony, a rács és az ablakok élei élesek maradnak,
 - a **prémium érzetet** az **eloxált, szemcseszórt alumínium tetőlap** (CNC-marás vagy lézer, utána eloxálás) adja, a narancs gumisarkok kontrasztjával,
 - miért nem teljes alumínium: a 90 mm-es zártszelvény csak 4 mm-es fallal kapható (~330 g, dobálva kemény), a tömbből mart ház pedig nagyon sok gépidő és nehéz – 3 darabhoz sem éri meg.
 - Ha később sorozatban „teljes fém” megjelenés kell, újra elővesszük (pl. vékonyfalú mart héj vagy fröccsöntés + fém tetőlap).
@@ -59,7 +59,7 @@ A kocka **dobálható**. Egy alumínium ház nehéz és kemény, ami kockázatos
   - **felső ház (SLS PA12):** 2,5 mm-es fal, alul nyitott, **kb. 79 g**,
   - **alsó tálca:** lekerekített, felül nyitott, ez **a belső szán alapja**. Így a szán alulról, teljes szélességben (85 mm) betolható, és kívülről nem látszik az osztás.
 - **Átmenő nyílások:** kijelzőablak (Ø33), kamera (Ø4,4, a C nyílásában), a C fénycsatorna, a két hangszórórács és a 60×60 mm-es tetőnyílás a tetőlap alatt.
-- **Tetőlap rögzítése:** 4 db **M2,5-Ã¶s süllyesztett fejű csavar** a sarkokban. A csavarok átmennek a tetőlapon és a ház peremén, és a nyomtatott **tetőtartó** menetes betéteibe húznak, így a csavarok a tetőlapot, a ház peremét és a tetőtartót fogják össze. A tetőlap a sapkákkal felülről leemelhető; a tetőtartó (72 mm) csak alulról fér be/ki, mert a tetőnyílás 60 mm.
+- **Tetőlap rögzítése:** 4 db **M2,5-ös süllyesztett fejű csavar** a sarkokban. A csavarok átmennek a tetőlapon és a ház peremén, és a nyomtatott **tetőtartó** menetes betéteibe húznak, így a csavarok a tetőlapot, a ház peremét és a tetőtartót fogják össze. A tetőlap a sapkákkal felülről leemelhető; a tetőtartó (72 mm) csak alulról fér be/ki, mert a tetőnyílás 60 mm.
 - **Belső szerkezet (helyőrzők):** a szán két sínje, a tetőtartó és az előlapi tartó. Az ütközés- és hézagvizsgálat szerint **mindenhol legalább 3 mm** hely van. Kivétel a kijelző és az előlapi tartó közti 1,5 mm, de ott a rögzítő távtartók vannak.
 - A geometriát **14 pontos ellenőrzés** igazolta: üreges belső, átmenő nyílások, tömör falak és perem.
 
@@ -73,7 +73,7 @@ A kocka **dobálható**. Egy alumínium ház nehéz és kemény, ami kockázatos
 | `C_fenycsatorna_opal_akril_3mm.dxf` | opál akril 3 mm | lézer |
 | `erintobetet_opal_akril_2mm.dxf` (Ø17,8) | opál akril 2 mm | lézer |
 | `fenygyuru_diffuzor_opal_akril_3mm.dxf` (Ø66, 3 furat) | opál akril 3 mm | lézer |
-| `gumitalp_EPDM_1_5mm.dxf` (Ø60, 3 lyuk) | EPDM gumi 1,5 mm | lézer / vízvágás |
+| ~~`gumitalp_EPDM_1_5mm.dxf`~~ (Ø60, 3 lyuk) | – | **elhagyva** (2026-11-17): kész gumilábak |
 | `Andor_fabetet_fa_2mm.dxf` (Ø6,6) | bükk/tölgy 2 mm | lézer |
 
 - Minden alkatrész 4 nézete (elöl, felül, oldal, metszet): [dxf/](dxf/), előnézet: `dxf/index.html`
@@ -86,7 +86,7 @@ A kocka **dobálható**. Egy alumínium ház nehéz és kemény, ami kockázatos
 - a C fénycsatorna, az érintőbetét és a kijelzőablak **pontosan akkora volt, mint a nyílás** (0 mm hézag) → most körben 0,1 mm-rel kisebbek (C: 44,0 mm, betét: Ø17,8, ablak: Ø32,8),
 - a gyorsabb DXF-exporthoz a vázlatok számítása halasztott (a régi export ~30 percig tartott).
 
-**Rendben:** tetőlap furatai (4× Ø2,2 csavar, 4× Ø8,2 gomb a Ø7,6 sapkához, Ø18 érintés, 6× Ø1,6 mikrofon), a mikrofonok hangútja (a tetőtartóban Ø6 csatorna a két Bonnet-mikrofon fölé), USB-C az osztásvonalon (a tálcával együtt lefelé kicsúszik), a hangszórók és a tálcacsavarok hozzáférése.
+**Rendben:** tetőlap furatai (4× Ø2,2 csavar, 4× Ø8,2 gomb a Ø7,6 sapkához, Ø18 érintés, 6× Ø1,6 mikrofon), a mikrofonok hangútja (2026-11-17 óta a ReSpeaker két mikrofonja fölé: elöl Ø6, hátul Ø3 csatorna a tetőtartóban, hátul Ø2 furat a ház peremén), USB-C az osztásvonalon (a tálcával együtt lefelé kicsúszik), a hangszórók és a tálcacsavarok hozzáférése.
 
 **Beépítve Zollo döntése alapján** ([tools/apply_fixes.py](tools/apply_fixes.py), a folyamat utolsó lépése):
 1. **Gombsapkák:** SLA sapka **szárral és gallérral**. A fej Ø7,6 a tetőlap Ø8,2-es furatában ül, 1 mm-rel kiáll. A Ø9,6-os gallér a tetőlap alatt tartja a sapkát. A Ø3,5-ös szár 0,1 mm-re van a kapcsoló tetejétől. A ház peremében Ø10,6-os kiszabadítás van a gallérnak. **Andor-gomb:** ugyanilyen SLA alap, a tetejébe préselve egy **Ø6,6 × 2 mm-es fa betét** (`Andor_fabetet_fa_2mm.dxf`).
@@ -97,6 +97,6 @@ A kocka **dobálható**. Egy alumínium ház nehéz és kemény, ami kockázatos
 5. **C-akril és érintőbetét:** **semleges (neutrális) szilikonnal**, belülről körbe. A szilikon rugalmas, így dobáskor elnyeli az ütést, és késsel kivágható, ha cserélni kell. A C 3 mm-es, kívül egy síkban van a fallal, belül 0,5 mm-rel kilóg, hogy a szilikon megfogja. Ecetszagú (acetoxi) szilikont nem szabad használni, mert repeszti az akrilt, és korrodálja az elektronikát.
 
 **Apróság / ellenőrizni a valódi alkatrészen:**
-- a Pi és a Voice Bonnet közt a modellben 13 mm van, a szabványos tüskesor 11 mm → a valóságban 2 mm-rel több hely marad a tetőtartó alatt,
-- a Voice Bonnet két mikrofonjának pontos helye: ehhez igazítsuk a tetőlap 2 „hasznos” mikrofonfuratát (a többi 4 díszítés),
-- a tetőlap sarkai élesek (72×72) – eloxálás előtt sorjázni, vagy R1 lekerekítés.
+- a Pi és a hangpanel közt a modellben 13 mm van, a szabványos tüskesor 11 mm → a valóságban 2 mm-rel több hely marad a tetőtartó alatt,
+- **ReSpeaker 2-Mics Pi HAT (2026-11-17, átvezetve):** a mikrofonok helye a gyártó v1-es Eagle-fájljából (a panel sarkától 3,05 / 61,98 × 21,34 mm); **a v2.0-ra becsült**, mert a Seeed a v2 koordinátáit nem adja meg (csak azt, hogy a lapkiosztás „lényegében azonos”) – az első megvásárolt panelen lemérni. A hangszóró-csatlakozó (J2, 2 tűs, 2,0 mm) és a 3,5 mm-es jack a lap +X széle felé néz, körülöttük legalább 3,9 mm hely van. A tüskesor a bal (−X) oldalon, így a tetőlap 2 hasznos furata x = −6,34-nél, z = +25,46 és −33,46-nál van; a hátsó a 60 × 60-as tetőnyíláson kívül esik, ezért a ház peremén Ø2 hangfurat van. Magasság: 1,6 mm NYÁK + legfeljebb 6 mm alkatrész (gomb 5,0 mm) → a tetőtartóig **3,9 mm** hely marad (+2 mm a rövidebb tüskesor miatt). **Ha a HAT-ot fordítva tesszük fel, a furatok nem esnek a mikrofonok fölé.**
+- ~~a tetőlap sarkai élesek (72×72) – eloxálás előtt sorjázni, vagy R1 lekerekítés~~ – **lezárva (2026-11-17, M7):** a sarkok R1 lekerekítésűek a modellben és a `tetolap_alu_2mm.dxf` kontúrjában, így kézi sorjázás nem kell.

@@ -12,7 +12,7 @@ Irodai és otthoni felhasználóknak, akik telefon vagy képernyő nélkül, gyo
 | Elem | Leírás |
 |---|---|
 | Ház | **9 × 9 × 9 cm**-es kocka (a szerelhetőség miatt nőtt 8 cm-ről), 9 mm-es lekerekített élekkel |
-| Anyag | matt grafitszürke, puha tapintású műanyag (soft-touch PC/ABS) |
+| Anyag | matt grafitszürke műanyag (a koncepcióban soft-touch PC/ABS; a prototípusban szemcseszórt, mártással színezett SLS PA12) |
 | Tetőlap | 72 × 72 mm-es eloxált alumínium lap, 6 furattal körben (2 mögött mikrofon), középen Ø18 mm-es áttetsző műanyag érintőbetéttel |
 | Gombok | 4 programozható gomb (Ø 7,6 mm) a tetőlap sarkaiban: **„Andor”** (valódi fa borítás, bal elöl), türkiz, menta, rózsaszín |
 | Előlap | **kerek kijelző** (Ø 33 mm), körülötte világító **C betű** (Ø 4,4 cm-es nyitott gyűrű, ~288°-os ív) |
@@ -20,7 +20,7 @@ Irodai és otthoni felhasználóknak, akik telefon vagy képernyő nélkül, gyo
 | Oldalak | bal és jobb oldalon kör alakú, perforált hangszórórács |
 | Hátlap | USB-C tápcsatlakozó |
 | Sarkok | 8 **narancs** gumi „ütköző” sarokvédő (1,5 mm-rel állnak ki), színben cserélhetők |
-| Alj | **RGB fénygyűrű** (Ø 66 mm), ami az asztalra vetül, alatta csúszásgátló gumitalp |
+| Alj | **RGB fénygyűrű** (Ø 66 mm), ami az asztalra vetül, alatta 4 csúszásgátló gumiláb |
 
 ## A karakter: a kocka arca
 A kijelzőn egy egyszerű, **mosolygós, mindig jókedvű kis arc** látható: két szem és egy mosoly, semmi több. A kifejezése az állapottal együtt változik:
@@ -104,7 +104,7 @@ Vicces extra: hétfő reggel a Sarcastic magától is „bekapcsolhat” egy mon
 A köszöntés közben a kijelzőn az arc felragyog (nagy, csillogó szemek), és a C betű egy kört fut a gomb- vagy kedvenc színben.
 
 ## Belső felépítés (koncepció szinten)
-- 2 mikrofon (Adafruit Voice Bonnet) a tetőfuratok alatt; a többi furat dizájnelem
+- 2 mikrofon (Seeed ReSpeaker 2-Mics Pi HAT v2.0; eredetileg Adafruit Voice Bonnet) a tetőfuratok alatt; a többi furat dizájnelem
 - 2 db oldalsugárzó hangszóró
 - Ø 33 mm-es kerek IPS kijelző (240 × 240 képpont)
 - Kis kameramodul helyi (eszközön futó) arc- és hangulatfelismeréssel, jelzőfénnyel

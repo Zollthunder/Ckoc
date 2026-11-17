@@ -1,6 +1,6 @@
 """Szimulált hardver a PC-re: a kijelző képeit PNG-be menti, a hangot és a LED-eket a naplóba írja.
 Így a teljes szoftver hardver nélkül is futtatható és tesztelhető."""
-import asyncio, logging, math, os, random, time
+import asyncio, logging, math, os, random, time, wave
 
 from . import hal
 
@@ -35,8 +35,12 @@ class SimAudio(hal.Audio):
 
     async def play_clip(self, path, rate=1.0):
         try:
-            dur = os.path.getsize(path) * 8 / 64000 / rate
-        except OSError:
+            if path.lower().endswith('.wav'):            # a beszélgetés válaszai (TTS): a hossz a WAV fejlécéből
+                with wave.open(path, 'rb') as w:
+                    dur = w.getnframes() / w.getframerate() / rate
+            else:
+                dur = os.path.getsize(path) * 8 / 64000 / rate
+        except (OSError, wave.Error):
             log.warning('hiányzó hangfájl: %s', path)
             dur = 1.0
         self.played.append(os.path.basename(path))

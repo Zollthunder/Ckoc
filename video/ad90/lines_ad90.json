@@ -1,0 +1,15 @@
+[
+ {"id": "A01", "text": "Hey, you! Yeah, you!", "speed": 1.1},
+ {"id": "A02", "text": "Is your desk totally boring?", "speed": 1.1},
+ {"id": "A03", "text": "Then get ready for the C-Cube!", "speed": 1.1},
+ {"id": "A04", "text": "It talks!", "speed": 1.05},
+ {"id": "A05", "text": "It glows in a gazillion colors!", "speed": 1.1},
+ {"id": "A06", "text": "Toss it! Drop it! Bounce it!", "speed": 1.15},
+ {"id": "A07", "text": "Press the wooden button for dad jokes!", "speed": 1.1},
+ {"id": "A08", "text": "Need some privacy? Just flip it over!", "speed": 1.15},
+ {"id": "A09", "text": "Four radical personalities!", "speed": 1.1},
+ {"id": "A10", "text": "It's totally cube-tastic!", "speed": 1.05},
+ {"id": "A11", "text": "Call now! Operators are standing by!", "speed": 1.15},
+ {"id": "A12", "text": "C-Cube! Available wherever cool stuff is sold!", "speed": 1.1},
+ {"id": "A13", "text": "Concept product. Not actually for sale. Cube may become sarcastic. Batteries sold separately.", "speed": 1.45}
+]
