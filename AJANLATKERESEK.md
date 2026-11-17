@@ -81,7 +81,7 @@ A [SZERELES.md](SZERELES.md) szerint kockánként: 25 db M2,5 menetes betét, 4 
 | Beszállító | Becsült díj | Megjegyzés |
 |---|---|---|
 | Hestore (Pi, cellák, gyűrű, hangszórók, gombok) | 2 000 Ft | **becslés**; futárdíj |
-| EU-s disztribútor (Mouser / DigiKey / TME: ReSpeaker, XIAO, IMU, rezgőmodul, Qwiic, USB-C) | 8 000 Ft | **becslés**; egy helyről rendelve egy bizonyos érték fölött gyakran ingyenes – ellenőrizni |
+| EU-s disztribútor (Mouser / DigiKey / TME: ReSpeaker, XIAO, IMU, rezgőmodul, Qwiic, USB-C) | 8 000 Ft | **becslés**; **döntés (2026-11-17, B1):** ami lehet, innen, egy csomagban; egy helyről rendelve egy bizonyos érték fölött gyakran ingyenes – ellenőrizni |
 | Botland (Pi Zero 2 WH; a ReSpeaker az EU-s disztribútori rendelésben) | 3 000 Ft | **becslés** |
 | Pi-Ener-lite (Tindie, Kínából) | 7 080 Ft | „from 9 USD” [O]; ~12 USD szállítás + vámkezelési díj **becslés**; az importÁFA a 27%-ban benne van |
 | LED-szalag | 1 700 Ft | **becslés** |
@@ -291,7 +291,7 @@ Köszönettel:
 - **Menetes betétek:** 70 db-os csomag; 75 db kell + selejt, ezért 2 csomag.
 - **LED-szalag:** jellemzően csak 1 m-es vagy 5 m-es tekercsben kapható; 3 kockához 0,33 m kell → **1 m-t rendelünk** (2026-11-17).
 - **PMMA, fa:** egész tábla vagy minimum vágási méret; érdemes **maradékot** kérni.
-- **Eloxálás:** kis darabszámnál a **minimális tételdíj** a döntő. Ha a 4 tetőlap mellé más eloxálandó munka is van, együtt olcsóbb. Ha a minimum díj nagyon magas, a natúr (színtelen) eloxálás vagy a festett/porszórt alu is szóba jöhet.
+- **Eloxálás:** kis darabszámnál a **minimális tételdíj** a döntő. Ha a 4 tetőlap mellé más eloxálandó munka is van, együtt olcsóbb. Ha a minimum díj nagyon magas, a natúr (színtelen) eloxálás vagy a festett/porszórt alu is szóba jöhet. **Döntés (2026-11-17, M8):** a prototípus tetőlapjai más eloxálandó munkával együtt menjenek. A 25 000 Ft-os becslés a legrosszabb esetet mutatja.
 
 ### Szállítási idők és beszerzési kockázatok
 - **Hangpanel:** az Adafruit Voice Bonnet (4757) kifutott (BerryBase: „nem szállítható”, Botland: „Discontinued”, DigiKey: „Obsolete”). **Döntés (2026-11-17): Seeed ReSpeaker 2-Mics Pi HAT + 1 hangszóró (mono).** A v1 (WM8960) több boltban már kifutott (SparkFun, Core Electronics); a v2.0 TLV320AIC3104 kodekes. **Hangszórókimenet ellenőrizve (2026-11-17):** a v2.0 kapcsolási rajza (2024-11-15) szerint a lapon **TPA2005D1** mono D-osztályú erősítő van (5 V-ról, 8 Ω-ra kb. 1,4 W), kimenete egy **2 tűs, 2,0 mm-es csatlakozón** (J2, A2001WF-02A, JST PH-kompatibilis), mellette 3,5 mm-es jack. Az erősítőt egy vezérlőjel (AMP_CTL) kapcsolja be. **Külön erősítőmodul nem kell.** **Még ellenőrizni:** a mikrofonok helyét (a tetőlap furataihoz) és a magasságot a modellben; rendeléskor a v2.0-t kérni.

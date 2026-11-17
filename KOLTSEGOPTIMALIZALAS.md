@@ -21,7 +21,16 @@
 | S1/G5 saját NYÁK sorozatban – **elvi eltérés jóváhagyva** | ✅ 500 db fölött tervezhető | a prototípust nem érinti |
 | E5 töltőmodul a Pi-Ener-lite helyett | ❌ elvetve, **marad a Pi-Ener-lite** | – |
 | M2 kevesebb menetes betét | ❌ nem engedélyezve, maradnak a betétek | – |
-| M1, M3, M4, M7, M8, M10, B1, B2, G1–G4 | nyitott (nem volt kérdés) | – |
+| *A következő sorokban Zollo a döntést Claude-ra bízta („az optimalizálást rád bízom”, 2026-11-17). Elvvel ütköző javaslat nincs köztük.* | | |
+| M1 közös csavarméret | ✅ elfogadva: 3 féle csavar marad. Süllyesztett fejűből csak M2,5×8 (tetőlap, USB-C szorítólap, diffúzor, szánlábak), hengeres fejűből M2,5×6 (előlap, hangszóró, IMU) és M2,5×14 (tálca). A diffúzornál és a szánlábaknál ~1 mm-rel mélyebb vakfurat kell | a 3D-munkamenet vezeti át (modell, SZERELES.md, AJANLATKERESEK.md) |
+| M7 tetőlap: R1 sarok a DXF-ben, egy felfogás | ✅ elfogadva: ingyen van, és kiváltja a kézi sorjázást. A GYARTASI_TERV.md nyitott „R1 vagy sorjázás” kérdését is lezárja | a 3D-munkamenet vezeti át (DXF) |
+| M8 eloxálás | ✅ prototípusnál: a 4 tetőlap **más eloxálandó munkával együtt** menjen (csak szervezés). ⏸ Sorozatnál az előeloxált lemez halasztva: a natúr vágott él más megjelenés, ezt a kész prototípuson érdemes megnézni | AJANLATKERESEK.md (megjegyzés) |
+| B1 összevont rendelés | ✅ elfogadva: ami lehet, az EU-s disztribútortól egy csomagban | AJANLATKERESEK.md (megjegyzés) |
+| B2 alu maradékból | ✅ elfogadva, ha van házon belül 2 mm-es **5754 vagy 6082** maradék. Ismeretlen ötvözetű maradék nem jó, mert foltos lesz az eloxálás | – (a költségvetésben a vásárolt lemez marad tartaléknak) |
+| M3 bepattintható gumisarkok | ⏸ halasztva: a kocka dobálható, és ha a sarok dobáskor leesik, az a fő funkciót rontja. A prototípus ragasztott sarkokkal készül (az elv ezt kifejezetten engedi), a pattintós változat a dobáspróba után jöhet | – |
+| M4 3 mm-es érintőbetét | ❌ most nem: az érintést a XIAO érzékeli (E2), és ez a fém tetőlap alatt még nincs kipróbálva. +1 mm-es betéttel két kockázat adódna össze, a megtakarítás pedig kb. 700 Ft/db | – |
+| M10 bajonettes hangszórógyűrű | ❌ nem: 1 hangszóró maradt, így a megtakarítás kb. 500 Ft/db, és a hangszóró zöröghet | – |
+| G1–G4, E7, E8, E10 (sorozat) | ✅ a sorozat tervébe felvéve (fészkelés az SLS-ben, porfrissítés, kábelköteg, automatikus teszt, közvetlen beszerzés). A prototípust nem érinti | – |
 
 **Az új kiindulás:** az AJANLATKERESEK.md végösszege a döntések átvezetése után **319 982 Ft nettó / 3 db = 106 661 Ft/db** (előtte 140 044 Ft/db).
 
