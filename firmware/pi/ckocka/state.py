@@ -14,6 +14,7 @@ class State:
     sliders: dict = field(default_factory=lambda: {'humor': 80, 'energy': 60, 'chatty': 50, 'sarcasm': 30, 'kind': 90})
     party: bool = False
     dnd: bool = False
+    cat: bool = False            # cat mode: macskaarc, simogatásra dorombol
     peek: bool = True
     voice: bool = True
     hue: float = 45
@@ -47,7 +48,7 @@ class State:
         return d
 
 
-SETTINGS_KEYS = ('persona', 'sliders', 'peek', 'voice', 'hue', 'bright', 'nick', 'assign', 'last_seen')
+SETTINGS_KEYS = ('persona', 'sliders', 'cat', 'peek', 'voice', 'hue', 'bright', 'nick', 'assign', 'last_seen')
 
 
 def settings_path():

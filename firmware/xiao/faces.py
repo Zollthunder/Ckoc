@@ -6,7 +6,8 @@
 # egyszer hozza létre, utána csak a pontjaikat, színüket, láthatóságukat állítja.
 #
 # A Pi csak az állapotot küldi (protocol.py): {"cmd":"face","mode":…,"mouth":…,"persona":…,"look":[x,y],"peek":…,
-# "text":…,"sub":…,"color":[r,g,b]|null,"caller":…,"live":…} és beszéd közben {"cmd":"talk","v":0..1} (a száj).
+# "text":…,"sub":…,"color":[r,g,b]|null,"caller":…,"live":…,"cat":false} és beszéd közben {"cmd":"talk","v":0..1} (a száj).
+# Cat mode ("cat": true): macskaarc (fülek, réspupilla, orr, ω-száj, bajusz); "mode":"purr" = dorombol (lehunyt ^ ^ szem).
 # Az animáció (pislogás, pontok, spirál, hangszínkép) itt fut. Az arcok: DESIGN.md, „Az arc”.
 import math
 import random
@@ -16,9 +17,13 @@ C = SIZE // 2
 BG = (5, 6, 8)
 EYE = {'sunny': (143, 232, 255), 'chill': (159, 217, 255), 'hype': (255, 155, 210), 'sarcastic': (179, 168, 255),
        'pro': (143, 232, 255)}
-MODES = ('off', 'sleep', 'face', 'listen', 'think', 'dizzy', 'text', 'eq', 'privacy', 'dnd', 'call')
+MODES = ('off', 'sleep', 'face', 'listen', 'think', 'dizzy', 'text', 'eq', 'privacy', 'dnd', 'call', 'purr')
+CAT_MODES = ('face', 'listen', 'think', 'purr')       # ezekben cat mode-ban macskaarc; a többi (felirat, spirál…) ugyanaz
+CAT_EYE, CAT_NOSE, CAT_EAR = (196, 240, 110), (255, 140, 170), (120, 60, 80)
 MOUTHS = ('smile', 'grin', 'flat', 'worried', 'o')
-N_POLY, N_BAR, N_DOT, N_TEXT = 4, 9, 20, 2       # helyek: szemek + száj + szemöldök, hangszínkép, pontok, feliratok
+N_POLY, N_BAR, N_DOT, N_TEXT = 14, 9, 20, 2      # helyek: sokszögek (lent), hangszínkép, pontok, feliratok
+# Sokszög-helyek: 0–1 szemek, 2 száj, 3 szemöldök / orr, 4–5 pupillák, 6–9 bajusz, 10–11 fülek, 12–13 fülbelső.
+# A rajzolási sorrend a helyek sorrendje: a pupilla a szem, a fülbelső a fül után rajzolódik, ezért látszik rajta.
 
 
 def rrect(cx, cy, w, h, r, n=3):
@@ -78,6 +83,7 @@ class Face:
         self.mode, self.mouth, self.persona = 'off', 'smile', 'sunny'
         self.look, self.peek = (0.0, 0.0), False
         self.text, self.sub, self.color, self.caller, self.live = '', '', None, '', False
+        self.cat = False
         self.hue = 28
         self.level, self._level_t = 0.0, -1.0
         self.eq = [0.1] * N_BAR
@@ -97,6 +103,7 @@ class Face:
         col = m.get('color', self.color)
         self.color = tuple(int(v) for v in col[:3]) if col else None
         self.caller, self.live = str(m.get('caller', self.caller))[:16], bool(m.get('live', self.live))
+        self.cat = bool(m.get('cat', self.cat))
         if 'hue' in m:
             self.hue = m['hue']
 
@@ -122,6 +129,9 @@ class Face:
         self.eq = [max(0.1, v - dt * 1.5) for v in self.eq]
         f = {'polys': [None] * N_POLY, 'bars': [None] * N_BAR, 'dots': [None] * N_DOT, 'texts': [None] * N_TEXT}
         if self.mode in ('off', 'sleep'):
+            return f
+        if self.mode == 'purr' or (self.cat and self.mode in CAT_MODES):
+            self._cat(f, now)
             return f
         eye = EYE.get(self.persona, EYE['sunny'])
         getattr(self, '_' + self.mode)(f, eye, now)
@@ -183,6 +193,60 @@ class Face:
         top = [(C - 22 + i * 7.5, C + 42 + (6 if i % 2 else -6) - 2.5) for i in range(7)]
         bot = [(x, y + 5) for x, y in reversed(top)]
         f['polys'][2] = ([(round(x), round(y)) for x, y in top + bot], eye)
+
+    def _cat(self, f, now):
+        """Macskaarc. listen: hegyezett fül + lüktető pontok, think: felfelé néz + keringő pontok,
+        purr: elégedetten lehunyt szem (^ ^), remegő bajusz és fül."""
+        m = self.mode
+        purr = m == 'purr'
+        ex, ey = (10, -9) if m == 'think' else (self.look[0] * 16, self.look[1] * 12)
+        buzz = math.sin(now * 40) * 1.2 if purr else 0.0            # dorombolás: finom remegés
+        perk = 6 if m == 'listen' else 0
+        for i, sx in enumerate((-1, 1)):                            # fülek: háromszög + rózsaszín belső
+            tw = math.sin(now * 3 + sx) * 2 if purr else 0.0
+            bx = C + sx * 52
+            f['polys'][10 + i] = ([(round(bx - 30), C - 66), (round(bx + 30), C - 66),
+                                   (round(bx + sx * 10 + tw), C - 96 - perk)], CAT_EYE)
+            f['polys'][12 + i] = ([(round(bx - 17), C - 70), (round(bx + 17), C - 70),
+                                   (round(bx + sx * 7 + tw), C - 88 - perk)], CAT_EAR)
+        openness = 1 - math.sin(min(1.0, self._blink) * math.pi)
+        lid = 0.55 if self.peek else 1.0
+        for i, sx in enumerate((-1, 1)):
+            cx, cy = C + sx * 40 + ex, C - 24 + ey
+            if purr:
+                f['polys'][i] = (arc_band(cx, cy + 8, 15, 200, 340, 6, 8), CAT_EYE)
+                continue
+            h = max(3, 36 * openness * lid * (1.1 if m == 'listen' else 1.0))
+            f['polys'][i] = (ellipse(cx, cy, 18, h / 2, 16), CAT_EYE)
+            if h > 10:                                              # réspupilla: a tekintettel együtt mozdul
+                f['polys'][4 + i] = (ellipse(cx + ex * 0.15, cy, 3.5 if m != 'listen' else 6, h / 2 - 3, 10), BG)
+        nx, ny = C + ex * 0.4, C + 10 + ey * 0.4
+        f['polys'][3] = ([(round(nx - 8), round(ny - 4)), (round(nx + 8), round(ny - 4)), (round(nx), round(ny + 5))], CAT_NOSE)
+        my = ny + 14
+        if self.level > 0.02 and not purr:                          # beszél / nyávog: kinyílik a száj
+            f['polys'][2] = (ellipse(nx, my + 2, 9, (4 + self.level * 16) / 2, 12), CAT_EYE)
+        else:                                                       # ω-száj
+            top = [(nx + 16 * t / 6, my + 6 * abs(math.sin(math.pi * t / 6)) - 2.5) for t in range(-6, 7)]
+            bot = [(x, y + 5) for x, y in reversed(top)]
+            f['polys'][2] = ([(round(x), round(y)) for x, y in top + bot], CAT_EYE)
+        for i, (sx, dy) in enumerate(((-1, -6), (-1, 8), (1, -6), (1, 8))):   # bajusz: két-két vékony szál
+            x0, y0 = nx + sx * 26, ny + 6 + dy * 0.3
+            x1, y1 = nx + sx * 88, ny + 6 + dy + buzz * (1 if i % 2 else -1)
+            f['polys'][6 + i] = ([(round(x0), round(y0 - 1)), (round(x1), round(y1 - 1)),
+                                  (round(x1), round(y1 + 1)), (round(x0), round(y0 + 2))], dim(CAT_EYE, 0.8))
+        if m == 'listen':
+            for i in range(3):
+                k = 0.3 + 0.7 * max(0.0, math.sin(now * 6 - i))
+                f['dots'][i] = (C - 18 + i * 18, C + 64, 5, dim(CAT_EYE, k))
+        elif m == 'think':
+            for i in range(3):
+                a = now * 4 + i * 2.1
+                f['dots'][i] = (round(C + math.cos(a) * 14), round(C - 70 + math.sin(a) * 6), 5,
+                                dim(CAT_EYE, 0.35 + 0.65 * (i + 1) / 3))
+        elif purr:                                                  # a dorombolás „hulláma” a száj alatt
+            for i in range(5):
+                k = 0.25 + 0.75 * max(0.0, math.sin(now * 5 - i * 0.9))
+                f['dots'][i] = (C - 28 + i * 14, C + 66, 4, dim(CAT_EYE, k))
 
     def _text(self, f, eye, now):
         col = self.color or eye

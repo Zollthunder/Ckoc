@@ -12,11 +12,12 @@ Három irány:
                      "budget": 0.3}   (budget: a 31 LED összes fényerejének felső korlátja; alvás közben 0.08)
                     {"cmd": "face", "mode": "face"|"listen"|"think"|"dizzy"|"text"|"eq"|"privacy"|"dnd"|"call"|"off"|"sleep",
                      "mouth": "smile"|"grin"|"flat"|"worried"|"o", "persona": "sunny", "look": [0, 0], "peek": false,
-                     "text": "", "sub": "", "color": null|[r, g, b], "caller": "", "live": false}
+                     "text": "", "sub": "", "color": null|[r, g, b], "caller": "", "live": false, "cat": false}
+                     (cat: macskaarc; "mode": "purr" = dorombol)
                      (az arc állapota – csak ha változott; az animációt a XIAO rajzolja: firmware/xiao/faces.py)
                     {"cmd": "talk", "v": 0.42}  (beszéd közben a hang hangereje 0..1 – a száj mozgása)
                     {"cmd": "beat"}  (party: egy ütem – a XIAO színt vált és felvillan)
-                    {"cmd": "haptic", "pattern": "buzz"|"tick"}
+                    {"cmd": "haptic", "pattern": "buzz"|"tick"|"purr"}
                     {"cmd": "camled", "on": true}
 """
 import json
@@ -29,7 +30,7 @@ COMMANDS = {
     'power.on': {}, 'power.off': {},
     'persona.set': {'name': lambda v: v in PERSONAS},
     'persona.custom': {'humor': 'pct', 'energy': 'pct', 'chatty': 'pct', 'sarcasm': 'pct', 'kind': 'pct'},
-    'mode.party': {'on': bool}, 'mode.dnd': {'on': bool},
+    'mode.party': {'on': bool}, 'mode.dnd': {'on': bool}, 'mode.cat': {'on': bool},
     'peek.set': {'on': bool}, 'voice.set': {'on': bool},
     'led.color': {'hue': lambda v: isinstance(v, (int, float)) and 0 <= v < 360},
     'led.brightness': {'value': lambda v: isinstance(v, (int, float)) and 0 <= v <= 1},

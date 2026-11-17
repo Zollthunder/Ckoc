@@ -49,6 +49,39 @@ SFX = {
 }
 
 
+PURR_LEN = 3.2
+
+
+def purr(dur=PURR_LEN, rate=26.0, breath=1.6):
+    """Dorombolás: mély, ~26 Hz-es „berregés” (szűrt zaj, lüktetve), belégzés-kilégzés ütemre, a belégzés halkabb."""
+    n = int(dur * SR)
+    t = np.arange(n) / SR
+    x = np.random.uniform(-1, 1, n)
+    k = 60                                                   # háromszoros mozgóátlag: aluláteresztő, ~400 Hz alatt marad a zaj
+    for _ in range(3):
+        x = np.convolve(x, np.ones(k) / k, mode='same')
+    x *= 0.5 / (np.abs(x).max() + 1e-9)
+    body = np.sin(2 * np.pi * 55 * t) * 0.5 + np.sin(2 * np.pi * 110 * t) * 0.2
+    am = (0.5 + 0.5 * np.sin(2 * np.pi * rate * t)) ** 3     # a gége rezgése: rövid lökések
+    ph = (t % breath) / breath                               # egy légzés: 0..1 – belégzés, rövid szünet, kilégzés
+    br = np.where(ph < 0.42, 0.55 * np.sqrt(np.abs(np.sin(np.pi * ph / 0.42))),
+                  np.where(ph >= 0.5, np.sqrt(np.abs(np.sin(np.pi * (ph - 0.5) / 0.5))), 0.0))
+    fade = np.clip(np.minimum(t, dur - t) * 4, 0, 1)
+    return (x + body) * am * br * fade * 0.6
+
+
+def meow():
+    """Rövid „miaú”: felfelé, majd lefelé hajló, kicsit orrhangú hang."""
+    a = tone(560, 0.16, 'saw', 0.22, 820)
+    b = tone(820, 0.42, 'saw', 0.22, 430)
+    c = tone(1120, 0.42, 'sine', 0.1, 640)
+    return mix([(0, a), (0.14, b), (0.14, c)], 0.65)
+
+
+SFX['purr'] = purr
+SFX['meow'] = meow
+
+
 def party_loop(bars=8):
     """C–G–Am–F, 110 BPM, nyolcadokban: lábdob, lábcin, pergő, akkordok, basszus. Visszaad: (minták, ütemidőpontok)."""
     spb = 60 / BPM / 2

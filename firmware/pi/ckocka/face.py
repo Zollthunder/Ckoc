@@ -39,6 +39,7 @@ class FaceState:
     persona: str = 'sunny'
     caller: str = ''
     call_live: bool = False
+    cat: bool = False             # cat mode: macskaarc (a XIAO-n: faces.Face._cat)
     _blink: float = 0.0
     _next_blink: float = 2.0
 
@@ -64,8 +65,41 @@ class FaceRenderer:
         eye = EYE.get(fs.persona, EYE['sunny'])
         c = SIZE / 2
         ex, ey = fs.look[0] * 16, fs.look[1] * 12
+        if fs.mode == 'purr' or (fs.cat and fs.mode in ('face', 'listen', 'think')):
+            self._cat(d, fs, c, ex, ey, t)
+            return img
         getattr(self, '_' + fs.mode, self._face)(d, fs, c, ex, ey, eye, t)
         return img
+
+    def _cat(self, d, fs, c, ex, ey, t):
+        """Cat mode (ugyanaz a rajz, mint a XIAO-n: faces.Face._cat): fülek, réspupilla, orr, ω-száj, bajusz."""
+        eye, nose, ear, bg = (196, 240, 110), (255, 140, 170), (120, 60, 80), (5, 6, 8)
+        purr = fs.mode == 'purr'
+        if fs.mode == 'think':
+            ex, ey = 10, -9
+        for sx in (-1, 1):
+            bx = c + sx * 52
+            d.polygon([(bx - 30, c - 66), (bx + 30, c - 66), (bx + sx * 10, c - 96)], fill=eye)
+            d.polygon([(bx - 17, c - 70), (bx + 17, c - 70), (bx + sx * 7, c - 88)], fill=ear)
+            x, y = c + sx * 40 + ex, c - 24 + ey
+            if purr:
+                d.arc([x - 15, y - 7, x + 15, y + 23], 200, 340, fill=eye, width=6)
+                continue
+            h = max(3, 36 * (1 - math.sin(min(1.0, fs._blink) * math.pi)) * (0.55 if fs.peeking else 1.0))
+            d.ellipse([x - 18, y - h / 2, x + 18, y + h / 2], fill=eye)
+            if h > 10:
+                d.ellipse([x + ex * 0.15 - 3.5, y - h / 2 + 3, x + ex * 0.15 + 3.5, y + h / 2 - 3], fill=bg)
+        nx, ny = c + ex * 0.4, c + 10 + ey * 0.4
+        d.polygon([(nx - 8, ny - 4), (nx + 8, ny - 4), (nx, ny + 5)], fill=nose)
+        my = ny + 14
+        if fs.talk_level > 0.02 and not purr:
+            a = 4 + fs.talk_level * 16
+            d.ellipse([nx - 9, my + 2 - a / 2, nx + 9, my + 2 + a / 2], fill=eye)
+        else:
+            d.line([(nx + 16 * k / 6, my + 6 * abs(math.sin(math.pi * k / 6))) for k in range(-6, 7)], fill=eye, width=5)
+        for sx in (-1, 1):
+            for dy in (-6, 8):
+                d.line([(nx + sx * 26, ny + 6 + dy * 0.3), (nx + sx * 88, ny + 6 + dy)], fill=tuple(int(v * 0.8) for v in eye), width=2)
 
     # ----------------------------------------------------------- üzemmódok
     def _face(self, d, fs, c, ex, ey, eye, t):

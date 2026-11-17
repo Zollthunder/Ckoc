@@ -22,7 +22,7 @@ const store = {
 // ------------------------------------------------------------------ állapot
 const S = {
   on: false, persona: store.get('persona', 'sunny'), sliders: store.get('sliders', { humor: 80, energy: 60, chatty: 50, sarcasm: 30, kind: 90 }),
-  party: false, dnd: false, peek: true, voice: true, hue: 28, bright: 0.8, nick: store.get('nick', 'Captain'),
+  party: false, dnd: false, cat: store.get('cat', false), peek: true, voice: true, hue: 28, bright: 0.8, nick: store.get('nick', 'Captain'),
   assign: { 2: 'horn', 3: 'gooo', 4: 'coffee' }, flipped: false, throws: 0, busy: false, call: null,
 };
 // A kocka mondatai előre generált hangfájlok (XTTS-v2, Whisperrel ellenőrizve): web/voice/<id>.mp3, szövegük: web/voice/lines.json.
@@ -102,6 +102,19 @@ const SFX = {
   whoosh() { const t = audio.currentTime; noise(t, 0.4, 0.2, 400); tone(300, t + 0.45, 0.25, 'sine', 0.3, 90); },
   ding() { const t = audio.currentTime; tone(880, t, 0.5, 'sine', 0.2); tone(1320, t + 0.08, 0.5, 'sine', 0.12); },
   buzz() { const t = audio.currentTime; for (let i = 0; i < 3; i++) tone(55, t + i * 0.3, 0.2, 'square', 0.06); },
+  meow() { const t = audio.currentTime; tone(560, t, 0.16, 'sawtooth', 0.16, 820); tone(820, t + 0.14, 0.42, 'sawtooth', 0.16, 430); tone(1120, t + 0.14, 0.42, 'sine', 0.07, 640); },
+  purr() {                       // dorombolás: mély, ~26 Hz-es lüktető berregés, két légzésnyi (mint a Pi-n: synth.purr)
+    const sr = audio.sampleRate, dur = PURR_LEN, n = Math.floor(sr * dur), b = audio.createBuffer(1, n, sr), d = b.getChannelData(0);
+    let l1 = 0, l2 = 0, l3 = 0; const a = 1 - Math.exp(-2 * Math.PI * 300 / sr);
+    for (let i = 0; i < n; i++) {
+      const t = i / sr; l1 += a * (Math.random() * 2 - 1 - l1); l2 += a * (l1 - l2); l3 += a * (l2 - l3);
+      const body = Math.sin(2 * Math.PI * 55 * t) * 0.5 + Math.sin(2 * Math.PI * 110 * t) * 0.2;
+      const am = Math.pow(0.5 + 0.5 * Math.sin(2 * Math.PI * 26 * t), 3), ph = (t % 1.6) / 1.6;
+      const br = ph < 0.42 ? 0.55 * Math.sqrt(Math.abs(Math.sin(Math.PI * ph / 0.42))) : ph >= 0.5 ? Math.sqrt(Math.abs(Math.sin(Math.PI * (ph - 0.5) / 0.5))) : 0;
+      d[i] = (l3 * 8 + body) * am * br * Math.min(1, t * 4, (dur - t) * 4) * 0.5;
+    }
+    const s = audio.createBufferSource(); s.buffer = b; s.connect(master); s.start();
+  },
   ring() { const t = audio.currentTime; for (let i = 0; i < 4; i++) { tone(988, t + i * 0.5, 0.18, 'square', 0.06); tone(784, t + i * 0.5 + 0.2, 0.18, 'square', 0.06); } },
 };
 
@@ -230,6 +243,58 @@ function applyLights() {
 }
 S.partyHue = 28; S.partyPulse = 0.8;
 
+// ------------------------------------------------------------------ cat mode: macskaarc (ugyanaz, mint a XIAO-n: faces.Face._cat)
+const PURR_LEN = 3.2, CAT = { eye: '#c4f06e', nose: '#ff8caa', ear: '#783c50' };
+function drawCat(c, ex, ey, open, now) {
+  const k = 4 / 3, P = (x, y) => [c + x * k, c + y * k];                       // a 240 px-es XIAO-rajz 320 px-re nagyítva
+  const purr = F.mode === 'purr', perk = F.mode === 'listen' ? 6 : 0;
+  if (F.mode === 'think') { ex = 10; ey = -9; } else { ex /= k; ey /= k; }
+  const poly = (pts, col) => { g.fillStyle = col; g.beginPath(); pts.forEach(([x, y], i) => { const [px, py] = P(x, y); i ? g.lineTo(px, py) : g.moveTo(px, py); }); g.closePath(); g.fill(); };
+  g.shadowColor = CAT.eye;
+  for (const sx of [-1, 1]) {
+    const bx = sx * 52, tw = purr ? Math.sin(now * 3 + sx) * 2 : 0;
+    poly([[bx - 30, -66], [bx + 30, -66], [bx + sx * 10 + tw, -96 - perk]], CAT.eye);
+    g.shadowBlur = 0; poly([[bx - 17, -70], [bx + 17, -70], [bx + sx * 7 + tw, -88 - perk]], CAT.ear); g.shadowBlur = 18;
+    const [x, y] = P(sx * 40 + ex, -24 + ey);
+    if (purr) { g.strokeStyle = CAT.eye; g.lineWidth = 8; g.beginPath(); g.arc(x, y + 8 * k, 15 * k, 1.11 * Math.PI, 1.89 * Math.PI); g.stroke(); continue; }
+    const h = Math.max(3, 36 * open * (F.peeking ? 0.55 : 1) * (F.mode === 'listen' ? 1.1 : 1)) * k;
+    g.fillStyle = CAT.eye; g.beginPath(); g.ellipse(x, y, 18 * k, h / 2, 0, 0, 7); g.fill();
+    if (h > 10 * k) { g.shadowBlur = 0; g.fillStyle = '#050608'; g.beginPath(); g.ellipse(x + ex * 0.15 * k, y, (F.mode === 'listen' ? 6 : 3.5) * k, h / 2 - 3 * k, 0, 0, 7); g.fill(); g.shadowBlur = 18; }
+  }
+  const nx = ex * 0.4, ny = 10 + ey * 0.4, my = ny + 14;
+  g.shadowColor = CAT.nose; poly([[nx - 8, ny - 4], [nx + 8, ny - 4], [nx, ny + 5]], CAT.nose); g.shadowColor = CAT.eye;
+  g.strokeStyle = CAT.eye; g.fillStyle = CAT.eye; g.lineWidth = 6;
+  if (F.talking && !purr) {
+    const lv = voiceLevel(), a = (4 + (lv == null ? Math.abs(Math.sin(now * 17)) : lv) * 16) * k;
+    const [mx, mmy] = P(nx, my + 2); g.beginPath(); g.ellipse(mx, mmy, 9 * k, a / 2, 0, 0, 7); g.fill();
+  } else {
+    g.beginPath(); for (let t = -6; t <= 6; t++) { const [x, y] = P(nx + 16 * t / 6, my + 6 * Math.abs(Math.sin(Math.PI * t / 6))); t > -6 ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke();
+  }
+  g.lineWidth = 2.5; g.globalAlpha = 0.8; g.shadowBlur = 8;
+  const buzz = purr ? Math.sin(now * 40) * 1.2 : 0;
+  [[-1, -6], [-1, 8], [1, -6], [1, 8]].forEach(([sx, dy], i) => {
+    const [x0, y0] = P(nx + sx * 26, ny + 6 + dy * 0.3), [x1, y1] = P(nx + sx * 88, ny + 6 + dy + buzz * (i % 2 ? 1 : -1));
+    g.beginPath(); g.moveTo(x0, y0); g.lineTo(x1, y1); g.stroke();
+  });
+  g.globalAlpha = 1; g.shadowBlur = 18;
+  const dots = F.mode === 'listen' ? [0, 1, 2].map(i => [-18 + i * 18, 64, 0.3 + 0.7 * Math.max(0, Math.sin(now * 6 - i))])
+    : F.mode === 'think' ? [0, 1, 2].map(i => { const a = now * 4 + i * 2.1; return [Math.cos(a) * 14, -70 + Math.sin(a) * 6, 0.35 + 0.65 * (i + 1) / 3]; })
+    : purr ? [0, 1, 2, 3, 4].map(i => [-28 + i * 14, 66, 0.25 + 0.75 * Math.max(0, Math.sin(now * 5 - i * 0.9))]) : [];
+  for (const [x, y, a] of dots) { const [px, py] = P(x, y); g.globalAlpha = a; g.beginPath(); g.arc(px, py, (purr ? 4 : 5) * k, 0, 7); g.fill(); }
+  g.globalAlpha = 1;
+}
+async function purr() {
+  const sc = newScene();
+  emit('event.touch', { action: 'purr' });
+  S.busy = true; F.mode = 'purr';
+  if (S.voice) { ensureAudio(); SFX.purr(); }
+  cubeEl.classList.remove('purr'); void cubeEl.offsetWidth; cubeEl.classList.add('purr');
+  subtitle(T('😺 Dorombol… (simogatásra)'), PURR_LEN * 1000);
+  await sleep(PURR_LEN * 1000);
+  S.busy = false; cubeEl.classList.remove('purr');
+  backToFace(sc);
+}
+
 // ------------------------------------------------------------------ arc rajzolása
 function drawFace(dt, now) {
   if (!g) return;
@@ -248,6 +313,7 @@ function drawFace(dt, now) {
   F.blink = Math.max(0, F.blink - dt * 7);
   const open = 1 - Math.sin(Math.min(1, F.blink) * Math.PI);
   const ex = F.look.x * 22, ey = F.look.y * 16;
+  if (F.mode === 'purr' || (S.cat && ['face', 'listen', 'think'].includes(F.mode))) { drawCat(c, ex, ey, open, now); g.shadowBlur = 0; return; }
 
   if (F.mode === 'face' || F.mode === 'listen') {
     const lid = F.peeking ? 0.55 : 1;
@@ -482,6 +548,7 @@ async function touch() {
   }
   if (S.dnd) return vibrate();
   if (S.busy) return;
+  if (S.cat) return purr();                // cat mode: simogatásra dorombol (beszélni a 🎙️ gombbal lehet)
   if (TALK.ready && SR) return listen();   // ha él a beszélgetés, az érintés tényleg hallgatni kezd
   const sc = newScene();
   $('#touch').classList.add('listening'); F.mode = 'listen'; F.target = { x: 0, y: -0.7 };
@@ -627,6 +694,7 @@ async function handle(type, d) {
       if (!S.on && d.on) await boot();
       setParty(S.partyWanted); break;
     case 'mode.dnd': S.dnd = d.on; if (d.on) { setParty(false); stopVoice(); } newScene(); backToFace(); break;
+    case 'mode.cat': S.cat = d.on; store.set('cat', d.on); newScene(); backToFace(); if (d.on && S.voice && canSpeak()) { ensureAudio(); SFX.meow(); } break;
     case 'peek.set': S.peek = d.on; break;
     case 'voice.set': S.voice = d.on; if (!d.on) stopVoice(); break;
     case 'led.color': S.hue = d.hue; break;
@@ -639,8 +707,8 @@ async function handle(type, d) {
 }
 function broadcastState() {
   if (APP_ONLY || !chan) return;
-  const { on, persona: p, sliders, party, dnd, peek, voice, hue, bright, nick, assign, flipped } = S;
-  chan.postMessage({ dir: 'state', data: { on, persona: p, sliders, party, dnd, peek, voice, hue, bright, nick, assign, flipped } });
+  const { on, persona: p, sliders, party, dnd, cat, peek, voice, hue, bright, nick, assign, flipped } = S;
+  chan.postMessage({ dir: 'state', data: { on, persona: p, sliders, party, dnd, cat, peek, voice, hue, bright, nick, assign, flipped } });
 }
 
 // ================================================================== AZ APP
@@ -653,7 +721,7 @@ function syncAppUI(st = S) {
   $$('#persona button').forEach(b => b.classList.toggle('sel', b.dataset.p === st.persona));
   $('#sliders').hidden = st.persona !== 'custom';
   $$('#sliders input').forEach(i => { i.value = st.sliders[i.dataset.s]; });
-  $('#party').checked = st.party; $('#dnd').checked = st.dnd; $('#peek').checked = st.peek; $('#voice').checked = st.voice;
+  $('#party').checked = st.party; $('#dnd').checked = st.dnd; $('#cat').checked = !!st.cat; $('#peek').checked = st.peek; $('#voice').checked = st.voice;
   $$('#swatches button').forEach(b => b.classList.toggle('sel', +b.dataset.h === st.hue));
   $('#bright').value = Math.round(st.bright * 100);
   if (document.activeElement !== $('#nick')) $('#nick').value = st.nick;
@@ -666,6 +734,7 @@ $$('#persona button').forEach(b => b.addEventListener('click', () => send('perso
 $$('#sliders input').forEach(i => i.addEventListener('change', () => send('persona.custom', { [i.dataset.s]: +i.value })));
 $('#party').addEventListener('change', e => send('mode.party', { on: e.target.checked }));
 $('#dnd').addEventListener('change', e => send('mode.dnd', { on: e.target.checked }));
+$('#cat').addEventListener('change', e => send('mode.cat', { on: e.target.checked }));
 $('#peek').addEventListener('change', e => send('peek.set', { on: e.target.checked }));
 $('#voice').addEventListener('change', e => send('voice.set', { on: e.target.checked }));
 $$('#swatches button').forEach(b => b.addEventListener('click', () => send('led.color', { hue: +b.dataset.h })));

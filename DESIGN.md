@@ -59,6 +59,7 @@ A C betű és az alsó fénygyűrű **RGB**, így bármilyen színre állíthat�
 13. **Telefonos app és kihangosító:** Bluetooth-on csatlakozik a telefonhoz, a hozzá tartozó appban (C-kocka app) lehet beállítani a köszöntéseket, a gombok hangjait, a fényeket és a kijelző módjait. **Kihangosítóként** is működik: a hívást a kocka hangszórói és mikrofonjai viszik, a kijelzőn a hívó neve jelenik meg, a felvétel a tetején lévő érintőfelülettel történik. Bluetooth-hangszóróként zenét is lejátszik, ilyenkor jöhet a party mód.
 14. **Választható személyiség:** néhány kész személyiség közül lehet választani, vagy az appban sajátot lehet összerakni (lásd lent).
 15. **Személyre szabható:** cserélhető, színes gumisarkok (grafit, narancs, menta, céges színek).
+16. **Cat mode 🐱:** egy kapcsoló az appban, és az arcból macskaarc lesz: hegyes fülek, zöldes macskaszem függőleges pupillával, rózsaszín orr, ω-száj és bajusz. Bekapcsoláskor egy rövid „miaú”. Ha megsimogatod a tetejét, nem beszélgetni kezd, hanem **dorombol**: lehunyja a szemét (^ ^), mély, lüktető doromboló hangot ad, és a rezgőmotor is finoman berreg, így a kéz alatt is érezni. Beszélgetni ilyenkor az ébresztőszóval lehet. A beállítás megmarad kikapcsolás után is. *(Kis apróság: nem kell hozzá új alkatrész, csak szoftver.)*
 
 ## Személyiségek
 Ugyanaz a kocka, de mindegyik személyiségnél másképp beszél, más az arckifejezése, és más fényeket használ.

@@ -421,6 +421,8 @@ class Cube:
             return self.buzz()
         if s.busy:
             return
+        if s.cat:                                          # cat mode: a simogatásra dorombol (beszélgetni az ébresztőszóval lehet)
+            return await self.purr()
         if self.talk:                                      # valódi beszélgetés (talk.py)
             return await self.converse('touch')
         sc = self.new_scene()
@@ -439,6 +441,29 @@ class Cube:
             self.back_to_face(sc)
         else:
             await self.say(f'idle_{s.base_persona()}_{random.randint(1, 3)}')
+
+    async def purr(self):
+        """Cat mode: simogatásra lehunyja a szemét, dorombol, és a rezgőmotor is finoman berreg."""
+        sc = self.new_scene()
+        self.emit('event.touch', action='purr')
+
+        async def scene():
+            self.face.mode = 'purr'
+            self.hw.mcu.send({'cmd': 'haptic', 'pattern': 'purr'})
+            if self.s.voice:
+                self.hw.audio.sfx(self._sfx['purr'])
+            await asyncio.sleep(synth.PURR_LEN)
+            self.back_to_face(sc)
+        await self._busy(scene())
+
+    def set_cat(self, on):
+        s = self.s
+        s.cat = bool(on)
+        self.face.cat = s.cat
+        self.new_scene()
+        self.back_to_face()
+        if s.cat and s.voice and self.can_speak():
+            self.hw.audio.sfx(self._sfx['meow'])
 
     async def throw(self):
         s = self.s
@@ -651,6 +676,8 @@ class Cube:
             self.new_scene()
             self.back_to_face()
             self.lights()
+        elif type_ == 'mode.cat':
+            self.set_cat(d['on'])
         elif type_ == 'peek.set':
             s.peek = d['on']
         elif type_ == 'voice.set':
@@ -688,7 +715,7 @@ class Cube:
         return {'cmd': 'face', 'mode': 'sleep' if self.sleeping else f.mode, 'mouth': f.mouth, 'persona': f.persona,
                 'look': [round(f.look[0], 2), round(f.look[1], 2)], 'peek': bool(f.peeking), 'text': f.text,
                 'sub': f.sub, 'color': list(f.text_color) if f.text_color else None, 'caller': f.caller,
-                'live': bool(f.call_live)}
+                'live': bool(f.call_live), 'cat': bool(f.cat)}
 
     def sync_face(self, now):
         msg = self.face_msg()
@@ -707,6 +734,7 @@ class Cube:
             now = time.monotonic()
             self.face.talk_level = self.hw.audio.level()
             self.face.persona = self.s.base_persona()
+            self.face.cat = self.s.cat
             if not self.s.party:
                 self.face.hue = self.s.hue
             self.sync_face(now)

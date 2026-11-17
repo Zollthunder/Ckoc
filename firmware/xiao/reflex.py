@@ -109,6 +109,9 @@ def led_scale(pixels, budget=LED_BUDGET, count=LED_COUNT):
 PATTERNS = {
     'tick': ((1.0, 0.035),),                                       # hallgat: egy rövid koppintás
     'buzz': ((1.0, 0.05), (0.7, 0.18), (0.0, 0.08), (1.0, 0.05), (0.7, 0.18)),   # „Ne zavarj”: két zümmögés
+    # cat mode, simogatásra: halk, hullámzó berregés két légzésnyi ideig (~3,2 s, mint a hang: synth.purr)
+    'purr': ((1.0, 0.04), (0.42, 0.68), (0.22, 0.12), (0.50, 0.76), (0.0, 0.04),
+             (1.0, 0.04), (0.42, 0.68), (0.22, 0.12), (0.50, 0.68)),
 }
 
 

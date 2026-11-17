@@ -69,6 +69,8 @@ button { font: inherit; cursor: pointer; }
 .cube.buzz { animation: buzz .35s linear 3; }
 @keyframes buzz { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-2px); } 75% { transform: translateX(2px); } }
 .cube.flipped.buzz { animation: none; }
+.cube.purr { animation: purr .09s linear 34; }      /* cat mode: finom, gyors remegés dorombolás közben */
+@keyframes purr { 0%,100% { transform: translate(0, 0); } 50% { transform: translate(.6px, -.4px); } }
 
 .top-panel { background: #15181e; border: 1px solid var(--stage-line); border-radius: 22px; padding: 14px 18px 18px; }
 .panel-title { margin: 0 0 10px; font-size: 13px; color: #8d9098; text-transform: uppercase; letter-spacing: .12em; font-weight: 700; text-align: center; }
