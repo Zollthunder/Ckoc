@@ -1,5 +1,5 @@
 # A 2026-11-17-i költségdöntések átvezetése a Fusion-modellbe (c-kocka.f3d), majd F3D/STEP/STL export.
-# ÁLLAPOT (2026-11-17): még NEM futtatva – a Fusion foglalt volt; csak Zollo jelzése után indítható.
+# ÁLLAPOT: 2026-11-17-én lefuttatva (4 s), az f3d, a STEP és az STL-ek ebből vannak.
 # Ugyanazok a változások, mint a tools/cost_pass_step.py-ban (ott a részletes indoklás), csak parametrikusan, a Fusionben.
 # BIZTONSÁG: a 3d/c-kocka.f3d fájlt ÚJ dokumentumként nyitja meg, minden lépés előtt ellenőrzi, hogy ez az aktív
 # dokumentum, és a végén bezárja (mentés nélkül), majd visszaállítja az előtte aktív dokumentumot. Más dokumentumhoz nem nyúl.

@@ -29,4 +29,6 @@ Világkoordináta (mm, Y fel, eleje +Z):
 - Gumitalp törölve; 4 gumiláb Ø10 × 3 a diffúzor alján: (±20,5; 19,0) és (±17,5; -21,5), csavarfejtől ≥ 3 mm.
 - USB-C: a tálca zsebe x ±16, y 5…9,5, z -42,5…-40,3 (fül ≤ 30 × 2 mm, a tálca és a ház fogja be); a falnyílás nem változott.
 - Érintőpanel (AT42QT1010) törölve, a rezgő helyőrzője átnevezve „Rezgomotor-modul”.
-A .f3d-be (Fusion) még át kell vezetni ugyanezt; amíg ez nincs meg, a STEP az érvényes.
+Ugyanez a Fusion-modellben is (tools/cost_pass_fusion.py, 2026-11-17): a 3d/c-kocka.f3d, .step, .stl és a nyomtatási STL-ek
+már a Fusionből vannak exportálva; a Fusion STEP-je testenként (név, térfogat, befoglaló méret) egyezik az OCP-s változattal.
+A nézeti DXF-ek ebből a STEP-ből készültek; a vágási tetolap_alu_2mm.dxf mikrofonfuratai egyeznek a tetőlap nézetével.
