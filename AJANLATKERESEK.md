@@ -45,7 +45,7 @@ Alapok: [ELEKTRONIKA.md](ELEKTRONIKA.md) (modulok), [GYARTASI_TERV.md](GYARTASI_
 | 22 | Kábelek, JST-SH/JST-PH csatlakozók, vezeték, prototípus-lap a gomboknak, öntapadós rézfólia | – | 3 készlet | 4 000 Ft | 12 000 Ft | **becslés** [B] | – |
 | 22/b | ~~GPIO 1→2 elosztó panel~~ – nem kell: a kijelzőt a XIAO hajtja (döntés: 2026-11-17, KOMPATIBILITAS.md) | – | – | – | 0 Ft | – | 2026-11-17 |
 | 22/c | **Adafruit NeoDriver** (I2C → NeoPixel meghajtó, STEMMA QT, 5 V-os kimenet, csavaros sorkapocs) a 31 WS2812 LED-hez, egy láncban; + 1 db STEMMA QT kábel (IMU → NeoDriver) | 1 | 3 | ~7,50 USD + 1 € ≈ 2 950 Ft | 8 850 Ft | **becslés** [B]; a cikkszámot (5766?) rendelés előtt ellenőrizni | 2026-11-17 |
-| 22/d | **OTG kábel**, micro-B 90°-os, lefelé forduló dugó (Pi) → USB-C (XIAO), rövid | 1 | 3 | ~2 € ≈ 800 Ft | 2 400 Ft | **becslés** [B] | 2026-11-17 |
+| 22/d | **OTG kábel**, rövid: a Pi felőli micro-B dugó **90°-os, oldalra forduló** (a modell szerint előre néz), a XIAO felőli USB-C dugó **90°-os, felfelé forduló** (3D-ellenőrzés, 63864ee) | 1 | 3 | ~2 € ≈ 800 Ft | 2 400 Ft | **becslés** [B] | 2026-11-17 |
 | | **Elektronika összesen** | | | | **184 846 Ft** | | |
 
 ### 1.2 Kötőelemek (kívülről)
