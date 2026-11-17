@@ -154,6 +154,22 @@ Nettó (ÁFA nélkül), 1 EUR = 390 Ft. Minden szám **becslés**.
 
 **A prototípus** önköltsége (~125 000 Ft) nagyjából a piaci ár kétszerese, ezért eladásra nem alkalmas, csak bemutatásra és kipróbálásra. Ha mégis árazni kellene: 30%-os árréssel kb. **180 000 Ft nettó ≈ 230 000 Ft bruttó** lenne.
 
+### 5.5 CE-állapot alkatrészenként (2026-11-17, webes keresés, [K])
+**A lényeg:** az alkatrészek CE-jelölése nem öröklődik a termékre. A kész C-kockát egészként kell vizsgálni (EMC, biztonság, rádió, kiberbiztonság), és erről a gyártó nyilatkozik. A beszállítói dokumentumok azért fontosak, mert csökkentik a vizsgálatot (főleg a rádiós részét), és kellenek a műszaki dokumentációhoz (RoHS, akku).
+
+| Alkatrész | Megfelelőségi dokumentum | Megjegyzés |
+|---|---|---|
+| Raspberry Pi Zero 2 W(H) | ✅ **EU-megfelelőségi nyilatkozat a RED alapján** (Raspberry Pi Ltd; [Mouser-másolat](https://www.mouser.com/catalog/additional/Raspberry_Pi_EU_DoC_Raspberry_Pi_Zero_2.pdf), hivatalos: [Raspberry Pi approvals](https://pip.raspberrypi.com/categories/594-approvals)) | a legfontosabb: előtanúsított rádiós modul, a rádiós vizsgálat jó része erre építhet |
+| Seeed XIAO RP2040 | ⚠️ valószínű: a Seeed adatlapja CE-tanúsítványt linkel a 102010428-ra (nem nyitottam meg), a Plus változatra van EMC CE-dokumentum ([Seeed](https://files.seeedstudio.com/Seeed_Certificate/documents_certificate/100059977-CE.pdf)) | nincs rajta rádió |
+| Seeed ReSpeaker 2-Mics Pi HAT v2.0 | ❓ nem találtam | a Seeed tanúsítvány-archívumában vagy a beszállítótól kérni |
+| Pi-Ener-lite UPS | ❌ semmilyen CE-említést nem találtam ([Tindie](https://www.tindie.com/products/rachel/pi-ener-litea-portable-power-platform-for-pi-zero/)); kis gyártó, Kínából | **a leggyengébb pont:** töltő + akku, a biztonsági vizsgálatnál ez lesz a legkényesebb. Sorozatban a saját alappanel (S1) megoldja |
+| Adafruit LSM6DS3TR-C IMU | ❓ az Adafruit CE-ről nem nyilatkozik, egyes termékekre RoHS-tanúsítványt ad | fejlesztői panel |
+| GC9A01 kijelző, OV5647 kamera | ❓ általános, gyártói dokumentum nélkül | sorozatban dokumentált beszállító kell |
+| 18650 cella (KeepPower, védett) | ❓ ellenőrizni: az akkurendelet szerint a cellának is megfelelőségi dokumentum és jelölés kell, a szállításhoz UN38.3 | a beszállítótól kérni |
+| Hangszóró, LED-gyűrű, LED-szalag, gombok, kábelek, rezgőmodul, USB-C hosszabbító | – (alkatrészek, önmagukban általában nem CE-kötelesek) | **RoHS-nyilatkozat** kell mindegyikről |
+
+**Teendő a CE előtt:** a hivatalos Pi-nyilatkozat letöltése, RoHS- és REACH-nyilatkozat minden beszállítótól, a cella dokumentumai (akkurendelet, UN38.3), és a Pi-Ener-lite gyártójától nyilatkozat kérése. Ha nem ad, sorozatban helyette dokumentált töltőpanel vagy saját alappanel (S1) kell.
+
 ### 5.3 Melyik javaslat melyik sorozatnál
 | Javaslat | 3 db | 100 db | 500 db | 2000 db |
 |---|---|---|---|---|
