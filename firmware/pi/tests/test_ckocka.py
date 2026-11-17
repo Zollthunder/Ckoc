@@ -125,7 +125,7 @@ class CubeTest(unittest.TestCase):
             await cube.boot()
             self.assertFalse((await cube.command_json('{"type":"led.color","data":{"hue":999}}'))['ok'])
             await cube.command('led.color', {'hue': 150})
-            self.assertEqual(hw.mcu.sent[-1], {'cmd': 'leds', 'hue': 150, 'bright': 0.8, 'mode': 'solid'})
+            self.assertEqual(hw.mcu.sent[-1], {'cmd': 'leds', 'hue': 150, 'bright': 0.8, 'mode': 'solid', 'budget': 0.3})
             await cube.on_mcu({'ev': 'imu', 'kind': 'throw'})
             types = Counter(json.loads(m)['type'] for m in got)
             self.assertGreaterEqual(types['event.throw'], 1)

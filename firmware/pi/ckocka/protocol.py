@@ -5,8 +5,16 @@ Három irány:
   Pi   -> app  : események   {"type": "event.throw", "data": {"count": 3}}          (WebSocket, JSON)
   XIAO <-> Pi  : soronként egy JSON (USB CDC soros port, 115200)
        XIAO -> Pi : {"ev": "button", "id": 1} | {"ev": "touch"} | {"ev": "imu", "kind": "throw"|"shake"|"flip", "up": true}
-                    {"ev": "hello", "fw": "1.0"} | {"ev": "battery", ...}
-       Pi -> XIAO : {"cmd": "leds", "hue": 28, "bright": 0.8, "mode": "solid"|"dim"|"party"|"off"}
+                    {"ev": "hello", "fw": "1.4", "imu": true, "leds": true, "display": true, "haptic": true,
+                     "touch": "touchio"|"digital", "upside": false}
+                    {"ev": "battery", ...}
+       Pi -> XIAO : {"cmd": "leds", "hue": 28, "bright": 0.8, "mode": "solid"|"dim"|"party"|"off"|"listen"|"think",
+                     "budget": 0.3}   (budget: a 31 LED összes fényerejének felső korlátja; alvás közben 0.08)
+                    {"cmd": "face", "mode": "face"|"listen"|"think"|"dizzy"|"text"|"eq"|"privacy"|"dnd"|"call"|"off"|"sleep",
+                     "mouth": "smile"|"grin"|"flat"|"worried"|"o", "persona": "sunny", "look": [0, 0], "peek": false,
+                     "text": "", "sub": "", "color": null|[r, g, b], "caller": "", "live": false}
+                     (az arc állapota – csak ha változott; az animációt a XIAO rajzolja: firmware/xiao/faces.py)
+                    {"cmd": "talk", "v": 0.42}  (beszéd közben a hang hangereje 0..1 – a száj mozgása)
                     {"cmd": "beat"}  (party: egy ütem – a XIAO színt vált és felvillan)
                     {"cmd": "haptic", "pattern": "buzz"|"tick"}
                     {"cmd": "camled", "on": true}

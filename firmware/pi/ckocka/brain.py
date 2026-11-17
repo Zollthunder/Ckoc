@@ -1,11 +1,12 @@
 """A C-kocka „agya”: viselkedés és állapotgép – a webes szimulátor (web/sim.js) logikájának Python-változata.
 
-Bemenetek:  XIAO események (gombok, érintés, IMU), app-parancsok (WebSocket), kamera (helyben).
+Bemenetek:  XIAO események (gombok, érintés, IMU), app-parancsok (WebSocket), kamera (helyben),
+            beszélgetés (talk.py: ébresztőszó / érintés -> beszédfelismerés -> Claude -> beszédszintézis).
 Kimenetek:  arc a kijelzőn, hang, LED-ek és rezgés (XIAO-n át), események az appnak.
 """
 import asyncio, json, logging, os, random, time
 
-from . import protocol, state as st_mod, synth
+from . import power, protocol, state as st_mod, synth, talk as talk_mod
 from .face import FaceRenderer, FaceState
 
 log = logging.getLogger('ckocka')
@@ -31,8 +32,9 @@ class JokeBag:
 
 
 class Cube:
-    def __init__(self, hw, settings=True):
+    def __init__(self, hw, settings=True, talk=None):
         self.hw = hw
+        self.talk = talk                      # talk.Talk vagy None (akkor érintésre a régi viselkedés: idő / mondat)
         self.s = st_mod.State()
         if settings:
             st_mod.load(self.s)
@@ -51,6 +53,10 @@ class Cube:
         self._save_handle = None
         self._call = None
         self._last_cheer = 0.0
+        self.charging = False                 # külső tápon (power.py) – ilyenkor alszik, legfeljebb 15 perc ébrenlét
+        self.sleeping = False
+        self._awake_until = 0.0
+        self._face_sent, self._talk_sent, self._talk_t = None, 0.0, 0.0   # amit a XIAO-nak utoljára küldtünk az arcról
 
     # ------------------------------------------------------------ segédek
     def _load_lines(self):
@@ -73,11 +79,63 @@ class Cube:
         for fn in list(self.listeners):
             fn(msg)
 
-    def lights(self):
-        """A LED-ek állapota a XIAO-nak: szín, fényerő és üzemmód az állapotból számolva."""
+    def lights(self, activity=None):
+        """A LED-ek állapota a XIAO-nak: szín, fényerő és üzemmód az állapotból számolva.
+        activity: 'listen' / 'think' a beszélgetés alatt (ha épp nincs fontosabb: ki, Ne zavarj, fejjel lefelé, party)."""
         s = self.s
-        mode = 'off' if not s.on else 'dim' if (s.upside_down or s.dnd) else 'party' if s.party else 'solid'
-        self.hw.mcu.send({'cmd': 'leds', 'hue': round(s.hue), 'bright': round(s.bright, 2), 'mode': mode})
+        mode = 'off' if not s.on else 'dim' if (s.upside_down or s.dnd or self.sleeping) else 'party' if s.party \
+            else activity or 'solid'
+        budget = power.SLEEP_LED_BUDGET if self.sleeping else 0.3
+        self.hw.mcu.send({'cmd': 'leds', 'hue': round(s.hue), 'bright': round(s.bright, 2), 'mode': mode, 'budget': budget})
+
+    # ------------------------------------------------------------ töltés közben: alvás (HOKEZELES.md 7.5)
+    def set_charging(self, on):
+        """A power.guard hívja: külső táp be/ki. Bedugáskor még legfeljebb power.CHARGE_AWAKE ideig ébren marad."""
+        self.charging = bool(on)
+        if self.charging:
+            self._awake_until = time.monotonic() + power.CHARGE_AWAKE
+        else:
+            self.wake_up()
+
+    def go_sleep(self):
+        """Alvás: az arc kialszik, a LED-ek ≤ 8 %, a kamera szünetel. Az ébresztőszót továbbra is figyeli."""
+        if self.sleeping:
+            return
+        log.info('töltés közben alszik')
+        self.sleeping = True
+        if self.s.party:
+            self.set_party(False)
+        self.hw.camera.enable(False)
+        self.hw.mcu.send({'cmd': 'camled', 'on': False})
+        self.lights()
+        self.emit('power.sleep', on=True)
+
+    def wake_up(self):
+        if not self.sleeping:
+            return
+        log.info('felébredt')
+        self.sleeping = False
+        self._awake_until = time.monotonic() + power.CHARGE_AWAKE
+        self.hw.camera.enable(not self.s.upside_down)
+        self.lights()
+        self.emit('power.sleep', on=False)
+
+    async def charge_loop(self, period=5.0):
+        while True:
+            await asyncio.sleep(period)
+            if self.charging and not self.sleeping and time.monotonic() >= self._awake_until \
+                    and not self.s.busy and not self._call:
+                self.go_sleep()
+
+    def battery_shutdown(self):
+        """Lemerült (külső táp nélkül 5 % alatt): elköszön, mielőtt a power.guard leállítja a Pi-t."""
+        self.new_scene()
+        self.hw.audio.music(None)
+        self.hw.audio.stop()
+        self.show_text('LOW BATTERY', 'shutting down')
+        self.s.on = self.s.party = False
+        self.lights()
+        self.broadcast_state()
 
     def buzz(self):
         self.hw.mcu.send({'cmd': 'haptic', 'pattern': 'buzz'})
@@ -187,13 +245,18 @@ class Cube:
     async def on_mcu(self, ev):
         kind = ev.get('ev')
         if kind == 'hello':
-            log.info('XIAO firmware %s', ev.get('fw'))
+            log.info('XIAO firmware %s (érintés: %s, rezgés: %s, kijelző: %s, LED: %s)', ev.get('fw'), ev.get('touch', '?'),
+                     ev.get('haptic', '?'), ev.get('display', '?'), ev.get('leds', '?'))
+            if ev.get('touch') == 'digital':
+                log.warning('a XIAO nem talált 1 MΩ-os lehúzót a D7-en: digitális érintésbemenet (AT42QT1010 tartalék)')
+            self._face_sent = None                   # a XIAO (újra)indult: az arc állapotát újra elküldjük
             self.lights()
             if 'upside' in ev:                       # a Pi a XIAO után indult: így sem késik le a tájolást
                 await self.flip(bool(ev['upside']))
             return
         if kind == 'imu' and ev.get('kind') == 'flip':
             return await self.flip(bool(ev.get('up')))
+        self.wake_up()                               # alvásból: bármely gomb/érintés/mozdulat felébreszti, és végre is hajtja
         if not self.s.on:
             await self.boot()                        # bármely gomb/mozdulat bekapcsolja, és utána végre is hajtja
         if kind == 'button':
@@ -249,6 +312,102 @@ class Cube:
             await asyncio.sleep(1.8)
             self.back_to_face(sc)
 
+    async def say_text(self, text, mouth_after='smile'):
+        """Szabad szöveg kimondása (a Claude válasza) a helyi beszédszintézissel."""
+        s = self.s
+        if not s.on or s.upside_down:
+            return
+        if s.dnd:
+            self.buzz()
+            return
+        log.info('mondja (AI): %s', text)
+        self.emit('speech.say', id='ai', text=text)
+        self._say_token += 1
+        token = self._say_token
+        self.hw.audio.stop()
+        played = False
+        if s.voice:
+            try:
+                path = await self.talk.voice.synth(text, s.base_persona())
+                if token == self._say_token and self.can_speak():
+                    await self.hw.audio.play_clip(path, 1.0)
+                played = True
+            except Exception:
+                log.exception('beszédszintézis hiba – a válasz csak az appban jelenik meg')
+        if not played:
+            await asyncio.sleep(0.6 + len(text) * 0.055)
+        if token == self._say_token:
+            self.face.mouth = mouth_after
+
+    async def converse(self, trigger='touch'):
+        """Egy kérdés–válasz kör: hallgat -> felismeri -> gondolkodik (Claude) -> beszél.
+        Fejjel lefelé nem hallgat; Ne zavarj módban csak rezeg; ha bármi közbejön (fordítás, kikapcsolás, új jelenet),
+        a kör csendben véget ér."""
+        s = self.s
+        if not self.talk or s.upside_down or s.busy:
+            return
+        if s.dnd:
+            return self.buzz()
+        sc = self.new_scene()
+
+        def alive():
+            return sc == self._scene and self.can_speak()
+
+        async def scene():
+            if trigger == 'wake':
+                self.emit('event.wake')
+                self.hw.mcu.send({'cmd': 'haptic', 'pattern': 'tick'})
+            self.emit('event.touch' if trigger == 'touch' else 'speech.listen', action='listen')
+            self.face.mode, self.face.look = 'listen', [0.0, -0.7]
+            self.lights('listen')
+            try:
+                pcm = await self.talk.ears.record()
+                self.face.look = [0.0, 0.0]
+                if not alive():
+                    return
+                text = (await self.talk.stt.transcribe(pcm)).strip() if pcm else ''
+                if not alive():
+                    return
+                if not text:
+                    log.info('nem hallott semmit')
+                    self.face.mouth = 'flat'
+                    self.back_to_face(sc)
+                    self.lights()
+                    await asyncio.sleep(0.8)
+                    self.face.mouth = 'smile'
+                    return
+                log.info('hallotta: %s', text)
+                self.emit('speech.heard', text=text)
+                self.face.mode = 'think'
+                self.lights('think')
+                try:
+                    reply = (await self.talk.dialog.ask(self.talk.mind, s, text)).text
+                except talk_mod.MindError as e:
+                    log.warning('Claude: %s', e)
+                    reply = e.spoken
+                if not alive():
+                    return
+                self.back_to_face(sc)
+                self.lights()
+                await self.say_text(reply)
+            finally:
+                self.face.look = [0.0, 0.0]
+                if sc == self._scene and self.face.mode in ('listen', 'think'):
+                    self.back_to_face(sc)
+                self.lights()
+        await self._busy(scene())
+
+    async def wake_loop(self):
+        """Ébresztőszó: ugyanaz, mint az érintés – de csak ha a kocka be van kapcsolva, és épp nem beszél."""
+        while True:
+            await self.talk.ears.wake()
+            s = self.s
+            if s.on and self.sleeping:
+                self.wake_up()                       # töltés közbeni alvásból is az ébresztőszó ébreszti
+            if s.on and not s.upside_down and not s.dnd and not s.busy and not s.party and self.hw.audio.level() < 0.02:
+                log.info('ébresztőszó')
+                await self.converse('wake')
+
     async def touch(self):
         s = self.s
         if s.upside_down:
@@ -262,10 +421,12 @@ class Cube:
             return self.buzz()
         if s.busy:
             return
+        if self.talk:                                      # valódi beszélgetés (talk.py)
+            return await self.converse('touch')
         sc = self.new_scene()
         self.emit('event.touch', action='listen')
         self.face.mode, self.face.look = 'listen', [0.0, -0.7]
-        await asyncio.sleep(1.6)                           # itt indulna a beszédfelismerés (helyben vagy felhőben – beállítás kérdése)
+        await asyncio.sleep(1.6)                           # beszélgetés nélkül (nincs kulcs / modell): csak úgy tesz, mintha hallgatna
         self.face.look = [0.0, 0.0]
         if sc != self._scene:
             return
@@ -333,10 +494,12 @@ class Cube:
         self.broadcast_state()
 
     def set_mic(self, on):
-        """A Voice Bonnet mikrofonjainak némítása (ALSA kapcsoló a valódi hardveren)."""
+        """A ReSpeaker két mikrofonjának némítása (ALSA kapcsoló a valódi hardveren)."""
         mute = getattr(self.hw.audio, 'set_capture', None)
         if mute:
             mute(on)
+        if self.talk:
+            self.talk.ears.enable(on)                    # a folyamatban lévő felvétel is üresen ér véget
 
     def set_party(self, on):
         s = self.s
@@ -402,7 +565,8 @@ class Cube:
         while True:
             await asyncio.sleep(9 + random.random() * 9)
             s = self.s
-            if not (s.on and s.peek and not s.busy and not s.upside_down and not s.dnd and not s.party and self.face.mode == 'face'):
+            if not (s.on and s.peek and not s.busy and not s.upside_down and not s.dnd and not s.party and not self.sleeping
+                    and self.face.mode == 'face'):
                 continue
             seen = await self.hw.camera.look()
             if not seen.get('face'):
@@ -450,12 +614,15 @@ class Cube:
     # ------------------------------------------------------------ app-parancsok
     async def command(self, type_, d):
         s = self.s
+        self.wake_up()                               # az appból érkező parancs is felébreszti
         if type_ == 'power.on':
             await self.boot()
         elif type_ == 'power.off':
             self.power_off()
         elif type_ == 'persona.set':
             s.persona = d['name']
+            if self.talk:
+                self.talk.dialog.reset()                 # új személyiség: új beszélgetés (más a rendszerprompt)
             if d['name'] != 'custom':
                 s.hue = st_mod.PERSONA_HUE[d['name']]
             self.face.persona = s.base_persona()
@@ -515,17 +682,38 @@ class Cube:
         return {'ok': True}
 
     # ------------------------------------------------------------ futás
+    def face_msg(self):
+        """Az arc állapota a XIAO-nak (ő rajzolja: firmware/xiao/faces.py). Csak változáskor megy ki."""
+        f = self.face
+        return {'cmd': 'face', 'mode': 'sleep' if self.sleeping else f.mode, 'mouth': f.mouth, 'persona': f.persona,
+                'look': [round(f.look[0], 2), round(f.look[1], 2)], 'peek': bool(f.peeking), 'text': f.text,
+                'sub': f.sub, 'color': list(f.text_color) if f.text_color else None, 'caller': f.caller,
+                'live': bool(f.call_live)}
+
+    def sync_face(self, now):
+        msg = self.face_msg()
+        if msg != self._face_sent:
+            self._face_sent = msg
+            self.hw.mcu.send(msg)
+        lvl = 0.0 if self.sleeping else round(min(1.0, self.face.talk_level), 2)
+        # beszéd közben: változáskor, de legalább 4×/s (a XIAO 0,4 s üzenet nélkül becsukja a szájat)
+        if abs(lvl - self._talk_sent) >= 0.05 or (lvl > 0) != (self._talk_sent > 0) or (lvl > 0 and now - self._talk_t > 0.25):
+            self._talk_sent, self._talk_t = lvl, now
+            self.hw.mcu.send({'cmd': 'talk', 'v': lvl})
+
     async def face_loop(self):
         last = time.monotonic()
         while True:
             now = time.monotonic()
-            self.renderer.tick(self.face, now - last)
-            last = now
             self.face.talk_level = self.hw.audio.level()
             self.face.persona = self.s.base_persona()
             if not self.s.party:
                 self.face.hue = self.s.hue
-            self.hw.display.show(self.renderer.render(self.face, now))
+            self.sync_face(now)
+            if self.hw.display:                      # csak a szimulációban: a face.py ugyanezt PNG-be rajzolja
+                self.renderer.tick(self.face, now - last)
+                self.hw.display.show(self.renderer.render(self.face, now))
+            last = now
             await asyncio.sleep(1 / FPS)
 
     async def mcu_loop(self):
@@ -535,7 +723,10 @@ class Cube:
             asyncio.ensure_future(self.on_mcu(ev))
 
     def start(self):
-        self._tasks += [asyncio.ensure_future(self._guard(f, f.__name__)) for f in (self.face_loop, self.mcu_loop, self.peek_loop)]
+        loops = [self.face_loop, self.mcu_loop, self.peek_loop, self.charge_loop] + ([self.wake_loop] if self.talk else [])
+        self._tasks += [asyncio.ensure_future(self._guard(f, f.__name__)) for f in loops]
+        if getattr(self.hw, 'power', None):           # UPS: biztonságos leállás, alvás töltés közben
+            self._tasks.append(asyncio.ensure_future(self._guard(lambda: power.guard(self, self.hw.power), 'power')))
         self.lights()
 
     def stop(self):

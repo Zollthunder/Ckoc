@@ -7,7 +7,9 @@ Wants=network-online.target
 Type=simple
 User=pi
 WorkingDirectory=/opt/ckocka
-ExecStart=/usr/bin/python3 -m ckocka
+ExecStart=/opt/ckocka/venv/bin/python -m ckocka
+# az ANTHROPIC_API_KEY innen jön (root-only fájl a Pi-n, NEM a repóban); ha nincs, a kocka beszélgetés nélkül fut
+EnvironmentFile=-/etc/ckocka.env
 Restart=always
 RestartSec=3
 # párosító kód az apphoz (ha üres, a helyi hálózaton bárki csatlakozhat)

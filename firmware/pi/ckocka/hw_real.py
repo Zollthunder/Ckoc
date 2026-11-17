@@ -1,14 +1,17 @@
 """Valódi hardver a Raspberry Pi Zero 2 W-n.
 
-  Kijelző : GC9A01 1,28" kerek, 240×240, SPI0 (MOSI GPIO10, SCLK GPIO11, CE0 GPIO8), DC GPIO24, RST GPIO25, háttérfény GPIO23
-  Hang    : Adafruit Voice Bonnet (WM8960) – ALSA, lejátszás: aplay (dmix), dekódolás: mpg123; mikrofon-némítás: amixer
-  XIAO    : USB CDC soros port (/dev/ttyACM0), soronként egy JSON
+  Kijelző : nincs a Pi-n – a kerek kijelzőt (GC9A01) a XIAO hajtja és ő rajzolja az arcot; a Pi csak az állapotot küldi
+            (brain.Cube.face_msg: "face" és beszéd közben "talk")
+  Táp     : Pi-Ener-lite UPS – GPIO4 (alacsony = van külső táp), CW2015 töltöttségmérő 0x62 (power.py)
+  Hang    : Seeed ReSpeaker 2-Mics Pi HAT, 1 hangszóró (mono) – v1 (WM8960) és v2.0 (TLV320AIC3104) is; ALSA a kártya
+            nevével (seeed2micvoicec, firmware/pi/asound.conf), lejátszás: aplay (dmix), dekódolás: mpg123;
+            hangerő és mikrofon-némítás: amixer (a kodek szerint más vezérlőnevekkel)
+  XIAO    : USB CDC soros port (OTG; a XIAO „data” portja), soronként egy JSON
   Kamera  : OV5647 (picamera2) + OpenCV Haar-kaszkád – csak helyben, kép nem hagyja el a kockát
 
-FIGYELEM: ez a kód hardver nélkül készült (a C-kocka koncepció). A GC9A01 inicializáló sorozata a gyártói
-referenciakódból való; az első élesztésnél a lábkiosztást és a színsorrendet ellenőrizni kell.
+FIGYELEM: ez a kód hardver nélkül készült (a C-kocka koncepció); az első élesztésnél a keverőneveket ellenőrizni kell.
 """
-import asyncio, json, logging, subprocess, threading, time
+import asyncio, json, logging, os, subprocess, threading, time
 
 import numpy as np
 
@@ -16,72 +19,103 @@ from . import hal
 
 log = logging.getLogger('ckocka.hw')
 
-# --------------------------------------------------------------------------------------------- kijelző
-GC9A01_INIT = [
-    (0xEF, []), (0xEB, [0x14]), (0xFE, []), (0xEF, []), (0xEB, [0x14]), (0x84, [0x40]), (0x85, [0xFF]), (0x86, [0xFF]),
-    (0x87, [0xFF]), (0x88, [0x0A]), (0x89, [0x21]), (0x8A, [0x00]), (0x8B, [0x80]), (0x8C, [0x01]), (0x8D, [0x01]),
-    (0x8E, [0xFF]), (0x8F, [0xFF]), (0xB6, [0x00, 0x20]), (0x36, [0x08]), (0x3A, [0x05]), (0x90, [0x08] * 4),
-    (0xBD, [0x06]), (0xBC, [0x00]), (0xFF, [0x60, 0x01, 0x04]), (0xC3, [0x13]), (0xC4, [0x13]), (0xC9, [0x22]),
-    (0xBE, [0x11]), (0xE1, [0x10, 0x0E]), (0xDF, [0x21, 0x0C, 0x02]),
-    (0xF0, [0x45, 0x09, 0x08, 0x08, 0x26, 0x2A]), (0xF1, [0x43, 0x70, 0x72, 0x36, 0x37, 0x6F]),
-    (0xF2, [0x45, 0x09, 0x08, 0x08, 0x26, 0x2A]), (0xF3, [0x43, 0x70, 0x72, 0x36, 0x37, 0x6F]),
-    (0xED, [0x1B, 0x0B]), (0xAE, [0x77]), (0xCD, [0x63]), (0x70, [0x07, 0x07, 0x04, 0x0E, 0x0F, 0x09, 0x07, 0x08, 0x03]),
-    (0xE8, [0x34]), (0x62, [0x18, 0x0D, 0x71, 0xED, 0x70, 0x70, 0x18, 0x0F, 0x71, 0xEF, 0x70, 0x70]),
-    (0x63, [0x18, 0x11, 0x71, 0xF1, 0x70, 0x70, 0x18, 0x13, 0x71, 0xF3, 0x70, 0x70]),
-    (0x64, [0x28, 0x29, 0xF1, 0x01, 0xF1, 0x00, 0x07]), (0x66, [0x3C, 0x00, 0xCD, 0x67, 0x45, 0x45, 0x10, 0x00, 0x00, 0x00]),
-    (0x67, [0x00, 0x3C, 0x00, 0x00, 0x00, 0x01, 0x54, 0x10, 0x32, 0x98]), (0x74, [0x10, 0x85, 0x80, 0x00, 0x00, 0x4E, 0x00]),
-    (0x98, [0x3E, 0x07]), (0x35, []), (0x21, []),
-]
-
-
-class GC9A01(hal.Display):
-    def __init__(self, dc=24, rst=25, bl=23, spi_bus=0, spi_dev=0, hz=40_000_000):
-        import spidev
-        from gpiozero import DigitalOutputDevice, PWMOutputDevice
-        self.dc, self.rst, self.bl = DigitalOutputDevice(dc), DigitalOutputDevice(rst), PWMOutputDevice(bl)
-        self.spi = spidev.SpiDev()
-        self.spi.open(spi_bus, spi_dev)
-        self.spi.max_speed_hz, self.spi.mode = hz, 0
-        self.rst.off(); time.sleep(0.05); self.rst.on(); time.sleep(0.12)
-        for cmd, data in GC9A01_INIT:
-            self._cmd(cmd, data)
-        self._cmd(0x11); time.sleep(0.12)      # kilépés alvásból
-        self._cmd(0x29); time.sleep(0.02)      # kijelző be
-        self.bl.value = 0.9
-
-    def _cmd(self, c, data=()):
-        self.dc.off(); self.spi.writebytes([c])
-        if data:
-            self.dc.on(); self.spi.writebytes(list(data))
-
-    def show(self, img):
-        a = np.asarray(img.convert('RGB'), dtype=np.uint16)
-        rgb565 = ((a[..., 0] & 0xF8) << 8) | ((a[..., 1] & 0xFC) << 3) | (a[..., 2] >> 3)
-        self._cmd(0x2A, [0, 0, 0, 239]); self._cmd(0x2B, [0, 0, 0, 239]); self._cmd(0x2C)
-        self.dc.on()
-        self.spi.writebytes2(rgb565.astype('>u2').tobytes())
-
-    def brightness(self, v):
-        self.bl.value = max(0.0, min(1.0, v))
-
-
 # --------------------------------------------------------------------------------------------- hang
-class AlsaAudio(hal.Audio):
-    """Beszéd: mpg123 dekódol nyers PCM-re, aplay játssza le; közben mérjük a hangerőt (a száj mozgásához)."""
+RESPEAKER_CARD = 'seeed2micvoicec'          # mindkét ReSpeaker 2-Mics változat ezzel a névvel jelenik meg (aplay -l)
 
-    def __init__(self, device='default', card='wm8960soundcard'):
+# A két kodek ALSA-vezérlői (a Linux wm8960 és tlv320aic3x meghajtójának nevei). Az első élesztésnél ellenőrizni:
+#   amixer -c seeed2micvoicec controls
+# Ha egy név nem létezik, csak figyelmeztetés megy a naplóba, a kocka attól még elindul.
+CODECS = {
+    'wm8960': {                              # v1 – a WM8960 saját D osztályú erősítője hajtja a JST hangszórókimenetet
+        'name': 'ReSpeaker 2-Mics v1 (WM8960)',
+        'capture': 'Capture Switch',
+        'init': [('Left Output Mixer PCM Playback Switch', 'on'), ('Right Output Mixer PCM Playback Switch', 'on'),
+                 ('Playback Volume', '90%'), ('Speaker Playback Volume', '85%'), ('Headphone Playback Volume', '70%'),
+                 ('Left Input Mixer Boost Switch', 'on'), ('Right Input Mixer Boost Switch', 'on'),
+                 ('Capture Volume', '70%'), ('Capture Switch', 'on')],
+    },
+    # v2.0 (kapcsolási rajz, 2024-11-15): a JST hangszórókimenetet (J2) egy TPA2005D1 mono D osztályú erősítő hajtja,
+    # bemenete a kodek két VONALKIMENETÉNEK különbségi összege (IN+ = LEFT_LOP + RIGHT_LOP, IN- = LEFT_LOM + RIGHT_LOM),
+    # tehát (L+R) szól. Az erősítő ~SHUTDOWN lába (AMP_CTL) 10 kΩ-mal AVDD_3V3-ra húzva: mindig bekapcsolt, GPIO nem kell
+    # (a fejhallgató-dugóra némító Q1 tranzisztor nincs beültetve). A HPLOUT/HPROUT csak a 3,5 mm-es aljzatra megy.
+    'tlv320aic3x': {
+        'name': 'ReSpeaker 2-Mics v2.0 (TLV320AIC3104)',
+        'capture': 'PGA Capture Switch',
+        'init': [('Left Line Mixer DACL1 Switch', 'on'), ('Right Line Mixer DACR1 Switch', 'on'),   # hangszóró
+                 ('Line DAC Playback Volume', '85%'), ('Line Playback Switch', 'on'),
+                 ('Left HP Mixer DACL1 Switch', 'on'), ('Right HP Mixer DACR1 Switch', 'on'),       # 3,5 mm-es aljzat
+                 ('HP DAC Playback Volume', '70%'), ('HP Playback Switch', 'on'),
+                 ('PCM Playback Volume', '90%'),
+                 ('PGA Capture Volume', '60%'), ('PGA Capture Switch', 'on')],
+    },
+}
+
+
+def detect_codec(proc_dir='/proc/asound', card=RESPEAKER_CARD):
+    """Melyik ReSpeaker van fent? A kártya sorszáma a /proc/asound/cards-ból, a kodek a /proc/asound/pcm-ből
+    (pl. '02-00: 1f000a4000.i2s-tlv320aic3x-hifi tlv320aic3x-hifi-0 : ...'). Nincs ilyen kártya: None."""
+    import os, re
+    try:
+        with open(os.path.join(proc_dir, 'cards'), encoding='utf-8', errors='replace') as f:
+            cards = f.read()
+        with open(os.path.join(proc_dir, 'pcm'), encoding='utf-8', errors='replace') as f:
+            pcm = f.read()
+    except OSError:
+        return None
+    m = re.search(r'^\s*(\d+)\s+\[' + re.escape(card) + r'\s*\]', cards, re.M)
+    if not m:
+        return None
+    prefix = '%02d-' % int(m.group(1))
+    for line in pcm.splitlines():
+        if line.startswith(prefix):
+            for key in CODECS:
+                if key in line:
+                    return key
+    return None
+
+
+class AlsaAudio(hal.Audio):
+    """Beszéd: mpg123 dekódol nyers PCM-re, aplay játssza le; közben mérjük a hangerőt (a száj mozgásához).
+    A 'default' eszköz az /etc/asound.conf szerint a ReSpeaker, mono keveréssel (mindkét csatornán ugyanaz)."""
+
+    def __init__(self, device='default', card=RESPEAKER_CARD, proc_dir='/proc/asound'):
         self.device, self.card = device, card
         self._lvl, self._proc, self._music, self._lock, self._gen = 0.0, None, None, threading.Lock(), 0
+        self.codec = detect_codec(proc_dir, card)
+        if self.codec:
+            log.info('hangpanel: %s', CODECS[self.codec]['name'])
+            for name, value in CODECS[self.codec]['init']:
+                self._amixer(name, value)
+        else:
+            log.warning('a ReSpeaker hangkártya (%s) nem található – lásd firmware/README.md, „Hangpanel”', card)
+
+    def _amixer(self, name, value):
+        r = subprocess.run(['amixer', '-q', '-c', self.card, 'cset', 'name=' + name, value],
+                           check=False, capture_output=True, text=True)
+        if r.returncode != 0:
+            log.warning('amixer: %r = %s nem sikerült (%s)', name, value, (r.stderr or '').strip())
+        return r.returncode == 0
+
+    @staticmethod
+    def _decode(path):
+        """MP3 (előre generált mondatok) vagy WAV (a Piper válaszai) -> mono 16 bites PCM és mintavétel."""
+        if path.lower().endswith('.wav'):
+            import wave
+            with wave.open(path, 'rb') as w:
+                sr, ch, raw = w.getframerate(), w.getnchannels(), w.readframes(w.getnframes())
+            pcm = np.frombuffer(raw, dtype='<i2')
+            return (pcm.reshape(-1, ch).mean(axis=1).astype('<i2') if ch > 1 else pcm), sr
+        dec = subprocess.run(['mpg123', '-q', '-m', '-r', '24000', '-s', path], capture_output=True)
+        return np.frombuffer(dec.stdout, dtype='<i2'), 24000
 
     def _play_pcm(self, path, rate, gen):
-        dec = subprocess.run(['mpg123', '-q', '-m', '-r', '24000', '-s', path], capture_output=True)
-        pcm = np.frombuffer(dec.stdout, dtype='<i2')
+        pcm, sr = self._decode(path)
         with self._lock:
             if gen != self._gen:                         # dekódolás közben leállították
                 return
-            self._proc = subprocess.Popen(['aplay', '-q', '-D', self.device, '-f', 'S16_LE', '-c', '1', '-r', str(int(24000 * rate))],
+            self._proc = subprocess.Popen(['aplay', '-q', '-D', self.device, '-f', 'S16_LE', '-c', '1', '-r', str(int(sr * rate))],
                                           stdin=subprocess.PIPE)
-        proc, step = self._proc, int(24000 * rate * 0.05)
+        proc, step = self._proc, int(sr * rate * 0.05)
         try:
             for i in range(0, len(pcm), step):
                 if proc.poll() is not None or gen != self._gen:
@@ -138,14 +172,23 @@ class AlsaAudio(hal.Audio):
         threading.Thread(target=run, daemon=True).start()
 
     def set_capture(self, on):
-        """A két mikrofon ki/be (fejjel lefelé: adatvédelem)."""
-        subprocess.run(['amixer', '-q', '-c', self.card, 'sset', 'Capture', 'cap' if on else 'nocap'], check=False)
+        """A két mikrofon ki/be a kodekben (fejjel lefelé: adatvédelem). Ettől függetlenül a beszélgetés is eldobja
+        a hangot (talk.Ears.enable), így ha a kodek vezérlője nem állítható, a mikrofon akkor sem „hallgat”."""
+        if not self.codec:
+            return False
+        return self._amixer(CODECS[self.codec]['capture'], 'on' if on else 'off')
 
 
 # --------------------------------------------------------------------------------------------- XIAO
+XIAO_BAUD = 115200
+
+
 def find_xiao_port():
-    """A XIAO (CircuitPython) két USB soros portot ad: konzol (if00) és data (if02) – nekünk a data kell."""
+    """A XIAO (CircuitPython) két USB soros portot ad: konzol (if00) és data (if02) – nekünk a data kell.
+    Felülírható: CKOCKA_XIAO_PORT."""
     import glob
+    if os.environ.get('CKOCKA_XIAO_PORT'):
+        return os.environ['CKOCKA_XIAO_PORT']
     for pat in ('/dev/serial/by-id/*CircuitPython*if02*', '/dev/serial/by-id/*XIAO*if02*', '/dev/ttyACM1'):
         hits = sorted(glob.glob(pat))
         if hits:
@@ -154,7 +197,7 @@ def find_xiao_port():
 
 
 class SerialMcu(hal.Mcu):
-    def __init__(self, port=None, baud=115200):
+    def __init__(self, port=None, baud=XIAO_BAUD):
         super().__init__()
         self.port, self.baud, self.ser = port or find_xiao_port(), baud, None
         self.loop = asyncio.get_event_loop()
@@ -238,4 +281,5 @@ class LocalCamera(hal.Camera):
 
 
 def make(voice_dir):
-    return hal.Hardware(GC9A01(), AlsaAudio(), SerialMcu(), LocalCamera(), voice_dir)
+    from . import power
+    return hal.Hardware(None, AlsaAudio(), SerialMcu(), LocalCamera(), voice_dir, power=power.make_monitor())

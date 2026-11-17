@@ -2,6 +2,12 @@
 Pillow>=10
 numpy>=1.24
 websockets>=12
+# beszélgetés Claude-dal (a kulcs az ANTHROPIC_API_KEY környezeti változóból; szimulációban kulcs nélkül is fut)
+anthropic>=2.9
+# csak a Raspberry Pi-n, a beszélgetéshez (install.sh egy venv-be telepíti őket):
+# faster-whisper     – helyi beszédfelismerés (tiny.en, int8)
+# openwakeword       – helyi ébresztőszó
+# + a Piper önálló programja és angol hangja (install.sh tölti le)
 # csak a Raspberry Pi-n (a Pi OS csomagjaiból: sudo apt install python3-spidev python3-gpiozero python3-serial python3-picamera2 python3-opencv mpg123)
 # spidev
 # gpiozero
