@@ -31,7 +31,7 @@ Alapok: [ELEKTRONIKA.md](ELEKTRONIKA.md) (modulok), [GYARTASI_TERV.md](GYARTASI_
 | 8 | Hangszóró, 8 Ω, 2 W (VISATON K 36 WP, **Ø36 mm**) | **1** | 3 | 2 132 Ft | 6 396 Ft | Hestore.hu, 100.357.67 [O]; **Döntés (2026-11-16): ez kerül be**, a rögzítőgyűrű Ø36-ra módosul; **(2026-11-17): kockánként 1 db (mono)** | 2026-11-17 |
 | 9 | WS2812 LED-gyűrű, 24 LED, **Ø66 mm** (NeoPixel Ring 24-kompatibilis) | 1 | 3 | 3 429 Ft | 10 287 Ft | Hestore.hu, WS2812-RING24/66, 100.410.10 [O] | 2026-11-16 |
 | 10 | S-alakú (síkban hajlítható) WS2812-es LED-szalag, 60 LED/m, ~110 mm/kocka | 0,11 m | **1 m** (3 kockához 0,33 m kell) | 2 500 Ft | 2 500 Ft | **becslés** [B]; **döntés (2026-11-17): 1 m-es kiszerelés**. A talált tekercsek 6 mm szélesek vagy SK6812 chipesek (pl. 5 m, ~17–22 USD [K]); pontos 5 mm/60 LED/m WS2812 ajánlatot nem találtam | 2026-11-16 |
-| 11 | Seeed XIAO RP2040 | 1 | 3 | 4,92 € ≈ 1 919 Ft | 5 757 Ft | TME (tme.eu), 5,95 € bruttó [K]; a Hestore-nál nincs | 2026-11-16 |
+| 11 | Seeed XIAO RP2040 **Pre-Soldered** (gyárilag forrasztott tüskesorral; az alapváltozat forrasztatlan, lásd KOMPATIBILITAS.md) | 1 | 3 | ~5,90 € ≈ 2 300 Ft | 6 900 Ft | **becslés** [B] az alapváltozat TME-ára (4,92 € nettó [K]) + felár | 2026-11-17 |
 | 12 | IMU: Adafruit LSM6DS3TR-C, STEMMA QT (#4503) | 1 | 3 | 8,56 € ≈ 3 338 Ft | 10 014 Ft | Mouser / DigiKey EU, 8,46–8,59 € nettó [K] | 2026-11-16 |
 | 13 | **Rezgőmotor-modul** (lapos ERM motor + tranzisztoros meghajtó egy kis panelen, 3 tűs csatlakozó), a XIAO PWM-kimenetéről – az Adafruit DRV2605L helyett | 1 | 3 | ~1 € ≈ 400 Ft | 1 200 Ft | **becslés** [B]; **döntés (2026-11-17)** (KOLTSEGOPTIMALIZALAS.md, E3) | 2026-11-17 |
 | 14 | ~~Külön rezgőmotor~~ – a 13. tételben benne van | – | – | – | 0 Ft | – | 2026-11-17 |
@@ -43,7 +43,10 @@ Alapok: [ELEKTRONIKA.md](ELEKTRONIKA.md) (modulok), [GYARTASI_TERV.md](GYARTASI_
 | 20 | CR1220 gombelem (a UPS panel RTC-jéhez, nincs a dobozban) | 1 | 3 | 300 Ft | 900 Ft | **becslés** [B] | – |
 | 21 | M2,5 távtartó-készlet (11 mm) + csavarok a Pi/Bonnet stackhez | – | 1 készlet | 3 000 Ft | 3 000 Ft | **becslés** [B] | – |
 | 22 | Kábelek, JST-SH/JST-PH csatlakozók, vezeték, prototípus-lap a gomboknak, öntapadós rézfólia | – | 3 készlet | 4 000 Ft | 12 000 Ft | **becslés** [B] | – |
-| | **Elektronika összesen** | | | | **172 453 Ft** | | |
+| 22/b | **Stacking (átmenő) 2×20-as tüskesor** a Pi és a ReSpeaker közé, hogy a kijelző is hozzáférjen a GPIO-hoz (KOMPATIBILITAS.md, 2. pont) | 1 | 3 | ~1,5 € ≈ 600 Ft | 1 800 Ft | **becslés** [B] | 2026-11-17 |
+| 22/c | **74AHCT125 szintillesztő modul** (tüskesoros) a WS2812 LED-ek adatvonalához (3,3 V → 5 V) | 1 | 3 | ~2 € ≈ 800 Ft | 2 400 Ft | **becslés** [B] | 2026-11-17 |
+| 22/d | **OTG kábel**, micro-B (Pi) → USB-C (XIAO), rövid | 1 | 3 | ~2 € ≈ 800 Ft | 2 400 Ft | **becslés** [B] | 2026-11-17 |
+| | **Elektronika összesen** | | | | **180 196 Ft** | | |
 
 ### 1.2 Kötőelemek (kívülről)
 A [SZERELES.md](SZERELES.md) szerint kockánként: 25 db M2,5 menetes betét, 4 db M2,5×8 süllyesztett fejű (DIN 7991), 7 db M2,5×6 süllyesztett fejű, 10 db M2,5×6 hengeres fejű (DIN 912), 4 db M2,5×14 hengeres fejű.
@@ -94,16 +97,16 @@ A [SZERELES.md](SZERELES.md) szerint kockánként: 25 db M2,5 menetes betét, 4 
 ### 1.6 Végösszeg
 | | 3 db-ra | Kockánként |
 |---|---|---|
-| Elektronika | 172 453 Ft | 57 484 Ft |
+| Elektronika | 180 196 Ft | 60 065 Ft |
 | Kötőelemek | 11 478 Ft | 3 826 Ft |
 | Külső szolgáltatás és alapanyag | 44 982 Ft | 14 994 Ft |
 | Házon belüli anyag | 25 350 Ft | 8 450 Ft |
 | Szállítás | 36 630 Ft | 12 210 Ft |
-| **Részösszeg (nettó)** | **290 893 Ft** | **96 964 Ft** |
-| Tartalék, 10% (árfolyam, hiányzó apróságok, selejt) | 29 089 Ft | 9 696 Ft |
-| **Összesen nettó** | **319 982 Ft** | **106 661 Ft** |
-| ÁFA 27% | 86 395 Ft | 28 798 Ft |
-| **Összesen bruttó** | **406 377 Ft** | **135 459 Ft** |
+| **Részösszeg (nettó)** | **298 636 Ft** | **99 545 Ft** |
+| Tartalék, 10% (árfolyam, hiányzó apróságok, selejt) | 29 864 Ft | 9 955 Ft |
+| **Összesen nettó** | **328 500 Ft** | **109 500 Ft** |
+| ÁFA 27% | 88 695 Ft | 29 565 Ft |
+| **Összesen bruttó** | **417 195 Ft** | **139 065 Ft** |
 
 **Az ÁFA kezelése:**
 - A hazai boltok (Hestore) nettó árat mutatnak, erre jön a **27%-os ÁFA**.

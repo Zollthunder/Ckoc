@@ -131,28 +131,29 @@ A hőkezelés miatti hűtőborda (+400 Ft/db) ebben még nincs benne. A pontos s
 | LED-gyűrű + C szalag | 2 900 |
 | XIAO RP2040 + IMU + rezgőmodul (E3) | 4 600 |
 | Gombok, Qwiic, USB-C (E4), microSD, kábelköteg | 5 300 |
-| **Összesen** | **kb. 42 700 Ft ≈ 109 €** |
+| Kompatibilitás miatt (KOMPATIBILITAS.md): stacking tüskesor, szintillesztő, OTG kábel, forrasztott XIAO | 1 800 |
+| **Összesen** | **kb. 44 500 Ft ≈ 114 €** |
 
-A PIACI_TANULMANY.md 100 db-ra **~120 €** elektronikával és **~185 €** önköltséggel számol. A döntések után (E5 elvetve, a Pi-Ener-lite marad) az elektronika kb. **−11 €**, a mechanika és a szerelés (M6, M7, G1–G4) kb. **−8 €** → **kb. 165–170 €/db** önköltség. Így a 299 €-s limitált árnál (235 € nettó) a bruttó árrés **~21%-ról ~28–30%-ra** nő. *(Az E5-tel ~37% lett volna; frissítve 2026-11-17.)* *(CE nélkül, ahogy a PIACI_TANULMANY.md is a 100 db-os sorozatot.)*
+A PIACI_TANULMANY.md 100 db-ra **~120 €** elektronikával és **~185 €** önköltséggel számol. A döntések után (E5 elvetve, a Pi-Ener-lite marad) az elektronika kb. **−6 €** (a kompatibilitási kiegészítőkkel együtt), a mechanika és a szerelés (M6, M7, G1–G4) kb. **−8 €** → **kb. 170–175 €/db** önköltség. Így a 299 €-s limitált árnál (235 € nettó) a bruttó árrés **~21%-ról ~27–28%-ra** nő. *(Az E5-tel ~37% lett volna; frissítve 2026-11-17.)* *(CE nélkül, ahogy a PIACI_TANULMANY.md is a 100 db-os sorozatot.)*
 
 ### 5.4 Mennyibe kerül most egy C-kocka? (2026-11-17, minden döntés után)
 Nettó (ÁFA nélkül), 1 EUR = 390 Ft. Minden szám **becslés**.
 
 | | **Prototípus (3 db-os tétel)** | **100 db-os limitált széria** |
 |---|---|---|
-| Anyag és vásárolt alkatrész (szállítással, 10% tartalékkal) | 106 700 Ft ([AJANLATKERESEK.md](AJANLATKERESEK.md)) | ~42 700 Ft elektronika + ~10 700 Ft ház és mechanika (a PIACI_TANULMANY.md 35 €-ja, a mártásos színezéssel csökkentve) |
+| Anyag és vásárolt alkatrész (szállítással, 10% tartalékkal) | 109 500 Ft ([AJANLATKERESEK.md](AJANLATKERESEK.md), a kompatibilitási kiegészítőkkel) | ~44 500 Ft elektronika + ~10 700 Ft ház és mechanika (a PIACI_TANULMANY.md 35 €-ja, a mártásos színezéssel csökkentve) |
 | Hűtőborda a Pi-n (HOKEZELES.md) | 400 Ft | 400 Ft |
 | Szerelés | ~1 óra ≈ 10 000 Ft (a 1,5 óra helyett: színezés, kevesebb modul, R1 sarok) | ~45 perc ≈ 7 500 Ft (kábelköteg, teszt-szkript) |
 | Házon belüli gépidő (SLS, CNC/lézer, FDM, SLA) | ~5 000–15 000 Ft *(gépóradíj nélkül nem pontosítható)* | benne a ház és mechanika sorban |
 | Csomagolás, garancia | – | ~3 100 Ft |
-| **Önköltség** | **~122 000–132 000 Ft ≈ 315–340 €** | **~64 000–66 000 Ft ≈ 165–170 €** |
+| **Önköltség** | **~125 000–135 000 Ft ≈ 320–345 €** | **~66 000–68 000 Ft ≈ 170–175 €** |
 
 **Haszon a 100 db-os szériánál** (a PIACI_TANULMANY.md ára: **299 € bruttó** ≈ 116 600 Ft, ebből nettó 235 € ≈ 91 700 Ft):
-- **Közvetlen eladás (saját webshop, céges ajándék):** kb. **25 000–27 000 Ft (65–70 €) haszon darabonként**, ~28–30% bruttó árrés → 100 db-on kb. **2,6 millió Ft**.
-- **Webáruházon át (−20%):** a gyártóhoz kb. 73 300 Ft jut → kb. **7 000–9 000 Ft (~20 €) / db**, ~10–12% → vékony, ebben a darabszámban nem éri meg.
+- **Közvetlen eladás (saját webshop, céges ajándék):** kb. **24 000–26 000 Ft (62–65 €) haszon darabonként**, ~27–28% bruttó árrés → 100 db-on kb. **2,5 millió Ft**.
+- **Webáruházon át (−20%):** a gyártóhoz kb. 73 300 Ft jut → kb. **5 000–7 000 Ft (~15 €) / db**, ~7–9% → vékony, ebben a darabszámban nem éri meg.
 - **CE/RED nincs benne (~8–15 e€, a kiberbiztonsági követelményekkel inkább a felső sáv).** 100 db-ra ráosztva ez darabonként 80–150 € lenne, és az egész hasznot elvinné. **Fontos javítás (2026-11-17):** az EU szabályai szerint a kereskedelmi tevékenység keretében *ingyen* átadott termék (céges ajándék) is „forgalmazásnak” számít, ezért ehhez is CE kell. CE nélkül csak a belső kipróbálásra szánt prototípus és a „nem kapható” jelöléssel kiállított darab mehet. A 100 db-os számítás így csak akkor áll meg, ha a CE költségét nagyobb darabszám (1000+) vagy magasabb ár viseli. Jogi ellenőrzés kell.
 
-**A prototípus** önköltsége (~125 000 Ft) nagyjából a piaci ár kétszerese, ezért eladásra nem alkalmas, csak bemutatásra és kipróbálásra. Ha mégis árazni kellene: 30%-os árréssel kb. **180 000 Ft nettó ≈ 230 000 Ft bruttó** lenne.
+**A prototípus** önköltsége (~130 000 Ft) nagyjából a piaci ár kétszerese, ezért eladásra nem alkalmas, csak bemutatásra és kipróbálásra. Ha mégis árazni kellene: 30%-os árréssel kb. **185 000 Ft nettó ≈ 235 000 Ft bruttó** lenne.
 
 ### 5.5 CE-állapot alkatrészenként (2026-11-17, webes keresés, [K])
 **A lényeg:** az alkatrészek CE-jelölése nem öröklődik a termékre. A kész C-kockát egészként kell vizsgálni (EMC, biztonság, rádió, kiberbiztonság), és erről a gyártó nyilatkozik. A beszállítói dokumentumok azért fontosak, mert csökkentik a vizsgálatot (főleg a rádiós részét), és kellenek a műszaki dokumentációhoz (RoHS, akku).
