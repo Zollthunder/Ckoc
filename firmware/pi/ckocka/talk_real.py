@@ -1,6 +1,6 @@
 """Valódi beszélgetés a Raspberry Pi Zero 2 W-n – minden HELYBEN fut, csak a felismert szöveg megy a Claude API-nak.
 
-  Mikrofon       : Voice Bonnet (ALSA) – `arecord`, 16 kHz, mono, 16 bit, 80 ms-os darabok
+  Mikrofon       : ReSpeaker 2-Mics Pi HAT (ALSA dsnoop) – `arecord`, 16 kHz, mono, 16 bit, 80 ms-os darabok
   Ébresztőszó    : openWakeWord (helyben, ONNX) – alapból „hey jarvis” (CKOCKA_WAKEWORD); saját „Hey C” modell
                    tanítható, és fájlútvonallal megadható
   Beszédfelism.  : faster-whisper, „tiny.en”, int8 (CKOCKA_WHISPER) – a Pi Zero 2 W-n egy rövid mondat ~2–4 s

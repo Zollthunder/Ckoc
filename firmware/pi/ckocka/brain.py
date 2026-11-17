@@ -190,7 +190,9 @@ class Cube:
     async def on_mcu(self, ev):
         kind = ev.get('ev')
         if kind == 'hello':
-            log.info('XIAO firmware %s', ev.get('fw'))
+            log.info('XIAO firmware %s (érintés: %s, rezgés: %s)', ev.get('fw'), ev.get('touch', '?'), ev.get('haptic', '?'))
+            if ev.get('touch') == 'digital':
+                log.warning('a XIAO nem talált 1 MΩ-os lehúzót a D10-en: digitális érintésbemenet (AT42QT1010 tartalék)')
             self.lights()
             if 'upside' in ev:                       # a Pi a XIAO után indult: így sem késik le a tájolást
                 await self.flip(bool(ev['upside']))
@@ -432,7 +434,7 @@ class Cube:
         self.broadcast_state()
 
     def set_mic(self, on):
-        """A Voice Bonnet mikrofonjainak némítása (ALSA kapcsoló a valódi hardveren)."""
+        """A ReSpeaker két mikrofonjának némítása (ALSA kapcsoló a valódi hardveren)."""
         mute = getattr(self.hw.audio, 'set_capture', None)
         if mute:
             mute(on)

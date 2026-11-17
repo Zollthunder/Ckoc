@@ -1,20 +1,27 @@
 # C-kocka – Seeed XIAO RP2040 firmware (CircuitPython 9.x)
 # A kocka „reflexei”: LED-gyűrű + C-szalag, 4 gomb, érintés, mozgásérzékelő (dobás / rázás / fordítás), rezgés.
+# Hardver a 2026-11-17-i költségoptimalizálás szerint: az érintést a XIAO maga érzékeli (touchio), a rezgés egy kész
+# rezgőmotor-modul PWM-mel hajtva (az AT42QT1010 és a DRV2605L kimaradt).
 # A Raspberry Pi-vel USB-n beszél (usb_cdc data port), soronként egy JSON – lásd firmware/pi/ckocka/protocol.py.
 #
 # Lábkiosztás (XIAO RP2040):
 #   D0  NeoPixel Ring 24 (alsó fénygyűrű)        D1  S-alakú WS2812 szalag a C mögött (7 LED)
 #   D2  gomb 1 – Andor (fa)   D3 gomb 2   D8 gomb 3   D9 gomb 4      (gomb a GND felé, belső felhúzás)
-#   D10 AT42QT1010 OUT (érintés, aktív magas)
-#   D4/D5  I2C (SDA/SCL) – Qwiic lánc: LSM6DS3TR-C (IMU) + DRV2605L (rezgés)
+#   D10 érintés: rézfólia-elektróda (az érintőbetét alatt) + 1 MΩ lehúzó ellenállás a GND felé (a gombok prototípus-lapján)
+#       – a touchio lehúzó ellenállás nélkül nem indul; ilyenkor digitális bemenetként olvassuk, így tartalékként
+#         egy AT42QT1010 (aktív magas kimenet) is visszadugható ugyanide, szoftvercsere nélkül
+#   D6  rezgőmotor-modul jelbemenete (IN/SIG), PWM 20 kHz; a modul VCC-je 3V3 (vagy 5V), GND közös
+#   D4/D5  I2C (SDA/SCL) – Qwiic: LSM6DS3TR-C (IMU)
 #
-# Szükséges könyvtárak (circup install): neopixel, adafruit_lsm6ds, adafruit_drv2605, adafruit_debouncer, adafruit_ticks
+# Szükséges könyvtárak (circup install): neopixel, adafruit_lsm6ds, adafruit_debouncer, adafruit_ticks
+# A CIRCUITPY meghajtóra: boot.py, code.py és reflex.py (az érintés- és rezgéslogika, PC-n tesztelve)
 # boot.py-ban: usb_cdc.enable(console=True, data=True)   – a „data” porton megy a JSON
 import json, math, time
 import board, digitalio, busio, neopixel, usb_cdc
 from adafruit_debouncer import Debouncer
+from reflex import TouchDetector, Buzzer, duty_u16
 
-FW = '1.0'
+FW = '1.1'
 RING_N, C_N = 24, 7
 
 ring = neopixel.NeoPixel(board.D0, RING_N, brightness=1.0, auto_write=False)
@@ -29,7 +36,23 @@ def pin_in(p, pull=digitalio.Pull.UP):
 
 
 buttons = [Debouncer(pin_in(p)) for p in (board.D2, board.D3, board.D8, board.D9)]
-touch = Debouncer(pin_in(board.D10, None))
+
+# érintés: touchio (1 MΩ lehúzóval); ha nem indul, digitális bemenet (AT42QT1010 tartalék)
+touch_pad, touch_dig, touch_det = None, None, TouchDetector()
+try:
+    import touchio
+    touch_pad = touchio.TouchIn(board.D10)
+except (ImportError, ValueError):                     # ValueError: nincs lehúzó ellenállás a lábon
+    touch_dig = Debouncer(pin_in(board.D10, None))
+TOUCH_KIND = 'touchio' if touch_pad else 'digital'
+
+# rezgés: kész rezgőmotor-modul (ERM + tranzisztor) PWM-mel
+try:
+    import pwmio
+    motor = pwmio.PWMOut(board.D6, frequency=20000, duty_cycle=0)   # 20 kHz: nem hallható sípolás
+except Exception:
+    motor = None
+buzzer = Buzzer()
 
 i2c = busio.I2C(board.D5, board.D4)
 try:
@@ -37,11 +60,6 @@ try:
     imu = LSM6DS3TRC(i2c)
 except Exception:
     imu = None
-try:
-    import adafruit_drv2605
-    haptic = adafruit_drv2605.DRV2605(i2c)
-except Exception:
-    haptic = None
 
 port = usb_cdc.data or usb_cdc.console
 
@@ -148,13 +166,21 @@ def read_port():
             L['hue'] = (L['hue'] + 47) % 360; L['flash'] = 1.0
         elif c == 'camled':
             L['camled'] = bool(m.get('on'))
-        elif c == 'haptic' and haptic:
-            haptic.sequence[0] = adafruit_drv2605.Effect(47 if m.get('pattern') == 'buzz' else 1)   # 47: buzz, 1: tick
-            haptic.play()
+        elif c == 'haptic' and motor:
+            buzzer.play(m.get('pattern', 'tick'), time.monotonic())     # 'buzz': Ne zavarj, 'tick': hallgat
+
+
+def read_touch(now):
+    """True, ha most kezdődött egy érintés."""
+    if touch_pad:
+        return touch_det.update(touch_pad.raw_value, now)
+    touch_dig.update()
+    return touch_dig.rose
 
 
 # ------------------------------------------------------------------ főciklus (~100 Hz)
-send({'ev': 'hello', 'fw': FW, 'imu': imu is not None, 'haptic': haptic is not None, 'upside': IMU['upside']})
+send({'ev': 'hello', 'fw': FW, 'imu': imu is not None, 'haptic': motor is not None, 'touch': TOUCH_KIND,
+      'upside': IMU['upside']})
 last_hello = time.monotonic()
 while True:
     now = time.monotonic()
@@ -162,11 +188,12 @@ while True:
         b.update()
         if b.fell:                                    # lenyomás (a gomb a GND felé húz)
             send({'ev': 'button', 'id': i + 1})
-    touch.update()
-    if touch.rose:
+    if read_touch(now):
         send({'ev': 'touch'})
     read_imu(now)
     read_port()
+    if motor:
+        motor.duty_cycle = duty_u16(buzzer.duty(now))
     draw_leds(now)
     if now - last_hello > 30:                         # életjel: ha a Pi újraindul, újra megkapja az állapotot (a tájolást is)
         send({'ev': 'hello', 'fw': FW, 'upside': IMU['upside']}); last_hello = now

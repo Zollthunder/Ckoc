@@ -1,7 +1,9 @@
 """Valódi hardver a Raspberry Pi Zero 2 W-n.
 
   Kijelző : GC9A01 1,28" kerek, 240×240, SPI0 (MOSI GPIO10, SCLK GPIO11, CE0 GPIO8), DC GPIO24, RST GPIO25, háttérfény GPIO23
-  Hang    : Adafruit Voice Bonnet (WM8960) – ALSA, lejátszás: aplay (dmix), dekódolás: mpg123; mikrofon-némítás: amixer
+  Hang    : Seeed ReSpeaker 2-Mics Pi HAT, 1 hangszóró (mono) – v1 (WM8960) és v2.0 (TLV320AIC3104) is; ALSA a kártya
+            nevével (seeed2micvoicec, firmware/pi/asound.conf), lejátszás: aplay (dmix), dekódolás: mpg123;
+            hangerő és mikrofon-némítás: amixer (a kodek szerint más vezérlőnevekkel)
   XIAO    : USB CDC soros port (/dev/ttyACM0), soronként egy JSON
   Kamera  : OV5647 (picamera2) + OpenCV Haar-kaszkád – csak helyben, kép nem hagyja el a kockát
 
@@ -66,12 +68,74 @@ class GC9A01(hal.Display):
 
 
 # --------------------------------------------------------------------------------------------- hang
-class AlsaAudio(hal.Audio):
-    """Beszéd: mpg123 dekódol nyers PCM-re, aplay játssza le; közben mérjük a hangerőt (a száj mozgásához)."""
+RESPEAKER_CARD = 'seeed2micvoicec'          # mindkét ReSpeaker 2-Mics változat ezzel a névvel jelenik meg (aplay -l)
 
-    def __init__(self, device='default', card='wm8960soundcard'):
+# A két kodek ALSA-vezérlői (a Linux wm8960 és tlv320aic3x meghajtójának nevei). Az első élesztésnél ellenőrizni:
+#   amixer -c seeed2micvoicec controls
+# Ha egy név nem létezik, csak figyelmeztetés megy a naplóba, a kocka attól még elindul.
+CODECS = {
+    'wm8960': {                              # v1 – a WM8960 saját D osztályú erősítője hajtja a JST hangszórókimenetet
+        'name': 'ReSpeaker 2-Mics v1 (WM8960)',
+        'capture': 'Capture Switch',
+        'init': [('Left Output Mixer PCM Playback Switch', 'on'), ('Right Output Mixer PCM Playback Switch', 'on'),
+                 ('Playback Volume', '90%'), ('Speaker Playback Volume', '85%'), ('Headphone Playback Volume', '70%'),
+                 ('Left Input Mixer Boost Switch', 'on'), ('Right Input Mixer Boost Switch', 'on'),
+                 ('Capture Volume', '70%'), ('Capture Switch', 'on')],
+    },
+    'tlv320aic3x': {                         # v2.0 – a TLV320AIC3104-nek nincs hangszóró-erősítője: a fejhallgató-
+        'name': 'ReSpeaker 2-Mics v2.0 (TLV320AIC3104)',   # kimenet megy a JST-re vagy egy kész mono erősítőmodulra
+        'capture': 'PGA Capture Switch',
+        'init': [('Left HP Mixer DACL1 Switch', 'on'), ('Right HP Mixer DACR1 Switch', 'on'),
+                 ('PCM Playback Volume', '90%'), ('HP DAC Playback Volume', '85%'), ('HP Playback Switch', 'on'),
+                 ('PGA Capture Volume', '60%'), ('PGA Capture Switch', 'on')],
+    },
+}
+
+
+def detect_codec(proc_dir='/proc/asound', card=RESPEAKER_CARD):
+    """Melyik ReSpeaker van fent? A kártya sorszáma a /proc/asound/cards-ból, a kodek a /proc/asound/pcm-ből
+    (pl. '02-00: 1f000a4000.i2s-tlv320aic3x-hifi tlv320aic3x-hifi-0 : ...'). Nincs ilyen kártya: None."""
+    import os, re
+    try:
+        with open(os.path.join(proc_dir, 'cards'), encoding='utf-8', errors='replace') as f:
+            cards = f.read()
+        with open(os.path.join(proc_dir, 'pcm'), encoding='utf-8', errors='replace') as f:
+            pcm = f.read()
+    except OSError:
+        return None
+    m = re.search(r'^\s*(\d+)\s+\[' + re.escape(card) + r'\s*\]', cards, re.M)
+    if not m:
+        return None
+    prefix = '%02d-' % int(m.group(1))
+    for line in pcm.splitlines():
+        if line.startswith(prefix):
+            for key in CODECS:
+                if key in line:
+                    return key
+    return None
+
+
+class AlsaAudio(hal.Audio):
+    """Beszéd: mpg123 dekódol nyers PCM-re, aplay játssza le; közben mérjük a hangerőt (a száj mozgásához).
+    A 'default' eszköz az /etc/asound.conf szerint a ReSpeaker, mono keveréssel (mindkét csatornán ugyanaz)."""
+
+    def __init__(self, device='default', card=RESPEAKER_CARD, proc_dir='/proc/asound'):
         self.device, self.card = device, card
         self._lvl, self._proc, self._music, self._lock, self._gen = 0.0, None, None, threading.Lock(), 0
+        self.codec = detect_codec(proc_dir, card)
+        if self.codec:
+            log.info('hangpanel: %s', CODECS[self.codec]['name'])
+            for name, value in CODECS[self.codec]['init']:
+                self._amixer(name, value)
+        else:
+            log.warning('a ReSpeaker hangkártya (%s) nem található – lásd firmware/README.md, „Hangpanel”', card)
+
+    def _amixer(self, name, value):
+        r = subprocess.run(['amixer', '-q', '-c', self.card, 'cset', 'name=' + name, value],
+                           check=False, capture_output=True, text=True)
+        if r.returncode != 0:
+            log.warning('amixer: %r = %s nem sikerült (%s)', name, value, (r.stderr or '').strip())
+        return r.returncode == 0
 
     @staticmethod
     def _decode(path):
@@ -149,8 +213,11 @@ class AlsaAudio(hal.Audio):
         threading.Thread(target=run, daemon=True).start()
 
     def set_capture(self, on):
-        """A két mikrofon ki/be (fejjel lefelé: adatvédelem)."""
-        subprocess.run(['amixer', '-q', '-c', self.card, 'sset', 'Capture', 'cap' if on else 'nocap'], check=False)
+        """A két mikrofon ki/be a kodekben (fejjel lefelé: adatvédelem). Ettől függetlenül a beszélgetés is eldobja
+        a hangot (talk.Ears.enable), így ha a kodek vezérlője nem állítható, a mikrofon akkor sem „hallgat”."""
+        if not self.codec:
+            return False
+        return self._amixer(CODECS[self.codec]['capture'], 'on' if on else 'off')
 
 
 # --------------------------------------------------------------------------------------------- XIAO

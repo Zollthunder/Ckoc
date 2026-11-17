@@ -5,7 +5,8 @@ Három irány:
   Pi   -> app  : események   {"type": "event.throw", "data": {"count": 3}}          (WebSocket, JSON)
   XIAO <-> Pi  : soronként egy JSON (USB CDC soros port, 115200)
        XIAO -> Pi : {"ev": "button", "id": 1} | {"ev": "touch"} | {"ev": "imu", "kind": "throw"|"shake"|"flip", "up": true}
-                    {"ev": "hello", "fw": "1.0"} | {"ev": "battery", ...}
+                    {"ev": "hello", "fw": "1.1", "imu": true, "haptic": true, "touch": "touchio"|"digital", "upside": false}
+                    {"ev": "battery", ...}
        Pi -> XIAO : {"cmd": "leds", "hue": 28, "bright": 0.8, "mode": "solid"|"dim"|"party"|"off"|"listen"|"think"}
                     {"cmd": "beat"}  (party: egy ütem – a XIAO színt vált és felvillan)
                     {"cmd": "haptic", "pattern": "buzz"|"tick"}

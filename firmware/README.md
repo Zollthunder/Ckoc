@@ -17,15 +17,15 @@
 │ synth.py   hangeffektek és party-zene kódból                                        │
 │ talk.py    beszélgetés: ébresztőszó/érintés → Whisper → Claude → Piper (+claude.py)│
 │ api.py     WebSocket az apphoz (opcionális párosító kód)                           │
-│ hal.py     hardver-absztrakció ─┬─ hw_real.py: GC9A01 (SPI), Voice Bonnet (ALSA),  │
+│ hal.py     hardver-absztrakció ─┬─ hw_real.py: GC9A01 (SPI), ReSpeaker (ALSA, mono),│
 │                                 │              OV5647 + OpenCV (helyben), XIAO (USB)│
 │                                 └─ hw_sim.py:  PC – PNG-képek, napló               │
 │            (beszélgetés ugyanígy: talk_real.py a Pi-n, talk_sim.py PC-n/tesztben)  │
 └──────────────────────────────────────┬──────────────────────────────────────────────┘
                                        │ USB, soronként egy JSON
 ┌────────────── Seeed XIAO RP2040  (CircuitPython, firmware/xiao/code.py) ───────────┐
-│ NeoPixel Ring 24 + C-szalag · 4 gomb · AT42QT1010 érintés · LSM6DS3 IMU (dobás,     │
-│ rázás, fordítás felismerése) · DRV2605L rezgés · kamera-jelzőfény                   │
+│ NeoPixel Ring 24 + C-szalag · 4 gomb · érintés (touchio) · LSM6DS3 IMU (dobás,      │
+│ rázás, fordítás felismerése) · rezgőmotor (PWM) · kamera-jelzőfény                  │
 └─────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -68,7 +68,7 @@ python -m ckocka --sim              # majd: ask What should I do this afternoon?
 
 ```
  „Hey Jarvis” (openWakeWord)  ─┐                                        ┌─ arc: hallgat → gondolkodik → beszél
- vagy érintés (AT42QT1010)    ─┴→ felvétel a csend végéig → faster-whisper ─→ Claude API ─→ Piper → hangszóró
+ vagy érintés (XIAO touchio)  ─┴→ felvétel a csend végéig → faster-whisper ─→ Claude API ─→ Piper → hangszóró
                                   (arecord, 16 kHz)          (tiny.en, helyben)  (felhő)    (helyben)
 ```
 
@@ -101,26 +101,52 @@ Saját „Hey C” ébresztőszó az openWakeWord tanító jegyzetfüzetével k�
 ## Telepítés a Raspberry Pi-re
 
 1. Raspberry Pi OS (Bookworm, 64 bit) a microSD-re; SPI és kamera engedélyezése (`raspi-config`).
-2. Voice Bonnet meghajtó (Adafruit leírása szerint), hangszórók a két kimenetre.
-3. A repó gyökeréből: `sudo sh firmware/pi/install.sh` – telepít (a beszélgetéshez: venv `anthropic`, `faster-whisper`,
-   `openwakeword` csomagokkal, a Piper programja és egy angol hang), és szolgáltatásként elindítja (`journalctl -u ckocka -f`).
+2. A ReSpeaker 2-Mics Pi HAT a Pi tüskesorára, a hangszóró (1 db, mono) a JST hangszórókimenetre (lásd „Hangpanel”).
+3. A repó gyökeréből: `sudo sh firmware/pi/install.sh` – telepít (a hangpanel meghajtóját is; a beszélgetéshez: venv
+   `anthropic`, `faster-whisper`, `openwakeword` csomagokkal, a Piper programja és egy angol hang), és szolgáltatásként
+   elindítja (`journalctl -u ckocka -f`). Ha a hangpanel meghajtója most került fel: `sudo reboot`.
 4. Beszélgetéshez a kulcs: `sudo nano /etc/ckocka.env` → `ANTHROPIC_API_KEY=...`, majd `sudo systemctl restart ckocka`.
-5. XIAO: CircuitPython 9.x, majd `circup install neopixel adafruit_lsm6ds adafruit_drv2605 adafruit_debouncer adafruit_ticks`,
-   és a `firmware/xiao/boot.py` + `code.py` a CIRCUITPY meghajtóra.
+5. XIAO: CircuitPython 9.x, majd `circup install neopixel adafruit_lsm6ds adafruit_debouncer adafruit_ticks`,
+   és a `firmware/xiao/boot.py` + `code.py` + `reflex.py` a CIRCUITPY meghajtóra.
+
+## Hangpanel: Seeed ReSpeaker 2-Mics Pi HAT
+
+Két változata van, a szoftver **mindkettőt** kezeli (a kodeket a `/proc/asound`-ból ismeri fel, és ahhoz állítja a keverőt):
+
+| | v1 | v2.0 (ma ez kapható) |
+|---|---|---|
+| Kodek | WM8960 | TLV320AIC3104 |
+| Felismerés | – | „v2.0” felirat a gomb mellett; I2C-cím 0x18 (v1: 0x1a) |
+| Meghajtó (install.sh) | `dtoverlay=respeaker-2mic-v1_0` | `dtoverlay=respeaker-2mic-v2_0` |
+| Hangszóró | JST, a WM8960 saját erősítőjéről | a kodeknek nincs hangszóró-erősítője: ha a lapon nincs JST-kimenet, egy kész mono erősítőmodul kell a 3,5 mm-es aljzatra (**rendelés előtt ellenőrizni**) |
+
+- **Meghajtó:** az `install.sh` a Seeed `seeed-linux-dtoverlays` repójából fordítja le az eszközfa-overlay-t, és beírja a
+  `config.txt`-be. A változatot magától felismeri; ha nem sikerül, a v2.0-t teszi fel, kézzel: `sudo RESPEAKER=v1 sh firmware/pi/install.sh`.
+  (A régi `seeed-voicecard` DKMS-meghajtó a mai kernelekkel már nem működik.)
+- **ALSA** ([firmware/pi/asound.conf](pi/asound.conf) → `/etc/asound.conf`): a kártyát a nevéről keresi (`seeed2micvoicec`,
+  a sorszáma változhat), a lejátszás dmix (beszéd + hanghatás + zene egyszerre), a felvétel dsnoop. **Mono:** minden hang
+  (L+R)/2 keverékként mindkét csatornára megy, így mindegy, hogy a hangszóró melyik csatornán van.
+- **Keverő és mikrofon-némítás:** `hw_real.CODECS` – a Linux-meghajtók vezérlőnevei (v1: `Capture Switch`, v2.0:
+  `PGA Capture Switch`). Valódi panelen még nem futott: az első élesztésnél `amixer -c seeed2micvoicec controls`, és ha
+  egy név más, ott kell javítani. Ha egy vezérlő nem állítható, a kocka elindul, csak figyelmeztet a naplóban; fejjel
+  lefelé a beszélgetés ettől függetlenül is eldobja a mikrofon hangját.
+- **Próba:** `aplay -l` (látszik-e a `seeed2micvoicec`), `speaker-test -c 2 -t wav`, `arecord -d 3 -f S16_LE -r 16000 -c 1 proba.wav && aplay proba.wav`.
 
 ## Bekötés
 
 | Eszköz | Hova | Megjegyzés |
 |---|---|---|
-| GC9A01 kijelző | Pi SPI0: MOSI GPIO10, SCLK GPIO11, CS GPIO8 (CE0), DC GPIO24, RST GPIO25, háttérfény GPIO23 | A Voice Bonnet 3 DotStar LED-je is az SPI0-n van – belül nem látszanak, de villoghatnak; ha zavar, le kell választani |
-| Voice Bonnet | a Pi tüskesorára | I2S: GPIO18–21, I2C: GPIO2/3 |
+| GC9A01 kijelző | Pi SPI0: MOSI GPIO10, SCLK GPIO11, CS GPIO8 (CE0), DC GPIO24, RST GPIO25, háttérfény GPIO23 | A ReSpeaker 3 APA102 LED-je is SPI-n van (a lábakat a Seeed leírása nem adja meg) – belül nem látszanak, de villoghatnak; az első élesztésnél ellenőrizni |
+| ReSpeaker 2-Mics Pi HAT | a Pi tüskesorára | I2S: GPIO18–21, I2C: GPIO2/3 (kodek: v2.0 0x18, v1 0x1a); a lap gombja (GPIO17) és Grove-csatlakozói nincsenek használva |
+| Hangszóró (1 db, 8 Ω) | ReSpeaker JST hangszórókimenet (v2.0-n, ha nincs: mono erősítőmodul a 3,5 mm-es aljzatról) | mono |
 | Kamera | Pi kamera-csatlakozó (22 pólusú) | OV5647 „spy” kamera |
 | XIAO RP2040 | Pi USB (OTG adapter) | táp is innen |
 | NeoPixel Ring 24 | XIAO D0 | 5 V a UPS panelről, közös GND |
 | C LED-szalag (7 LED) | XIAO D1 | |
 | 4 gomb | XIAO D2, D3, D8, D9 → GND | belső felhúzó ellenállás |
-| AT42QT1010 | XIAO D10 | aktív magas |
-| LSM6DS3TR-C + DRV2605L | XIAO D4 (SDA), D5 (SCL) – Qwiic lánc | |
+| Érintés: rézfólia-elektróda az érintőbetét alatt | XIAO D10 + **1 MΩ lehúzó ellenállás D10 → GND** (a gombok prototípus-lapján) | `touchio`; induláskor kalibrál (akkor ne érjen hozzá senki), utána lassan követi a hő- és páraváltozást. Lehúzó nélkül a XIAO digitális bemenetre vált: így tartalékként egy AT42QT1010 (aktív magas) visszadugható ide szoftvercsere nélkül |
+| Rezgőmotor-modul (ERM + tranzisztor, 3 tűs) | XIAO D6 (jel, PWM 20 kHz), VCC 3V3 (vagy 5 V), GND | `tick` (hallgat) és `buzz` (Ne zavarj) minta, rövid teljes erejű indítással |
+| LSM6DS3TR-C | XIAO D4 (SDA), D5 (SCL) – Qwiic | |
 
 ## Mi nincs benne (még)
 
