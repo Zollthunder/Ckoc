@@ -82,11 +82,18 @@ CODECS = {
                  ('Left Input Mixer Boost Switch', 'on'), ('Right Input Mixer Boost Switch', 'on'),
                  ('Capture Volume', '70%'), ('Capture Switch', 'on')],
     },
-    'tlv320aic3x': {                         # v2.0 – a TLV320AIC3104-nek nincs hangszóró-erősítője: a fejhallgató-
-        'name': 'ReSpeaker 2-Mics v2.0 (TLV320AIC3104)',   # kimenet megy a JST-re vagy egy kész mono erősítőmodulra
+    # v2.0 (kapcsolási rajz, 2024-11-15): a JST hangszórókimenetet (J2) egy TPA2005D1 mono D osztályú erősítő hajtja,
+    # bemenete a kodek két VONALKIMENETÉNEK különbségi összege (IN+ = LEFT_LOP + RIGHT_LOP, IN- = LEFT_LOM + RIGHT_LOM),
+    # tehát (L+R) szól. Az erősítő ~SHUTDOWN lába (AMP_CTL) 10 kΩ-mal AVDD_3V3-ra húzva: mindig bekapcsolt, GPIO nem kell
+    # (a fejhallgató-dugóra némító Q1 tranzisztor nincs beültetve). A HPLOUT/HPROUT csak a 3,5 mm-es aljzatra megy.
+    'tlv320aic3x': {
+        'name': 'ReSpeaker 2-Mics v2.0 (TLV320AIC3104)',
         'capture': 'PGA Capture Switch',
-        'init': [('Left HP Mixer DACL1 Switch', 'on'), ('Right HP Mixer DACR1 Switch', 'on'),
-                 ('PCM Playback Volume', '90%'), ('HP DAC Playback Volume', '85%'), ('HP Playback Switch', 'on'),
+        'init': [('Left Line Mixer DACL1 Switch', 'on'), ('Right Line Mixer DACR1 Switch', 'on'),   # hangszóró
+                 ('Line DAC Playback Volume', '85%'), ('Line Playback Switch', 'on'),
+                 ('Left HP Mixer DACL1 Switch', 'on'), ('Right HP Mixer DACR1 Switch', 'on'),       # 3,5 mm-es aljzat
+                 ('HP DAC Playback Volume', '70%'), ('HP Playback Switch', 'on'),
+                 ('PCM Playback Volume', '90%'),
                  ('PGA Capture Volume', '60%'), ('PGA Capture Switch', 'on')],
     },
 }

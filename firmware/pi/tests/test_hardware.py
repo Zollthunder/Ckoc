@@ -316,7 +316,11 @@ class ReSpeakerTest(unittest.TestCase):
         self.assertTrue(all(c[:5] == ['amixer', '-q', '-c', 'seeed2micvoicec', 'cset'] for c in amixer.calls))
         s = amixer.settings()
         self.assertEqual((s['HP Playback Switch'], s['PGA Capture Switch']), ('on', 'on'))
-        self.assertEqual((s['Left HP Mixer DACL1 Switch'], s['Right HP Mixer DACR1 Switch']), ('on', 'on'))   # mono: mindkét csatorna
+        # a hangszóró erősítője a két VONALKIMENET összegét kapja (v2.0 rajz): mindkét vonalkeverő be, a hangerő nem 0
+        self.assertEqual((s['Left Line Mixer DACL1 Switch'], s['Right Line Mixer DACR1 Switch'], s['Line Playback Switch']),
+                         ('on', 'on', 'on'))
+        self.assertNotEqual(s['Line DAC Playback Volume'], '0%')
+        self.assertEqual((s['Left HP Mixer DACL1 Switch'], s['Right HP Mixer DACR1 Switch']), ('on', 'on'))   # 3,5 mm-es aljzat
         amixer.calls.clear()
         with mock.patch.object(hw_real.subprocess, 'run', amixer):
             self.assertTrue(audio.set_capture(False))          # fejjel lefelé

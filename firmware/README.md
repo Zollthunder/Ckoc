@@ -118,7 +118,7 @@ Két változata van, a szoftver **mindkettőt** kezeli (a kodeket a `/proc/asoun
 | Kodek | WM8960 | TLV320AIC3104 |
 | Felismerés | – | „v2.0” felirat a gomb mellett; I2C-cím 0x18 (v1: 0x1a) |
 | Meghajtó (install.sh) | `dtoverlay=respeaker-2mic-v1_0` | `dtoverlay=respeaker-2mic-v2_0` |
-| Hangszóró | JST, a WM8960 saját erősítőjéről | a kodeknek nincs hangszóró-erősítője: ha a lapon nincs JST-kimenet, egy kész mono erősítőmodul kell a 3,5 mm-es aljzatra (**rendelés előtt ellenőrizni**) |
+| Hangszóró | JST, a WM8960 saját erősítőjéről | 2 tűs, 2,0 mm-es JST (J2), **TPA2005D1** mono D osztályú erősítő; bemenete a kodek két vonalkimenetének összege (L+R), ezért a szoftver a *Line* keverőket kapcsolja be. Az erősítő mindig be van kapcsolva (~SHUTDOWN 10 kΩ-mal 3,3 V-ra húzva), GPIO nem kell hozzá. Forrás: a v2.0 kapcsolási rajza (2024-11-15) |
 
 - **Meghajtó:** az `install.sh` a Seeed `seeed-linux-dtoverlays` repójából fordítja le az eszközfa-overlay-t, és beírja a
   `config.txt`-be. A változatot magától felismeri; ha nem sikerül, a v2.0-t teszi fel, kézzel: `sudo RESPEAKER=v1 sh firmware/pi/install.sh`.
@@ -138,7 +138,7 @@ Két változata van, a szoftver **mindkettőt** kezeli (a kodeket a `/proc/asoun
 |---|---|---|
 | GC9A01 kijelző | Pi SPI0: MOSI GPIO10, SCLK GPIO11, CS GPIO8 (CE0), DC GPIO24, RST GPIO25, háttérfény GPIO23 | A ReSpeaker 3 APA102 LED-je is SPI-n van (a lábakat a Seeed leírása nem adja meg) – belül nem látszanak, de villoghatnak; az első élesztésnél ellenőrizni |
 | ReSpeaker 2-Mics Pi HAT | a Pi tüskesorára | I2S: GPIO18–21, I2C: GPIO2/3 (kodek: v2.0 0x18, v1 0x1a); a lap gombja (GPIO17) és Grove-csatlakozói nincsenek használva |
-| Hangszóró (1 db, 8 Ω) | ReSpeaker JST hangszórókimenet (v2.0-n, ha nincs: mono erősítőmodul a 3,5 mm-es aljzatról) | mono |
+| Hangszóró (1 db, 8 Ω) | ReSpeaker JST hangszórókimenet (v2.0: J2, 2 tűs, 2,0 mm) | mono; a 3,5 mm-es aljzat külön, a hangszóró attól nem némul el |
 | Kamera | Pi kamera-csatlakozó (22 pólusú) | OV5647 „spy” kamera |
 | XIAO RP2040 | Pi USB (OTG adapter) | táp is innen |
 | NeoPixel Ring 24 | XIAO D0 | 5 V a UPS panelről, közös GND |
