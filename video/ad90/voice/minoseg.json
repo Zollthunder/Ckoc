@@ -1,0 +1,418 @@
+{
+ "A01": {
+  "text": "Hey, you! Yeah, you!",
+  "chosen": "A01_0.wav",
+  "score": 1.0,
+  "heard": "Hey you, yeah you.",
+  "candidates": [
+   {
+    "file": "A01_0.wav",
+    "score": 1.0,
+    "heard": "Hey you, yeah you.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A01_1.wav",
+    "score": 1.0,
+    "heard": "Hey, you, yeah, you.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A01_2.wav",
+    "score": 1.0,
+    "heard": "Hey, you! Yeah, you!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A01_3.wav",
+    "score": 1.0,
+    "heard": "Hey, you! Yeah, you!",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "A02": {
+  "text": "Is your desk totally boring?",
+  "chosen": "A02_0.wav",
+  "score": 1.0,
+  "heard": "Is your desk totally boring?",
+  "candidates": [
+   {
+    "file": "A02_0.wav",
+    "score": 1.0,
+    "heard": "Is your desk totally boring?",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A02_1.wav",
+    "score": 1.0,
+    "heard": "Is your desk totally boring?",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A02_2.wav",
+    "score": 1.0,
+    "heard": "Is your desk totally boring?",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A02_3.wav",
+    "score": 1.0,
+    "heard": "Is your desk totally boring?",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "A03": {
+  "text": "Then get ready for the C-Cube!",
+  "chosen": "A03_2.wav",
+  "score": 1.0,
+  "heard": "Then get ready for the C -Cube.",
+  "candidates": [
+   {
+    "file": "A03_0.wav",
+    "score": 0.889,
+    "heard": "Then get ready for the CQ.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A03_1.wav",
+    "score": 0.889,
+    "heard": "Then get ready for the CQ.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A03_2.wav",
+    "score": 1.0,
+    "heard": "Then get ready for the C -Cube.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A03_3.wav",
+    "score": 1.0,
+    "heard": "Then get ready for the C -Cube.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "A04": {
+  "text": "It talks!",
+  "chosen": "A04_0.wav",
+  "score": 1.0,
+  "heard": "It talks.",
+  "candidates": [
+   {
+    "file": "A04_0.wav",
+    "score": 1.0,
+    "heard": "It talks.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A04_1.wav",
+    "score": 1.0,
+    "heard": "It talks.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A04_2.wav",
+    "score": 1.0,
+    "heard": "It talks.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A04_3.wav",
+    "score": 1.0,
+    "heard": "It talks.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "A05": {
+  "text": "It glows in a gazillion colors!",
+  "chosen": "A05_0.wav",
+  "score": 1.0,
+  "heard": "It glows in a gazillion colors.",
+  "candidates": [
+   {
+    "file": "A05_0.wav",
+    "score": 1.0,
+    "heard": "It glows in a gazillion colors.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A05_1.wav",
+    "score": 1.0,
+    "heard": "It glows in a gazillion colors.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A05_2.wav",
+    "score": 1.0,
+    "heard": "It glows in a gazillion colors.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A05_3.wav",
+    "score": 1.0,
+    "heard": "It glows in a gazillion colors.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "A06": {
+  "text": "Toss it! Drop it! Bounce it!",
+  "chosen": "A06_0.wav",
+  "score": 1.0,
+  "heard": "Toss it, drop it, bounce it.",
+  "candidates": [
+   {
+    "file": "A06_0.wav",
+    "score": 1.0,
+    "heard": "Toss it, drop it, bounce it.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A06_1.wav",
+    "score": 1.0,
+    "heard": "Toss it, drop it, bounce it.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A06_2.wav",
+    "score": 1.0,
+    "heard": "Toss it, drop it, bounce it.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A06_3.wav",
+    "score": 1.0,
+    "heard": "Toss it, drop it, bounce it.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "A07": {
+  "text": "Press the wooden button for dad jokes!",
+  "chosen": "A07_0.wav",
+  "score": 1.0,
+  "heard": "Press the wooden button for dad jokes.",
+  "candidates": [
+   {
+    "file": "A07_0.wav",
+    "score": 1.0,
+    "heard": "Press the wooden button for dad jokes.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A07_1.wav",
+    "score": 1.0,
+    "heard": "Press the wooden button for dad jokes.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A07_2.wav",
+    "score": 1.0,
+    "heard": "Press the wooden button for dad jokes.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A07_3.wav",
+    "score": 1.0,
+    "heard": "Press the wooden button for dad jokes.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "A08": {
+  "text": "Need some privacy? Just flip it over!",
+  "chosen": "A08_0.wav",
+  "score": 1.0,
+  "heard": "Need some privacy? Just flip it over.",
+  "candidates": [
+   {
+    "file": "A08_0.wav",
+    "score": 1.0,
+    "heard": "Need some privacy? Just flip it over.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A08_1.wav",
+    "score": 1.0,
+    "heard": "Need some privacy? Just flip it over.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A08_2.wav",
+    "score": 1.0,
+    "heard": "Need some privacy? Just flip it over.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A08_3.wav",
+    "score": 1.0,
+    "heard": "Need some privacy? Just flip it over.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "A09": {
+  "text": "Four radical personalities!",
+  "chosen": "A09_0.wav",
+  "score": 1.0,
+  "heard": "Four Radical Personalities",
+  "candidates": [
+   {
+    "file": "A09_0.wav",
+    "score": 1.0,
+    "heard": "Four Radical Personalities",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A09_1.wav",
+    "score": 1.0,
+    "heard": "Four Radical Personalities",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A09_2.wav",
+    "score": 0.598,
+    "heard": "4. Radical Personalities",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A09_3.wav",
+    "score": 1.0,
+    "heard": "Four Radical Personalities",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "A10": {
+  "text": "It's totally cube-tastic!",
+  "chosen": "A10_2.wav",
+  "score": 1.0,
+  "heard": "It's totally cube -tastic.",
+  "candidates": [
+   {
+    "file": "A10_0.wav",
+    "score": 0.979,
+    "heard": "It's totally cubetastic.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A10_1.wav",
+    "score": 0.979,
+    "heard": "It's totally cubetastic.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A10_2.wav",
+    "score": 1.0,
+    "heard": "It's totally cube -tastic.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A10_3.wav",
+    "score": 0.979,
+    "heard": "It's totally cubetastic.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "A11": {
+  "text": "Call now! Operators are standing by!",
+  "chosen": "A11_0.wav",
+  "score": 1.0,
+  "heard": "Call now. Operators are standing by.",
+  "candidates": [
+   {
+    "file": "A11_0.wav",
+    "score": 1.0,
+    "heard": "Call now. Operators are standing by.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A11_1.wav",
+    "score": 1.0,
+    "heard": "Call now. Operators are standing by.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A11_2.wav",
+    "score": 1.0,
+    "heard": "Call now, operators are standing by.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A11_3.wav",
+    "score": 1.0,
+    "heard": "Call now. Operators are standing by.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "A12": {
+  "text": "C-Cube! Available wherever cool stuff is sold!",
+  "chosen": "A12_0.wav",
+  "score": 1.0,
+  "heard": "C -Cube. Available wherever cool stuff is sold.",
+  "candidates": [
+   {
+    "file": "A12_0.wav",
+    "score": 1.0,
+    "heard": "C -Cube. Available wherever cool stuff is sold.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A12_1.wav",
+    "score": 1.0,
+    "heard": "C -Cube. Available wherever cool stuff is sold.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A12_2.wav",
+    "score": 1.0,
+    "heard": "C -Cube. Available wherever cool stuff is sold.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A12_3.wav",
+    "score": 1.0,
+    "heard": "C -Cube, available wherever cool stuff is sold.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "A13": {
+  "text": "Concept product. Not actually for sale. Cube may become sarcastic. Batteries sold separately.",
+  "chosen": "A13_0.wav",
+  "score": 1.0,
+  "heard": "Concept product. Not actually for sale. Cube may become sarcastic. Batteries sold separately.",
+  "candidates": [
+   {
+    "file": "A13_0.wav",
+    "score": 1.0,
+    "heard": "Concept product. Not actually for sale. Cube may become sarcastic. Batteries sold separately.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A13_1.wav",
+    "score": 1.0,
+    "heard": "Concept product. Not actually for sale. Cube may become sarcastic. Batteries sold separately.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A13_2.wav",
+    "score": 0.977,
+    "heard": "concept product not actually for sale cube may become sarcastic battery sold separately",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "A13_3.wav",
+    "score": 1.0,
+    "heard": "Concept product, not actually for sale. Cube may become sarcastic. Batteries sold separately.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ }
+}

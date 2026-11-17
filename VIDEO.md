@@ -149,3 +149,36 @@ Gyors vágások, mindegyik kb. 2 másodperc. Ugyanaz a kocka, de minden vágásn
 4. **Hangok:** a kocka angol mondatai Zira, a narráció és a favicc Szabolcs hangján szólnak (Windows beépített gépi hangjai).
 5. **Vágás:** a képek, a hangok, a zene és a feliratok összerakása kóddal (ffmpeg).
 6. A kész videó a weboldalra kerül.
+
+---
+
+## Bónusz: „90-es évekbeli amerikai tévéreklám” (42 mp) – `video/c-cube_90s.mp4`
+Hangos, túlpörgetett, „minden menő” reklám a 90-es évek stílusában, angol bemondóval. 13 vágás, mind 120 BPM-es ütemre.
+
+| Idő | Kép | Hang |
+|---|---|---|
+| 0:00 | „hangyás” tévékép, a videómagnó kijelzője: `PLAY ▶` | tévé bekapcsol |
+| 0:00.5 | a kocka berobban: **HEY YOU! / YEAH, YOU!** | *"Hey, you! Yeah, you!"* |
+| 0:02.5 | szürke, színtelen iroda, kikapcsolt kocka: **IS YOUR DESK… BORING?** | liftzene, szalagmegállás |
+| 0:05 | scratch → robbanás, a kocka pörögve leesik, **NEW!** · **THE C-CUBE!** | *"Then get ready for the C-Cube!"* |
+| 0:07.5 | **IT TALKS!** | 🤖 *"Let's gooooo!"* |
+| 0:10.5 | szivárványos fények: **IT GLOWS! · RADICAL!** | *"It glows in a gazillion colors!"* |
+| 0:13 | három ütemre: **TOSS IT! · DROP IT! · BOUNCE IT! · EXTREME!** | |
+| 0:16 | ujj megnyomja a fa „Andor”-gombot: **REAL WOOD BUTTON!** | *"Press the wooden button for dad jokes!"* → 🤖 *"What do you call a fake noodle?" – "An impasta!"* · ba-dum-tss |
+| 0:23 | neonrács, a kocka megfordul: **NEED PRIVACY? · FLIP IT! · BAM!** | |
+| 0:25.5 | négy személyiség ütemre: **SUNNY · CHILL · HYPE · SARCASTIC** | *"Four radical personalities!"* |
+| 0:27.5 | **TOTALLY CUBE-TASTIC!** | |
+| 0:29.5 | **CALL NOW!** · `1-800-555-CUBE` · **OPERATORS ARE STANDING BY!** | telefoncsörgés |
+| 0:32.5 | záróképernyő: **C-CUBE – AVAILABLE WHEREVER COOL STUFF IS SOLD!\*** | rezes fanfár |
+| 0:37–0:42 | kacsintó apróbetű: *„Concept product. Not actually for sale… (Koncepciótermék, nem kerül forgalomba.)”* | a bemondó hadarva felolvassa |
+
+**Képi világ:** neon színek, Memphis-stílusú geometrikus alakzatok (háromszög, karika, cikcakk, hullám, pöttyök), napsugaras / sakktáblás / cikcakkos / neonrácsos hátterek, krómos és arany „kihúzott” betűk, csillag-címkék. Az egész képre VHS-utómunka kerül: kisebb felbontás, színcsúszás (a vörös és a kék csatorna eltolva), szkenvonalak, sávzaj, vágásoknál „tracking”-rángás, és a videómagnó kijelzője (PLAY, SP, `NOV.17 1996`, futó óra és számláló). Az apróbetűs szöveget a VHS-hatás után rajzolja a program, hogy olvasható maradjon. A telefonszám 555-ös, vagyis kitalált.
+
+**Hogyan készült** (mint a japán reklám, ugyanazzal a 3D-modellel és jelenetmotorral):
+- `video/ad90/lines_ad90.json` – a bemondó 13 angol mondata (mondatonként tempóval); `video/ad90/timeline_ad90.json` – vágások, hangok, hanghatások, zenei részek.
+- **Bemondó:** XTTS-v2, „Craig Gutsy” stúdióhang (licencelt hang, nem klónozott valódi személy; CPML – nem kereskedelmi). `tools/ad90_voice_generate.py` mondatonként 4 jelöltet készít, a `video-narration` skill `pick_best.py`-ja Whisperrel választ (mind a 13 mondat 1,00 egyezés, `video/ad90/voice/minoseg.json`). Az apróbetűs mondat 1,3× gyorsítva szól.
+- **Zene és hanghatások:** `tools/ad90_audio.js` – minden kódból szintetizálva: swingelő dob és vastag pergő, slap-basszus, „zenekari ütés”, szinti-rezes dallam, liftzene-orgona, scratch, lézer, szalagmegállás, robbanás, telefoncsörgés, ba-dum-tss. Nincs külső zene vagy hangminta. A zene a beszéd alatt lehalkul.
+- **Kép:** `video/ad90/scene_ad90_part.js` (forgatókönyv, hátterek, feliratok, VHS) + `tools/build_ad90_scene.js` → `video/scene_ad90.html` / `scene_ad90.js` (a fő videó `scene.js`-éből generálva).
+- **Felvétel:** `node tools/render_video.js full --page scene_ad90.html --audio video/ad90/audio_mix_ad90.wav --out video/c-cube_90s.mp4`.
+
+Újragenerálás sorrendje: `ad90_voice_generate.py` → `pick_best.py` → `node tools/ad90_audio.js` → `node tools/build_ad90_scene.js` → `render_video.js`.

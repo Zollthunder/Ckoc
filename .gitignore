@@ -36,3 +36,7 @@ video/voice/durations_freetts.json
 # japán reklám: újragenerálható köztes fájlok
 video/jp/audio_mix_jp.wav
 video/jp/voice/cube_*.wav
+
+# 90-es reklám: újragenerálható köztes fájlok
+video/ad90/audio_mix_ad90.wav
+video/ad90/voice48/
