@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>C-kocka – kutatások</title>
+<meta name="description" content="A C-kocka mögötti kutatások: piaci előtanulmány, költségbecslés és -optimalizálás, hőkezelés, hardverkompatibilitás, tanúsítás.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='6' width='52' height='52' rx='12' fill='%2330333a'/%3E%3Cpath d='M44 22a14 14 0 1 0 0 20' fill='none' stroke='%23ff9a3c' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="web/site.css">
+</head>
+<body>
+
+<header class="nav">
+  <a class="brand" href="index.html"><span class="brand-c">C</span>-kocka</a>
+  <nav id="nav">
+    <a href="index.html#video">Videó</a>
+    <a href="index.html#funkciok">Funkciók</a>
+    <a href="sim.html">Szimulátor</a>
+    <a href="kutatasok.html" aria-current="page">Kutatások</a>
+    <a href="index.html#letoltes">Letöltés</a>
+  </nav>
+</header>
+
+<main>
+  <section class="section research-head">
+    <p class="eyebrow">Kutatások</p>
+    <h1>Ami a kocka mögött van</h1>
+    <p class="section-lead">A tervezés közben Claude-dal végigszámoltuk, megérné-e, mennyibe kerülne, nem melegszik-e túl, összeillenek-e az alkatrészek, és mi kellene a forgalmazáshoz. Ezek gyakorló anyagok az AI-kihíváshoz: becslések, nem üzleti terv és nem jogi tanács.</p>
+  </section>
+
+  <section class="section research-grid-wrap">
+    <div class="research-grid" id="cards"></div>
+  </section>
+
+  <section class="section reader-wrap" id="olvaso" hidden>
+    <div class="reader-bar">
+      <a class="btn small" href="#" id="back">↑ Vissza a kutatásokhoz</a>
+      <a class="btn small" id="src" target="_blank" rel="noopener">Forrás a GitHubon ↗</a>
+    </div>
+    <p class="reader-note muted" id="note" hidden>This document is in Hungarian. Your browser can translate the page.</p>
+    <article class="doc" id="doc" aria-live="polite"></article>
+  </section>
+</main>
+
+<footer class="footer">
+  <p><span class="brand-c">C</span>-kocka · Tervezte: Zollo &amp; C (Claude) · AI Kihívás 2026</p>
+  <p class="muted">Koncepciótermék – nem kerül forgalomba.</p>
+</footer>
+
+<script type="module" src="web/kutatasok.js"></script>
+</body>
+</html>

@@ -8,7 +8,7 @@ const EN = {
   'C-kocka szimulátor': 'C-Cube simulator',
   'Próbáld ki a C-kockát a böngészőben: élő arc, fények, gombok, személyiségek, party mód – és a telefonos vezérlőapp.': 'Try the C-Cube in your browser: live face, lights, buttons, personalities, party mode – and the phone app.',
   '-kocka': '-Cube',
-  'Videó': 'Video', 'Funkciók': 'Features', 'Szimulátor': 'Simulator', 'Letöltés': 'Downloads',
+  'Videó': 'Video', 'Funkciók': 'Features', 'Szimulátor': 'Simulator', 'Letöltés': 'Downloads', 'Kutatások': 'Research',
   'Próbáld ki a C-kockát': 'Try the C-Cube',
   'Nyomd meg a gombjait, dobd el, rázd meg, fordítsd fejjel lefelé – vagy vezéreld a telefonos appból. Hangot is ad, ha engeded.': 'Press its buttons, throw it, shake it, turn it upside down – or control it from the phone app. It makes sounds too, if you let it.',
   '⏻ Bekapcsolás': '⏻ Power on', '⏻ Kikapcsolás': '⏻ Power off',
@@ -81,6 +81,7 @@ export function applyStatic(root = document) {
   });
   // a főoldali linkek az angol főoldalra mutassanak
   root.querySelectorAll('a[href^="index.html"]').forEach(a => a.setAttribute('href', a.getAttribute('href').replace('index.html', 'index-en.html')));
+  root.querySelectorAll('a[href="kutatasok.html"]').forEach(a => a.setAttribute('href', 'kutatasok.html?lang=en'));
   root.querySelectorAll('a[href="sim.html"]').forEach(a => a.setAttribute('href', 'sim.html?lang=en'));
 }
 
