@@ -126,6 +126,8 @@ class FakeXiao:
         self.console = ''
         self.touch_raw, self.script, self.pulldown = touch_raw, script, pulldown
         self.out, self.inbox, self.duty_log, self.pwm = [], b'', [], None
+        self.strips, self.led_out, self.led_max = {}, {}, 0      # LED-szalagok; a kimenő Σ(r+g+b) lábanként, és a csúcs
+        self.i2c_error, self.i2c_args, self.pins = None, None, {}
 
     def modules(self):
         fx = self
@@ -135,6 +137,7 @@ class FakeXiao:
         class DIO:
             def __init__(self, pin):
                 self.pin, self.direction, self.pull = pin, None, None
+                fx.pins[pin] = self
                 self.value = pin != 'D10' or bool(fx.touch_raw(fx.t) > 1500)   # gombok felhúzva; D10: AT42QT1010-tartalék
         m['digitalio'] = types.SimpleNamespace(DigitalInOut=DIO, Direction=types.SimpleNamespace(INPUT=0, OUTPUT=1),
                                                Pull=types.SimpleNamespace(UP=1, DOWN=2))
@@ -189,18 +192,25 @@ class FakeXiao:
                 fx.out.append(json.loads(b.decode()))
         m['usb_cdc'] = types.SimpleNamespace(data=Port(), console=None)
 
-        class Pixels(list):
-            def __init__(self, pin, n, **kw):
+        class Pixels(list):                                    # mint a pixelbuf: a getitem a fényerő ELŐTTI értéket adja
+            def __init__(self, pin, n, brightness=1.0, **kw):
                 super().__init__([(0, 0, 0)] * n)
+                self.pin, self.brightness = pin, brightness
+                fx.strips[pin] = self
 
             def fill(self, c):
                 self[:] = [c] * len(self)
 
             def show(self):
-                pass
+                fx.led_out[self.pin] = sum(int(v * self.brightness) for p in self for v in p)
         m['neopixel'] = types.SimpleNamespace(NeoPixel=Pixels)
 
-        m['busio'] = types.SimpleNamespace(I2C=lambda *a: object())
+        def I2C(scl, sda):
+            fx.i2c_args = (scl, sda)
+            if fx.i2c_error:
+                raise RuntimeError(fx.i2c_error)
+            return (scl, sda)
+        m['busio'] = types.SimpleNamespace(I2C=I2C)
         if fx.imu_g is None:
             m['adafruit_lsm6ds'] = m['adafruit_lsm6ds.lsm6ds3trc'] = None   # nincs IMU: így is el kell indulnia
         else:
@@ -217,6 +227,7 @@ class FakeXiao:
         def sleep(dt):
             fx.t += dt + 0.002                                 # a kör maga is ~2 ms
             fx.step += 1
+            fx.led_max = max(fx.led_max, sum(fx.led_out.values()))
             fx.script(fx)
             if fx.step >= fx.steps:
                 raise _Stop

@@ -6,13 +6,16 @@
 #
 # Lábkiosztás (XIAO RP2040):
 #   D0  NeoPixel Ring 24 (alsó fénygyűrű)        D1  S-alakú WS2812 szalag a C mögött (7 LED)
+#       – mindkettő 74AHCT125 szintillesztőn át (3,3 V -> 5 V); a LED-ek tápja a UPS 5 V-ja, közös GND;
+#         összesen legfeljebb 30 % fényerő (reflex.LED_BUDGET, ≈ 0,56 A)
 #   D2  gomb 1 – Andor (fa)   D3 gomb 2   D8 gomb 3   D9 gomb 4      (gomb a GND felé, belső felhúzás)
 #   D10 érintés: rézfólia-elektróda (az érintőbetét alatt) + 1 MΩ lehúzó ellenállás a GND felé (a gombok prototípus-lapján)
 #       – a touchio lehúzó ellenállás nélkül nem indul; ilyenkor digitális bemenetként olvassuk, így tartalékként
 #         egy AT42QT1010 (aktív magas kimenet) is visszadugható ugyanide, szoftvercsere nélkül
 #   D6  rezgőmotor-modul jelbemenete (IN/SIG), PWM 20 kHz; a modul VCC-je 3V3 (vagy 5V), GND közös
-#   D4/D5  I2C (SDA/SCL) – Qwiic: LSM6DS3TR-C (IMU) – függőlegesen a szán jobb sínjén; a tengelyek átszámolása
-#          egy helyen: reflex.IMU_AXES (a mozgásfelismerés már a kocka tengelyein dolgozik)
+#   D4 = SDA, D5 = SCL  I2C – LSM6DS3TR-C (IMU) az Adafruit 4397 kábellel (STEMMA QT -> női Dupont: 3V3, GND, D4, D5;
+#          a XIAO-n nincs Qwiic-aljzat) – függőlegesen a szán jobb sínjén; a tengelyek átszámolása egy helyen:
+#          reflex.IMU_AXES (a mozgásfelismerés már a kocka tengelyein dolgozik). Ha nincs bekötve, IMU nélkül fut.
 #
 # Szükséges könyvtárak (circup install): neopixel, adafruit_lsm6ds, adafruit_debouncer, adafruit_ticks
 # A CIRCUITPY meghajtóra: boot.py, code.py és reflex.py (érintés, rezgés, IMU-tengelyek – PC-n tesztelve)
@@ -20,7 +23,7 @@
 import json, math, time
 import board, digitalio, busio, neopixel, usb_cdc
 from adafruit_debouncer import Debouncer
-from reflex import TouchDetector, Buzzer, duty_u16, to_cube
+from reflex import TouchDetector, Buzzer, duty_u16, to_cube, led_scale
 
 FW = '1.2'
 RING_N, C_N = 24, 7
@@ -43,8 +46,11 @@ touch_pad, touch_dig, touch_det = None, None, TouchDetector()
 try:
     import touchio
     touch_pad = touchio.TouchIn(board.D10)
-except (ImportError, ValueError):                     # ValueError: nincs lehúzó ellenállás a lábon
-    touch_dig = Debouncer(pin_in(board.D10, None))
+except Exception as e:                                # ValueError: nincs lehúzó ellenállás a lábon – ne álljon le
+    print('FIGYELEM: az érintés (touchio) nem indult a D10-en:', e)
+    print('  Kell egy 1 MΩ-os ellenállás a D10 és a GND közé (a gombok prototípus-lapján).')
+    print('  Addig digitális bemenetként olvasom (belső lehúzással: nem ad hamis érintést; AT42QT1010 is mehet ide).')
+    touch_dig = Debouncer(pin_in(board.D10, digitalio.Pull.DOWN))
 TOUCH_KIND = 'touchio' if touch_pad else 'digital'
 
 # rezgés: kész rezgőmotor-modul (ERM + tranzisztor) PWM-mel
@@ -55,11 +61,12 @@ except Exception:
     motor = None
 buzzer = Buzzer()
 
-i2c = busio.I2C(board.D5, board.D4)
-try:
+try:                                                  # busio.I2C(SCL, SDA): D5 = SCL, D4 = SDA
+    i2c = busio.I2C(board.D5, board.D4)               # felhúzó nélkül (nincs bekötve az IMU) RuntimeError-t dob
     from adafruit_lsm6ds.lsm6ds3trc import LSM6DS3TRC
     imu = LSM6DS3TRC(i2c)
-except Exception:
+except Exception as e:
+    print('FIGYELEM: nincs IMU (LSM6DS3TR-C a D4/D5-ön, Adafruit 4397 kábel):', e)
     imu = None
 
 port = usb_cdc.data or usb_cdc.console
@@ -107,6 +114,7 @@ def draw_leds(now):
         ring.fill(hsv(L['hue'], b * 0.85)); cstrip.fill(hsv(L['hue'], b))
     if L['camled']:                                   # a kamera jelzőfénye: a C-szalag utolsó LED-je zöld (mindig látszik, ha a kamera figyel)
         cstrip[C_N - 1] = (0, 160, 40)
+    ring.brightness = cstrip.brightness = led_scale(list(ring) + list(cstrip))   # összesen ≤ 30 % (UPS 5 V)
     ring.show(); cstrip.show()
 
 

@@ -1,6 +1,9 @@
 """Valódi hardver a Raspberry Pi Zero 2 W-n.
 
-  Kijelző : GC9A01 1,28" kerek, 240×240, SPI0 (MOSI GPIO10, SCLK GPIO11, CE0 GPIO8), DC GPIO24, RST GPIO25, háttérfény GPIO23
+  Kijelző : GC9A01 1,28" kerek, 240×240, a Linux mipi-dbi-spi meghajtójával (/dev/fbN) – SPI0 (MOSI GPIO10, SCLK GPIO11,
+            CE0 GPIO8), DC GPIO25, RST GPIO27, háttérfény GPIO22 (lásd panel.py; a gyári gc9a01 overlay a GPIO18-at, az
+            I2S órajelét foglalná). Ha nincs framebuffer, tartalékként közvetlenül spidev-vel hajtjuk ugyanezeken a lábakon.
+  Táp     : Pi-Ener-lite UPS – GPIO4 (alacsony = van külső táp), CW2015 töltöttségmérő 0x62 (power.py)
   Hang    : Seeed ReSpeaker 2-Mics Pi HAT, 1 hangszóró (mono) – v1 (WM8960) és v2.0 (TLV320AIC3104) is; ALSA a kártya
             nevével (seeed2micvoicec, firmware/pi/asound.conf), lejátszás: aplay (dmix), dekódolás: mpg123;
             hangerő és mikrofon-némítás: amixer (a kodek szerint más vezérlőnevekkel)
@@ -10,34 +13,70 @@
 FIGYELEM: ez a kód hardver nélkül készült (a C-kocka koncepció). A GC9A01 inicializáló sorozata a gyártói
 referenciakódból való; az első élesztésnél a lábkiosztást és a színsorrendet ellenőrizni kell.
 """
-import asyncio, json, logging, subprocess, threading, time
+import asyncio, glob, json, logging, os, subprocess, threading, time
 
 import numpy as np
 
-from . import hal
+from . import hal, panel
 
 log = logging.getLogger('ckocka.hw')
 
 # --------------------------------------------------------------------------------------------- kijelző
-GC9A01_INIT = [
-    (0xEF, []), (0xEB, [0x14]), (0xFE, []), (0xEF, []), (0xEB, [0x14]), (0x84, [0x40]), (0x85, [0xFF]), (0x86, [0xFF]),
-    (0x87, [0xFF]), (0x88, [0x0A]), (0x89, [0x21]), (0x8A, [0x00]), (0x8B, [0x80]), (0x8C, [0x01]), (0x8D, [0x01]),
-    (0x8E, [0xFF]), (0x8F, [0xFF]), (0xB6, [0x00, 0x20]), (0x36, [0x08]), (0x3A, [0x05]), (0x90, [0x08] * 4),
-    (0xBD, [0x06]), (0xBC, [0x00]), (0xFF, [0x60, 0x01, 0x04]), (0xC3, [0x13]), (0xC4, [0x13]), (0xC9, [0x22]),
-    (0xBE, [0x11]), (0xE1, [0x10, 0x0E]), (0xDF, [0x21, 0x0C, 0x02]),
-    (0xF0, [0x45, 0x09, 0x08, 0x08, 0x26, 0x2A]), (0xF1, [0x43, 0x70, 0x72, 0x36, 0x37, 0x6F]),
-    (0xF2, [0x45, 0x09, 0x08, 0x08, 0x26, 0x2A]), (0xF3, [0x43, 0x70, 0x72, 0x36, 0x37, 0x6F]),
-    (0xED, [0x1B, 0x0B]), (0xAE, [0x77]), (0xCD, [0x63]), (0x70, [0x07, 0x07, 0x04, 0x0E, 0x0F, 0x09, 0x07, 0x08, 0x03]),
-    (0xE8, [0x34]), (0x62, [0x18, 0x0D, 0x71, 0xED, 0x70, 0x70, 0x18, 0x0F, 0x71, 0xEF, 0x70, 0x70]),
-    (0x63, [0x18, 0x11, 0x71, 0xF1, 0x70, 0x70, 0x18, 0x13, 0x71, 0xF3, 0x70, 0x70]),
-    (0x64, [0x28, 0x29, 0xF1, 0x01, 0xF1, 0x00, 0x07]), (0x66, [0x3C, 0x00, 0xCD, 0x67, 0x45, 0x45, 0x10, 0x00, 0x00, 0x00]),
-    (0x67, [0x00, 0x3C, 0x00, 0x00, 0x00, 0x01, 0x54, 0x10, 0x32, 0x98]), (0x74, [0x10, 0x85, 0x80, 0x00, 0x00, 0x4E, 0x00]),
-    (0x98, [0x3E, 0x07]), (0x35, []), (0x21, []),
-]
+GC9A01_INIT = panel.GC9A01_INIT
+
+
+def rgb565(img, byteorder='>'):
+    a = np.asarray(img.convert('RGB'), dtype=np.uint16)
+    v = ((a[..., 0] & 0xF8) << 8) | ((a[..., 1] & 0xFC) << 3) | (a[..., 2] >> 3)
+    return v.astype(byteorder + 'u2').tobytes()
+
+
+
+class FbDisplay(hal.Display):
+    """A mipi-dbi-spi meghajtó framebuffere (a kernel küldi SPI-n, a CE0-t ő kezeli). RGB565, kis végű a memóriában."""
+
+    @staticmethod
+    def find(sys_dir='/sys/class/graphics', match='mipi-dbi'):
+        """A panel /dev/fbN eszköze a meghajtó neve alapján (a HDMI is kaphat fb0-t, ezért nem a sorszám számít)."""
+        for d in sorted(glob.glob(os.path.join(sys_dir, 'fb*'))):
+            try:
+                with open(os.path.join(d, 'name')) as f:
+                    if match in f.read():
+                        return '/dev/' + os.path.basename(d), d
+            except OSError:
+                pass
+        return None
+
+    def __init__(self, dev, sys_path, backlight_dir='/sys/class/backlight'):
+        with open(os.path.join(sys_path, 'bits_per_pixel')) as f:
+            if int(f.read()) != 16:
+                raise RuntimeError('a kijelző framebuffere nem 16 bites (RGB565)')
+        self.fb = open(dev, 'r+b', buffering=0)
+        self.bl = sorted(glob.glob(os.path.join(backlight_dir, '*')))
+        log.info('kijelző: %s (mipi-dbi-spi)', dev)
+
+    def show(self, img):
+        self.fb.seek(0)
+        self.fb.write(rgb565(img, '<'))
+
+    def brightness(self, v):
+        """A gpio-backlight csak be/ki (max_brightness = 1); PWM-es háttérfénynél fokozatos."""
+        for d in self.bl:
+            try:
+                with open(os.path.join(d, 'max_brightness')) as f:
+                    mx = int(f.read())
+                v = max(0.0, min(1.0, v))
+                with open(os.path.join(d, 'brightness'), 'w') as f:
+                    f.write(str(round(v * mx) if mx > 1 else int(v > 0)))
+            except (OSError, ValueError) as e:
+                log.warning('háttérfény: %s', e)
 
 
 class GC9A01(hal.Display):
-    def __init__(self, dc=24, rst=25, bl=23, spi_bus=0, spi_dev=0, hz=40_000_000):
+    """Tartalék: közvetlen spidev-vezérlés (ha a mipi-dbi-spi overlay nincs betöltve). Ugyanazok a lábak."""
+
+    def __init__(self, dc=panel.PINS['dc'], rst=panel.PINS['reset'], bl=panel.PINS['backlight'], spi_bus=0, spi_dev=0,
+                 hz=panel.SPEED_HZ):
         import spidev
         from gpiozero import DigitalOutputDevice, PWMOutputDevice
         self.dc, self.rst, self.bl = DigitalOutputDevice(dc), DigitalOutputDevice(rst), PWMOutputDevice(bl)
@@ -57,11 +96,9 @@ class GC9A01(hal.Display):
             self.dc.on(); self.spi.writebytes(list(data))
 
     def show(self, img):
-        a = np.asarray(img.convert('RGB'), dtype=np.uint16)
-        rgb565 = ((a[..., 0] & 0xF8) << 8) | ((a[..., 1] & 0xFC) << 3) | (a[..., 2] >> 3)
         self._cmd(0x2A, [0, 0, 0, 239]); self._cmd(0x2B, [0, 0, 0, 239]); self._cmd(0x2C)
         self.dc.on()
-        self.spi.writebytes2(rgb565.astype('>u2').tobytes())
+        self.spi.writebytes2(rgb565(img))
 
     def brightness(self, v):
         self.bl.value = max(0.0, min(1.0, v))
@@ -322,5 +359,21 @@ class LocalCamera(hal.Camera):
             (self.cam.start if on else self.cam.stop)()
 
 
+class NullDisplay(hal.Display):
+    def show(self, img):
+        pass
+
+
+def make_display():
+    """mipi-dbi-spi framebuffer, különben közvetlen spidev; ha egyik sem megy, a kocka kijelző nélkül is elindul."""
+    found = FbDisplay.find()
+    try:
+        return FbDisplay(*found) if found else GC9A01()
+    except Exception as e:
+        log.warning('a kijelző nem érhető el (%s) – kijelző nélkül fut. Ellenőrzés: python3 -m ckocka.diag spi-leds', e)
+        return NullDisplay()
+
+
 def make(voice_dir):
-    return hal.Hardware(GC9A01(), AlsaAudio(), SerialMcu(), LocalCamera(), voice_dir)
+    from . import power
+    return hal.Hardware(make_display(), AlsaAudio(), SerialMcu(), LocalCamera(), voice_dir, power=power.make_monitor())

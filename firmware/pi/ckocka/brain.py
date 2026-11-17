@@ -6,7 +6,7 @@ Kimenetek:  arc a kijelzőn, hang, LED-ek és rezgés (XIAO-n át), események a
 """
 import asyncio, json, logging, os, random, time
 
-from . import protocol, state as st_mod, synth, talk as talk_mod
+from . import power, protocol, state as st_mod, synth, talk as talk_mod
 from .face import FaceRenderer, FaceState
 
 log = logging.getLogger('ckocka')
@@ -53,6 +53,7 @@ class Cube:
         self._save_handle = None
         self._call = None
         self._last_cheer = 0.0
+        self.eco = False                      # takarékmód töltés közben (power.py: a UPS töltőárama fix 1 A, melegít)
 
     # ------------------------------------------------------------ segédek
     def _load_lines(self):
@@ -80,7 +81,26 @@ class Cube:
         activity: 'listen' / 'think' a beszélgetés alatt (ha épp nincs fontosabb: ki, Ne zavarj, fejjel lefelé, party)."""
         s = self.s
         mode = 'off' if not s.on else 'dim' if (s.upside_down or s.dnd) else 'party' if s.party else activity or 'solid'
-        self.hw.mcu.send({'cmd': 'leds', 'hue': round(s.hue), 'bright': round(s.bright, 2), 'mode': mode})
+        bright = s.bright * (power.ECO['led'] if self.eco else 1.0)
+        self.hw.mcu.send({'cmd': 'leds', 'hue': round(s.hue), 'bright': round(bright, 2), 'mode': mode})
+
+    def set_eco(self, on):
+        """Takarékmód (power.ECO): kevesebb LED-fény, halványabb kijelző, kisebb képfrissítés."""
+        self.eco = bool(on)
+        bl = getattr(self.hw.display, 'brightness', None)
+        if bl:
+            bl(power.ECO['backlight'] if on else 1.0)
+        self.lights()
+
+    def battery_shutdown(self):
+        """Lemerült (külső táp nélkül 5 % alatt): elköszön, mielőtt a power.guard leállítja a Pi-t."""
+        self.new_scene()
+        self.hw.audio.music(None)
+        self.hw.audio.stop()
+        self.show_text('LOW BATTERY', 'shutting down')
+        self.s.on = self.s.party = False
+        self.lights()
+        self.broadcast_state()
 
     def buzz(self):
         self.hw.mcu.send({'cmd': 'haptic', 'pattern': 'buzz'})
@@ -631,7 +651,7 @@ class Cube:
             if not self.s.party:
                 self.face.hue = self.s.hue
             self.hw.display.show(self.renderer.render(self.face, now))
-            await asyncio.sleep(1 / FPS)
+            await asyncio.sleep(1 / (power.ECO['fps'] if self.eco else FPS))
 
     async def mcu_loop(self):
         while True:
@@ -642,6 +662,8 @@ class Cube:
     def start(self):
         loops = [self.face_loop, self.mcu_loop, self.peek_loop] + ([self.wake_loop] if self.talk else [])
         self._tasks += [asyncio.ensure_future(self._guard(f, f.__name__)) for f in loops]
+        if getattr(self.hw, 'power', None):           # UPS: biztonságos leállás, takarékmód töltés közben
+            self._tasks.append(asyncio.ensure_future(self._guard(lambda: power.guard(self, self.hw.power), 'power')))
         self.lights()
 
     def stop(self):

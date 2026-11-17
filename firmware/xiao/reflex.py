@@ -84,6 +84,23 @@ def to_panel(cube, axes=IMU_AXES):
     return tuple(out)
 
 
+# ------------------------------------------------------------------ fényerőkorlát a WS2812 LED-ekre
+# A 31 LED (24-es gyűrű + 7 a C mögött) tápja közvetlenül a UPS 5 V-járól jön (74AHCT125 szintillesztőn át). Egy LED
+# teljes fehéren ~60 mA, 31 × 60 mA ≈ 1,86 A – ez a UPS 2,5 A-jéből a Pi, a hang és a kamera mellett nem fér ki.
+# Ezért ÖSSZESEN legfeljebb a teljes fényerő 30 %-a mehet ki (≈ 0,56 A), bármit kér a Pi.
+LED_COUNT = 31
+LED_BUDGET = 0.30
+
+
+def led_scale(pixels, budget=LED_BUDGET, count=LED_COUNT):
+    """pixels: (r, g, b) hármasok (0..255). Visszaad: a szorzó (0..1), amellyel a teljes áram a keret alatt marad."""
+    total = 0
+    for p in pixels:
+        total += p[0] + p[1] + p[2]
+    limit = budget * count * 3 * 255
+    return 1.0 if total <= limit else limit / total
+
+
 # Rezgésminták a kész rezgőmotor-modulhoz (ERM motor + tranzisztor, PWM-mel hajtva): (kitöltés 0..1, időtartam s).
 # Az ERM motor lassan indul, ezért minden minta egy rövid, teljes erejű „rúgással” kezdődik.
 PATTERNS = {

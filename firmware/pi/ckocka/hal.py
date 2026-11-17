@@ -53,5 +53,6 @@ class Camera(abc.ABC):
 
 
 class Hardware:
-    def __init__(self, display, audio, mcu, camera, voice_dir):
+    def __init__(self, display, audio, mcu, camera, voice_dir, power=None):
         self.display, self.audio, self.mcu, self.camera, self.voice_dir = display, audio, mcu, camera, voice_dir
+        self.power = power                    # power.PowerMonitor (UPS) vagy None (szimuláció, UPS nélkül)
