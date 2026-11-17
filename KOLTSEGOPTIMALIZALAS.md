@@ -131,8 +131,8 @@ A hőkezelés miatti hűtőborda (+400 Ft/db) ebben még nincs benne. A pontos s
 | LED-gyűrű + C szalag | 2 900 |
 | XIAO RP2040 + IMU + rezgőmodul (E3) | 4 600 |
 | Gombok, Qwiic, USB-C (E4), microSD, kábelköteg | 5 300 |
-| Kompatibilitás miatt (KOMPATIBILITAS.md): GPIO-elosztó panel, NeoDriver + Qwiic kábel, forrasztott XIAO | 4 000 |
-| **Összesen** | **kb. 46 700 Ft ≈ 120 €** |
+| Kompatibilitás miatt (KOMPATIBILITAS.md): NeoDriver + Qwiic kábel, forrasztott XIAO, OTG kábel | 3 600 |
+| **Összesen** | **kb. 46 300 Ft ≈ 119 €** |
 
 A PIACI_TANULMANY.md 100 db-ra **~120 €** elektronikával és **~185 €** önköltséggel számol. A döntések után (E5 elvetve, a Pi-Ener-lite marad) az elektronika **±0 €** (a megtakarítást a kompatibilitási kiegészítők elviszik), a mechanika és a szerelés (M6, M7, G1–G4) kb. **−8 €** → **kb. 175–180 €/db** önköltség. Így a 299 €-s limitált árnál (235 € nettó) a bruttó árrés **~21%-ról ~24–25%-ra** nő. *(Az E5-tel ~37% lett volna; frissítve 2026-11-17.)* *(CE nélkül, ahogy a PIACI_TANULMANY.md is a 100 db-os sorozatot.)*
 
@@ -141,7 +141,7 @@ Nettó (ÁFA nélkül), 1 EUR = 390 Ft. Minden szám **becslés**.
 
 | | **Prototípus (3 db-os tétel)** | **100 db-os limitált széria** |
 |---|---|---|
-| Anyag és vásárolt alkatrész (szállítással, 10% tartalékkal) | 112 500 Ft ([AJANLATKERESEK.md](AJANLATKERESEK.md), a kompatibilitási kiegészítőkkel) | ~46 700 Ft elektronika + ~10 700 Ft ház és mechanika (a PIACI_TANULMANY.md 35 €-ja, a mártásos színezéssel csökkentve) |
+| Anyag és vásárolt alkatrész (szállítással, 10% tartalékkal) | 111 200 Ft ([AJANLATKERESEK.md](AJANLATKERESEK.md), a kompatibilitási kiegészítőkkel) | ~46 300 Ft elektronika + ~10 700 Ft ház és mechanika (a PIACI_TANULMANY.md 35 €-ja, a mártásos színezéssel csökkentve) |
 | Hűtőborda a Pi-n (HOKEZELES.md) | 400 Ft | 400 Ft |
 | Szerelés | ~1 óra ≈ 10 000 Ft (a 1,5 óra helyett: színezés, kevesebb modul, R1 sarok) | ~45 perc ≈ 7 500 Ft (kábelköteg, teszt-szkript) |
 | Házon belüli gépidő (SLS, CNC/lézer, FDM, SLA) | ~5 000–15 000 Ft *(gépóradíj nélkül nem pontosítható)* | benne a ház és mechanika sorban |

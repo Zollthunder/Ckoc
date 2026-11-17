@@ -6,8 +6,8 @@
 ## Összefoglaló
 | # | Téma | Eredmény | Teendő |
 |---|---|---|---|
-| 1 | **Kijelző és a ReSpeaker LED-jei ugyanazon az SPI-buszon** | ❗ PROBLÉMA | próba, majd szükség esetén a két LED-tüske leválasztása az elosztón; másik lábkiosztás |
-| 2 | **A kijelző nem fér hozzá a Pi tüskesorához** (a ReSpeaker elfoglalja) | ✅ döntés: **GPIO 1→2 elosztó panel**; a XIAO is ezen át, UART-on | a 3D-modellben a stacket lejjebb kell tenni |
+| 1 | **Kijelző és a ReSpeaker LED-jei ugyanazon az SPI-buszon** | ✅ megszűnt: a kijelzőt a XIAO hajtja (B döntés) | – |
+| 2 | **A kijelző nem fér hozzá a Pi tüskesorához** (a ReSpeaker elfoglalja) | ✅ **B döntés (Zollo, 2026-11-17): az arcot a XIAO rajzolja**, a kijelző a XIAO SPI-jén; a XIAO USB-n (OTG) a Pi-hez; a hangszóró a bal rács mögé kerül | 3D: hangszóró balra, OTG-dugó jobbra; firmware: arc a XIAO-n |
 | 3 | **A Pi-Ener-lite töltőárama fix 1 A** (a hőkezelés 0,5 A-t kér) | ❗ PROBLÉMA | a hőszámítás újrafuttatása 1 A-re, vagy kérdés a gyártónak |
 | 4 | **31 WS2812 LED a XIAO-ról** | ✅ döntés: **Adafruit NeoDriver** (I2C → NeoPixel, 5 V-os kimenet) a Qwiic láncon | a LED-táp közvetlenül a UPS 5 V-járól, fényerőkorlát |
 | 5 | **XIAO RP2040: forrasztatlan tüskesor, nincs Qwiic** | ⚠️ ELLENŐRIZENDŐ | gyárilag forrasztott változat + női Dupont-végű Qwiic kábel |
@@ -15,6 +15,14 @@
 | 7 | I2C-címek | ✅ OK | – (az 5 V-os felhúzást ellenőrizni) |
 | 8 | Kamera | ✅ OK | – |
 | 9 | Teljesítménymérleg | ⚠️ csak LED-korláttal fér bele | fényerőkorlát, a cella kisütési áramát ellenőrizni |
+
+## B döntés (Zollo, 2026-11-17): az arc a XIAO-n
+A GPIO-elosztó a 3D-ellenőrzés szerint csak becsült mérettel, a stack 9,7 mm-es lejjebb tételével és a bal sín visszavágásával férne el. Ezért:
+- **A kijelző (GC9A01) a XIAO RP2040-re kerül** (SPI). A Pi csak állapotot küld („hallgat”, „gondolkodik”, „beszél” stb.), az arcot a XIAO rajzolja (CircuitPython, `adafruit_gc9a01a` + `displayio`).
+- **A XIAO lábai (mind a 11 foglalt):** D0 rezgés (PWM) · D1, D2, D3, D6 gombok · D7 érintés (`touchio`) · D4/D5 I2C (IMU → NeoDriver) · D8 SCK, D10 MOSI, D9 DC a kijelzőnek. A kijelző CS-e GND-re, RST-je és háttérvilágítása 3,3 V-ra kerül, Dupont-kábellel; a kijelző szoftveres reset-parancsot kap.
+- **A XIAO USB-n (OTG) kapcsolódik a Pi-hez**, 90°-os micro-B dugóval. Ehhez a hangszóró a **bal** rács mögé kerül, így a jobb oldalon lesz hely a dugónak. A jobb rács szellőző.
+- **A Pi tüskesorát csak a ReSpeaker használja** (+ alul a UPS pogo-tüskéi). Így az APA102-ütközés is megszűnik, mert a Pi SPI-jén nincs más.
+- Az alábbi 1–2. pont az előzményeket mutatja.
 
 ## Részletek
 
@@ -65,7 +73,7 @@ A [HOKEZELES.md](HOKEZELES.md) (a thermal ágon) 0,5 A-es töltést javasol. **T
 - Az alapváltozat **forrasztatlan tüskesorral** jön; van **gyárilag forrasztott („Pre-Soldered”) változat** [E]. → Azt kell rendelni (a forrasztás ütközne az elvekkel).
 - **Nincs rajta STEMMA QT/Qwiic** csatlakozó [E]. → Az IMU-hoz **Adafruit 4397** kábel kell (STEMMA QT → női Dupont-aljzatok, 150 mm), a XIAO tüskéire: 3V3, GND, D4 = SDA, D5 = SCL [E]. *(Az eddig tervezett 4399-es kábel két végén is Qwiic-dugó van, a XIAO-hoz nem jó.)*
 - **Érintés (`touchio`):** RP2040-en külső **1 MΩ-os lehúzó ellenállás** kell a GND felé [E, Adafruit útmutató]; enélkül a `TouchIn` hibát dob [V]. A gombok prototípus-lapjára kerül (ott amúgy is van forrasztás).
-- **Döntés (2026-11-17): a XIAO soros vonalon (UART) kapcsolódik a Pi-hez** (Pi GPIO14/15 ↔ XIAO TX/RX, + 5 V és GND, Dupont-kábellel az elosztó panelről). Így nem kell OTG kábel. A 3D-ellenőrzés szerint a micro-USB dugó nem fért volna el: 1,5 mm maradt volna a hangszóróig, a minimum 2 mm helyett. A Pi Zero 2 W-n ez a „mini UART” (a PL011 a Bluetooth-é), ezért `enable_uart=1` kell, és a soros konzolt ki kell kapcsolni.
+- ~~Döntés (2026-11-17): a XIAO soros vonalon (UART) kapcsolódik a Pi-hez~~ – **felülírta a B döntés: USB (OTG), 90°-os dugóval.** Az eredeti indoklás (Pi GPIO14/15 ↔ XIAO TX/RX, + 5 V és GND, Dupont-kábellel az elosztó panelről). Így nem kell OTG kábel. A 3D-ellenőrzés szerint a micro-USB dugó nem fért volna el: 1,5 mm maradt volna a hangszóróig, a minimum 2 mm helyett. A Pi Zero 2 W-n ez a „mini UART” (a PL011 a Bluetooth-é), ezért `enable_uart=1` kell, és a soros konzolt ki kell kapcsolni.
 
 ### 6. ReSpeaker v2.0 a Raspberry Pi OS-en – ELLENŐRIZENDŐ
 - A `respeaker-2mic-v2_0` overlay **nincs benne** a Raspberry Pi kernelben (rpi-6.12.y – 6.18.y) [E]. → A Seeed `seeed-linux-dtoverlays` repójából kell lefordítani, a `/boot/firmware/overlays/` alá másolni, és a `config.txt`-be beírni: `dtoverlay=respeaker-2mic-v2_0` [E].
