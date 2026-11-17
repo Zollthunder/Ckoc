@@ -16,10 +16,12 @@
 | [NAPLO.md](NAPLO.md) | **a napló**: eszközök, példapromptok, elakadások és megoldások |
 | [DESIGN.md](DESIGN.md) | a termék koncepciója |
 | [VIDEO.md](VIDEO.md) | a videó forgatókönyve |
-| [ELEKTRONIKA.md](ELEKTRONIKA.md) | elektronika kész modulokból (Pi Zero 2 W, Voice Bonnet, …) |
+| [ELEKTRONIKA.md](ELEKTRONIKA.md) | elektronika kész modulokból (Pi Zero 2 WH, ReSpeaker hangpanel, XIAO RP2040, …) |
 | [GYARTASI_TERV.md](GYARTASI_TERV.md), [TERVEZESI_ELVEK.md](TERVEZESI_ELVEK.md) | gyártási terv alkatrészenként és a tervezési elvek |
 | [SZERELES.md](SZERELES.md) | **szerelési útmutató** lépésenként, képekkel |
 | [PIACI_TANULMANY.md](PIACI_TANULMANY.md) | piaci előtanulmány: piac, ár, haszonkulcs, sorozatnagyság |
+| [AJANLATKERESEK.md](AJANLATKERESEK.md) | költségbecslés és ajánlatkérés-tervezetek a 3 prototípushoz (gyakorló anyag, nem elküldve) |
+| [KOLTSEGOPTIMALIZALAS.md](KOLTSEGOPTIMALIZALAS.md) | költségoptimalizálás alkatrészenként és sorozatnagyság szerint, döntésekkel |
 | [dxf/vagas/](dxf/vagas/), [3d/nyomtatas/](3d/nyomtatas/) | vágási DXF-ek (lézer/CNC) és nyomtatandó STL-ek gépenként |
 
 ## Helyi futtatás
