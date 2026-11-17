@@ -40,3 +40,7 @@ video/jp/voice/cube_*.wav
 # 90-es reklám: újragenerálható köztes fájlok
 video/ad90/audio_mix_ad90.wav
 video/ad90/voice48/
+
+# retró magyar reklám: újragenerálható köztes fájlok
+video/hu_retro/audio_mix_hu_retro.wav
+video/hu_retro/voice48/

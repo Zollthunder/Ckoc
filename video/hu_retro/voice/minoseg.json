@@ -1,0 +1,456 @@
+{
+ "H01": {
+  "text": "Kedves Nézőink! Bemutatjuk az új Cé kockát!",
+  "chosen": "H01_2.wav",
+  "score": 0.988,
+  "heard": "Kedves nézőink! Bemutatjuk az új cékockát!",
+  "candidates": [
+   {
+    "file": "H01_2.wav",
+    "score": 0.988,
+    "heard": "Kedves nézőink! Bemutatjuk az új cékockát!",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "H02": {
+  "text": "Kicsi kocka, nagy barát: mesél, nevet egész nap át!",
+  "chosen": "H02_0.wav",
+  "score": 1.0,
+  "heard": "Kicsi kocka, nagy barát. Mesél, nevet egész nap át.",
+  "candidates": [
+   {
+    "file": "H02_0.wav",
+    "score": 1.0,
+    "heard": "Kicsi kocka, nagy barát. Mesél, nevet egész nap át.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H02_1.wav",
+    "score": 0.989,
+    "heard": "Kicsi kocka, nagy barát, mesél nevet egész napát.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H02_2.wav",
+    "score": 0.826,
+    "heard": "Kicsi kocka, nagybarát, besél, nevedve két napát.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H02_3.wav",
+    "score": 0.989,
+    "heard": "Kicsi kocka, nagy barát, mesél, nevet egész napát.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H02_4.wav",
+    "score": 0.989,
+    "heard": "Kicsi kocka, nagy barát, Mesél, nevet egész nap á.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H02_5.wav",
+    "score": 0.857,
+    "heard": "Kicsi kocka nagybarát, besér, bevetek és napát!",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "H03": {
+  "text": "Kérje a szaküzletekben!",
+  "chosen": "H03_0.wav",
+  "score": 1.0,
+  "heard": "Kérje a szaküzletekben.",
+  "candidates": [
+   {
+    "file": "H03_0.wav",
+    "score": 1.0,
+    "heard": "Kérje a szaküzletekben.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H03_1.wav",
+    "score": 1.0,
+    "heard": "Kérje a szaküzletekben!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H03_2.wav",
+    "score": 0.83,
+    "heard": "Kérje, kérje a szaküzletekben.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H03_3.wav",
+    "score": 1.0,
+    "heard": "Kérje a szaküzletekben.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H03_4.wav",
+    "score": 1.0,
+    "heard": "Kérje a szaküzletekben.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H03_5.wav",
+    "score": 1.0,
+    "heard": "Kérje a szaküzletekben!",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "H10": {
+  "text": "Cé-kocka. Egy kis barát az asztalára.",
+  "chosen": "H10_0.wav",
+  "score": 0.886,
+  "heard": "C. Kocka. Egy kis barát az asztalára.",
+  "candidates": [
+   {
+    "file": "H10_0.wav",
+    "score": 0.886,
+    "heard": "C. Kocka. Egy kis barát az asztalára.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H10_1.wav",
+    "score": 0.857,
+    "heard": "C. Kocka. Egy kis barát az osztalára.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H10_2.wav",
+    "score": 0.674,
+    "heard": "Székocka. Egy kis barát az osztalára.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H10_3.wav",
+    "score": 0.828,
+    "heard": "C. Kocka. Egy kis barát az osztolára.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H10_4.wav",
+    "score": 0.828,
+    "heard": "C. Kocka. Egy kis barát az osztolára.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H10_5.wav",
+    "score": 0.886,
+    "heard": "C. Kocka. Egy kis barát az asztalára.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "H11": {
+  "text": "A kockázatokról és mellékhatásokról kérdezze a kockát!",
+  "chosen": "H11_2.wav",
+  "score": 1.0,
+  "heard": "A kockázatokról és mellékhatásokról kérdezze a kockát.",
+  "candidates": [
+   {
+    "file": "H11_0.wav",
+    "score": 0.971,
+    "heard": "A kockázatokról és mellékhatásokról kérdezi a kockát.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H11_1.wav",
+    "score": 0.981,
+    "heard": "A kockázatokról és mellékhatásokról kérdezzi a kockát.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H11_2.wav",
+    "score": 1.0,
+    "heard": "A kockázatokról és mellékhatásokról kérdezze a kockát.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H11_3.wav",
+    "score": 0.981,
+    "heard": "A kockázatokról és mellékhatásokról kérdezve a kockát.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H11_4.wav",
+    "score": 0.971,
+    "heard": "A kockázatokról és mellékhatásokról kérdezje a kocká.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H11_5.wav",
+    "score": 1.0,
+    "heard": "A kockázatokról és mellékhatásokról kérdezze a kockát.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "H04": {
+  "text": "Figyelem, figyelem! Itt a Cé-kocka!",
+  "chosen": "H04_0.wav",
+  "score": 0.984,
+  "heard": "Figyelem, figyelem! Itt a C kocka!",
+  "candidates": [
+   {
+    "file": "H04_0.wav",
+    "score": 0.984,
+    "heard": "Figyelem, figyelem! Itt a C kocka!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H04_1.wav",
+    "score": 0.969,
+    "heard": "Figyelem, figyelem! Itt a C -kocska!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H04_2.wav",
+    "score": 0.969,
+    "heard": "Figyelem! Figyelem! Itt a cékocska!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H04_3.wav",
+    "score": 0.969,
+    "heard": "Figyelem, figyelem! Itt a C kocska!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H04_4.wav",
+    "score": 0.476,
+    "heard": "Vigyállam! Vigyállam! Itt orzre, gondskat!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H04_5.wav",
+    "score": 0.984,
+    "heard": "Figyelem, figyelem! Itt a C kocka!",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "H05": {
+  "text": "Beszél, világít, és ha leejti, akkor sem törik el!",
+  "chosen": "H05_1.wav",
+  "score": 1.0,
+  "heard": "Beszél, világít, és ha leejti, akkor sem törik el.",
+  "candidates": [
+   {
+    "file": "H05_0.wav",
+    "score": 0.978,
+    "heard": "Beszél világét, és ha leejti, akkor sem törik el.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H05_1.wav",
+    "score": 1.0,
+    "heard": "Beszél, világít, és ha leejti, akkor sem törik el.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H05_2.wav",
+    "score": 0.989,
+    "heard": "Beszél, világít, és ha lejti, akkor sem törik el.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H05_3.wav",
+    "score": 0.945,
+    "heard": "Beszél világi, és ha lejíti, akkor sem tönik el.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H05_4.wav",
+    "score": 0.989,
+    "heard": "Beszél, világít és ha lejti, akkor sem törik el.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H05_5.wav",
+    "score": 0.989,
+    "heard": "Beszél világyit, és ha leejti, akkor sem törik el.",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "H06": {
+  "text": "Rendelje meg most, házhoz szállítjuk!",
+  "chosen": "H06_0.wav",
+  "score": 1.0,
+  "heard": "Rendelje meg most, házhoz szállítjuk!",
+  "candidates": [
+   {
+    "file": "H06_0.wav",
+    "score": 1.0,
+    "heard": "Rendelje meg most, házhoz szállítjuk!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H06_1.wav",
+    "score": 1.0,
+    "heard": "– Rendelje meg most, házhoz szállítjuk!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H06_2.wav",
+    "score": 1.0,
+    "heard": "Rendelje meg most, házhoz szállítjuk!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H06_3.wav",
+    "score": 1.0,
+    "heard": "Rendelje meg most házhoz szállítjuk.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H06_4.wav",
+    "score": 0.928,
+    "heard": "Rendelje meg most, házra szállítjuk.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H06_5.wav",
+    "score": 0.93,
+    "heard": "Rendelje, majd most házhoz szállítjuk!",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "H07": {
+  "text": "Az új Cé-kocka. Most akciósan!",
+  "chosen": "H07_0.wav",
+  "score": 0.982,
+  "heard": "Az új C -kocka most akciósan.",
+  "candidates": [
+   {
+    "file": "H07_0.wav",
+    "score": 0.982,
+    "heard": "Az új C -kocka most akciósan.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H07_1.wav",
+    "score": 0.929,
+    "heard": "Az új cégkocka, most aksiósán.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H07_2.wav",
+    "score": 0.982,
+    "heard": "Az új C kocka, most akciósan.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H07_3.wav",
+    "score": 0.945,
+    "heard": "Az új cég kocka, most akciós",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H07_4.wav",
+    "score": 0.877,
+    "heard": "Az óvicei kocka, most akciósan!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H07_5.wav",
+    "score": 0.893,
+    "heard": "Az új cégpucka, most akciósan!",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "H08": {
+  "text": "Ajándék fagombbal!",
+  "chosen": "H08_0.wav",
+  "score": 1.0,
+  "heard": "Ajándék fagombbal!",
+  "candidates": [
+   {
+    "file": "H08_0.wav",
+    "score": 1.0,
+    "heard": "Ajándék fagombbal!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H08_1.wav",
+    "score": 0.909,
+    "heard": "Ajándék fagomból!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H08_2.wav",
+    "score": 0.764,
+    "heard": "Állandék, Fagombar!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H08_3.wav",
+    "score": 0.766,
+    "heard": "Ajándékfagomból.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H08_4.wav",
+    "score": 0.436,
+    "heard": "Olyan dek fogomból.",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H08_5.wav",
+    "score": 0.766,
+    "heard": "ajándékfagomból",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ },
+ "H09": {
+  "text": "Ne maradjon le!",
+  "chosen": "H09_1.wav",
+  "score": 1.0,
+  "heard": "Ne maradjon le!",
+  "candidates": [
+   {
+    "file": "H09_0.wav",
+    "score": 0.759,
+    "heard": "Ne morodjunk le!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H09_1.wav",
+    "score": 1.0,
+    "heard": "Ne maradjon le!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H09_2.wav",
+    "score": 1.0,
+    "heard": "Ne maradjon le!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H09_3.wav",
+    "score": 1.0,
+    "heard": "Ne maradjon le!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H09_4.wav",
+    "score": 1.0,
+    "heard": "Ne maradjon le!",
+    "inner_zero_gaps_s": []
+   },
+   {
+    "file": "H09_5.wav",
+    "score": 1.0,
+    "heard": "Ne maradjon le!",
+    "inner_zero_gaps_s": []
+   }
+  ]
+ }
+}

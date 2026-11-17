@@ -182,3 +182,27 @@ Hangos, túlpörgetett, „minden menő” reklám a 90-es évek stílusában, a
 - **Felvétel:** `node tools/render_video.js full --page scene_ad90.html --audio video/ad90/audio_mix_ad90.wav --out video/c-cube_90s.mp4`.
 
 Újragenerálás sorrendje: `ad90_voice_generate.py` → `pick_best.py` → `node tools/ad90_audio.js` → `node tools/build_ad90_scene.js` → `render_video.js`.
+
+---
+
+## Bónusz: „retró magyar tévéreklám” (41 mp) – `video/c-kocka_retro_hu.mp4`
+Három korszak, egy kocka: rövid montázs a hazai gyártású tévéreklámok hangulatában, 1978-tól 2004-ig, csatornaváltós „hangyás” átmenetekkel. Minden saját: a stílus idézi a korszakot, de nem utánoz létező reklámot, márkát, szlogent, figurát, dallamot vagy bemondót.
+
+| Idő | Korszak | Kép | Hang |
+|---|---|---|---|
+| 0:00 | – | hangyás kép, `▶ 1978` | csatornaváltás |
+| 0:00.5 | **1978** | 4:3-as filmkép: szemcse, karcok, por, villódzás, fakult meleg színek; 70-es „szupergrafika” (vastag, ívelt színcsíkok), papírkivágás-napocska, virágok; a kocka stop-motion bábként (12 kép/s) ugrálva besétál: *„Bemutatjuk: az új C-KOCKA”* | kimért női bemondó: *„Kedves Nézőink! Bemutatjuk az új C-kockát.”* · csilingelő reklámzene, vetítőgép-zörej |
+| 0:05 | 1978 | rímes szlogen papírcsíkokon, a kocka ütemre szökken | *„Kicsi kocka, nagy barát: mesél, nevet egész nap át!”* |
+| 0:11.5 | 1978 | dupla keretes tablókép: **Kérje a szaküzletekben!** – *Kapható a kockaosztályon is.* (a kocka kacsint) | *„Kérje a szaküzletekben!”* |
+| 0:14 | **1993** | „házi” videótechnika: kék színátmenetes stúdió, sakktábla-padló, csillogás, csillag alakú áttűnések, „WordArt”-betűk: **FIGYELEM! · ÚJ! · C-KOCKA** | lelkes férfihang, house-szinti: *„Figyelem, figyelem! Itt a C-kocka!”* |
+| 0:17 | 1993 | **BESZÉL! · VILÁGÍT! · TÖRHETETLEN!** – a kocka leesik és visszapattan | *„Beszél, világít, és ha leejti, akkor sem törik el!”* |
+| 0:21.5 | 1993 | **RENDELJE MEG MOST!** · `☎ 06-KOCKA` (betűkkel – biztosan nem valódi szám) · **HÁZHOZ SZÁLLÍTJUK!** · futószöveg alul | *„Rendelje meg most, házhoz szállítjuk!”* |
+| 0:25 | **2004** | 16:9, korai digitális fény: fényes kék betűk, úszó ívek, lencsecsillanás, **AKCIÓ! −30%** csillag; ráközelítés a fa gombra: **+ AJÁNDÉK FAGOMB! · INGYEN!** | *„Az új C-kocka. Most akciósan! Ajándék fagombbal!”* |
+| 0:30.5 | 2004 | **NE MARADJON LE!** · *Csak a készlet erejéig!\** | *„Ne maradjon le!”* |
+| 0:32 | zárás | **C-kocka** – *Egy kis barát az asztalára.* · apróbetű: *„A kockázatokról és mellékhatásokról kérdezze a kockát! \*Koncepciótermék, nem kerül forgalomba. Szaküzletben se kérje. ;)”* – a kocka kacsint | *„C-kocka. Egy kis barát az asztalára.”* · *„A kockázatokról és mellékhatásokról kérdezze a kockát!”* · csilingelő záró szignál |
+
+**Hangok:** XTTS-v2, magyarul (`language="hu"`), két licencelt stúdióhanggal (nem valódi személy klónja; CPML – nem kereskedelmi): a 70-es évek és a zárás női bemondója „Gitta Nikolina”, a 90-es és 2000-es évek férfihangja „Craig Gutsy”. Mondatonként 6–8 jelölt, a `video-narration` skill `pick_best.py`-ja Whisperrel (magyarul) választott: 10 mondat 0,98–1,00, a „C-kocka. …” 0,89 (a Whisper „C. Kocka”-nak írja). A „C-kocka” kiejtése kötőjellel néha „célkocka/cégkocka” lett, ezért az első mondat „Cé kockát” írásmóddal készült (`say` mező). Az F5-TTS magyar finomhangolással is kipróbáltuk (8 jelölt/mondat), de elharapta a kezdőhangokat („nedves nézőink”, „ligyelem”), így az nem került be.
+**Hangszín korszakonként:** 1978 = keskeny sávú „filmhang” és enyhe sercegés, 1993 = tévéhangszóró, 2004 = tiszta. A 0,35 mp-nél hosszabb szüneteket a keverő 0,28 mp-re rövidíti.
+**Zene és hanghatások** (`tools/hu_retro_audio.js`, mind kódból, 120 BPM): 1978 – „oom-pah” basszus, elektromos zongora, seprűs pergő, saját harangjáték-dallam; 1993 – house-lábdob, taps, orgonás akkordütések, szinti-basszus; 2004 – pumpáló pad, pengetett arpeggio; mindegyik korszak elején ugyanaz a saját háromhangos „C-kocka” motívum más hangszínnel. Hanghatások: csatornaváltás, vetítőgép, csúszófütty, „boing”, lézer, puffanás, pénztárgép, csillogás, csengő.
+**Fájlok:** `video/hu_retro/` (`lines_hu_retro.json` – szöveg és kiejtés, `timeline_hu_retro.json`, `scene_hu_retro_part.js`, `voice/` + `minoseg.json`), `tools/build_hu_retro_scene.js` → `video/scene_hu_retro.html` / `.js`, `tools/hu_retro_audio.js`.
+**Újragenerálás:** XTTS-jelöltek a skill `xtts_generate.py`-jával (`--lang hu --speaker "Gitta Nikolina"` ill. `"Craig Gutsy"`, a `say` szöveggel) → `pick_best.py --lang hungarian` → `node tools/hu_retro_audio.js` → `node tools/build_hu_retro_scene.js` → `node tools/render_video.js full --page scene_hu_retro.html --audio video/hu_retro/audio_mix_hu_retro.wav --out video/c-kocka_retro_hu.mp4`.
