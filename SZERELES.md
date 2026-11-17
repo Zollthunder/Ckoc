@@ -18,9 +18,9 @@ A kocka **négy egységből** áll, amiket külön lehet összerakni és kiprób
 ### Kötőelemek
 | Db | Elem | Hová |
 |---|---|---|
-| 30 | **M2,5 menetes betét** (beolvasztós, Ø3,6-os furatba, 4 mm hosszú) | tetőtartó 4, ház elöl 4, ház a tálcához 4, ház a hangszóróhoz 3, tálca a diffúzorhoz 3, szán lábai 4, szán jobb sín (IMU) 2, szán bal sín (NeoDriver) 4, USB-C szorítólap 2 |
+| 30 | **M2,5 menetes betét** (beolvasztós, Ø3,6-os furatba, 4 mm hosszú) | tetőtartó 4, ház elöl 4, ház a tálcához 4, ház a hangszóróhoz 3, tálca a diffúzorhoz 3, szán lábai 4, szán jobb sín (IMU 2 + NeoDriver 4) 6, USB-C szorítólap 2 |
 | **13** | **M2,5×8 süllyesztett fejű** (ISO 10642 / DIN 7991) | tetőlap → tetőtartó 4, ház hátfala (kívülről) → USB-C szorítólap 2, diffúzor → tálca 3, tálca → szán lábai (alulról) 4 |
-| **21** | **M2,5×6 hengeres fejű** (ISO 4762 / DIN 912) | előlapi tartó → ház 4, hangszóró-rögzítő gyűrű → ház 3, IMU → szán jobb sín 2, NeoDriver → szán bal sín 4, Pi + ReSpeaker távtartói 8 |
+| **21** | **M2,5×6 hengeres fejű** (ISO 4762 / DIN 912) | előlapi tartó → ház 4, hangszóró-rögzítő gyűrű → ház 3, IMU → szán jobb sín 2, NeoDriver → szán jobb sín 4, Pi + ReSpeaker távtartói 8 |
 | **4** | **M2,5×14 hengeres fejű** | tálca → ház (alulról) |
 | 4 | M2,5 távtartó, 11 mm, anya-anya | Pi + ReSpeaker hangpanel (a csavarjai a fenti M2,5×6-osok) |
 
@@ -53,7 +53,7 @@ Minden nyomtatott alkatrészbe olvaszd be az M2,5-ös betéteket (a fenti tábl�
 2. Tedd be a **C-t kívülről** a horonyba: elöl egy síkba kerül a fallal, belül 0,5 mm-rel kilóg.
 3. **Belülről** húzz körbe egy vékony szilikoncsíkot a C kilógó része és a fal közé. Kívül ne kerüljön szilikon a résbe.
 4. Ugyanígy: az **érintőbetétet** tedd az alu tetőlap Ø18-as furatába (a tetőlap felső síkjával egy síkba), és alulról szilikonozd körbe.
-5. **Hangszóró:** a 36 mm-es hangszórót (VISATON K 36 WP) a rács mögé tedd, a PETG gyűrűvel szorítsd oda, 3 db M2,5×6 csavarral. **Csak az egyik oldalon** (2026-11-17 óta mono); a másik rács szellőző marad. *(Az ábrán még két hangszóró látszik.)*
+5. **Hangszóró:** a 36 mm-es hangszórót (VISATON K 36 WP) a rács mögé tedd, a PETG gyűrűvel szorítsd oda, 3 db M2,5×6 csavarral. **Csak a BAL rács mögött** (2026-11-17 óta mono; a B döntés óta a bal oldalon, mert a jobb oldalon a Pi–XIAO USB-dugónak kell a hely); a jobb rács szellőző marad. *(Az ábrán még két hangszóró látszik.)*
 6. **USB-C:** a hosszabbító aljzatát belülről told a hátfal nyílásába (9,4 × 3,6 mm, 18 mm-rel az alj fölött), a fülét fogd a fal és a nyomtatott **USB-C szorítólap** közé, és kívülről 2 db M2,5×8 süllyesztett csavarral húzd a lap betéteibe. A hosszabbító a házban marad; a dugós vége szabadon lóg (10–15 cm).
 7. Hagyd **24 órát** kötni (ez idő alatt jöhet a többi egység).
 
@@ -69,9 +69,9 @@ Minden nyomtatott alkatrészbe olvaszd be az M2,5-ös betéteket (a fenti tábl�
 
 1. A **NeoPixel gyűrűt** a tálca fényablaka fölé tedd (a LED-ek lefelé, a diffúzor felé nézzenek).
 2. A **szánt** tedd a tálcára, és alulról 4 db M2,5×8 süllyesztett csavarral húzd a lábaiba.
-3. A szán aljára: **XIAO RP2040, rezgőmotor-modul**. A **NeoDriver** függőlegesen a **bal sín külső oldalára** kerül (alkatrész-oldal kifelé, sorkapcsok felül), 4 db M2,5×6 csavarral a sín betéteibe. Az **IMU** függőlegesen a **jobb sín külső oldalára** kerül (alkatrész-oldal kifelé, a rögzítőfuratos él felül), 2 db M2,5×6 csavarral a sín betéteibe. A Qwiic → Dupont kábelt (Adafruit 4397, 150 mm) a sínbe vágott résen (y 17…24, z −5…1) át a XIAO tüskéire (3V3, GND, D4 = SDA, D5 = SCL). Az út kb. 40 mm, a kb. 110 mm-es ráhagyást a jobb sín külső oldalán, az IMU előtt (z −5…+20, a sín és a hangszóró között) laza hurokban, kábelkötegelővel a sín réséhez fogva kell elvezetni – ragasztás nélkül.
+3. A szán aljára: **XIAO RP2040** (az USB-C portja jobbra, a jobb sín felé néz) és a **rezgőmotor-modul**. A **NeoDriver** függőlegesen a **jobb sín külső oldalára**, az IMU elé kerül (alkatrész-oldal kifelé, sorkapcsok felül), 4 db M2,5×6 csavarral a sín betéteibe. Az **IMU** függőlegesen a **jobb sín külső oldalára** kerül (alkatrész-oldal kifelé, a rögzítőfuratos él felül), 2 db M2,5×6 csavarral a sín betéteibe. A Qwiic → Dupont kábelt (Adafruit 4397, 150 mm) a sínbe vágott résen (y 17…24, z −5…1) át a XIAO tüskéire (3V3, GND, D4 = SDA, D5 = SCL). Az út kb. 40 mm, a kb. 110 mm-es ráhagyást a jobb sín külső oldalán, az IMU fölött (y 31…46, z −30…−10) laza hurokban, kábelkötegelővel a sín réséhez fogva kell elvezetni – ragasztás nélkül.
 4. A szán polcaira: **UPS panel + 18650 akku**, felette a **Raspberry Pi Zero 2 W**, rá 11 mm-es távtartókkal a **ReSpeaker hangpanel**.
-5. Kösd be a kábeleket: gyűrű → XIAO, IMU és rezgés → XIAO (I²C), XIAO → Pi (USB vagy UART), UPS → Pi táp. (Az USB-C hosszabbító a házban van, a 8. lépésben dugod be.)
+5. Kösd be a kábeleket: gyűrű → XIAO, IMU és rezgés → XIAO (I²C), **XIAO → Pi: rövid OTG-kábel, mindkét végén 90°-os dugóval** – a Pi micro-USB (OTG) portjába egy **előre forduló micro-B** dugó a jobb sín ablakán át, a XIAO-ba egy **felfelé forduló USB-C** dugó (a feje a fedélzet kivágásába lóg). A kábel a jobb sín külső oldalán előre, a sín vége előtt (a NeoDriver előtt) le, majd a fedélzet fölött a XIAO-hoz fut. **Kijelző → XIAO:** 8 eres Dupont-kábel (SCK, MOSI, DC, CS → GND, RST és BL → 3,3 V, 3,3 V, GND) az előlapi tartó középső nyílásán át, a tartó hátlapja és a UPS eleje között (itt csak 3 mm van: a vezetékeket laposan, egymás mellett vezesd), a UPS alatt a XIAO-ig. UPS → Pi táp. (Az USB-C hosszabbító a házban van, a 8. lépésben dugod be.)
 
 ## 4. Előlapi egység
 ![Előlapi egység: kijelző, kamera, C LED-szalag](szereles/kepek/04_eloegyseg.png)
@@ -123,7 +123,7 @@ Ragaszd fel a 8 narancs gumisarkot (zsírtalanítás után). Ez az egyetlen igaz
 
 **IMU (2026-11-17 óta):** függőlegesen a szán **jobb sínjének külső oldalán** (a jobb hangszóró felőli oldalon). A NYÁK síkja függőleges, az alkatrész-oldal kifelé, jobbra néz (+X); a hosszanti él vízszintes, előre-hátra fut; a két rögzítőfuratos él felül van. A panel saját tengelyei a kockához képest (Y fel, eleje +Z, jobb +X): **panel X → hátra (−Z), panel Y → fel (+Y), panel Z → jobbra (+X)**. Ez a panel éleiből és a gyártói rajzból adódik; a chip tengelyjelölését a megvásárolt panel szitanyomatán ellenőrizni. **A firmware-ben (`firmware/xiao/code.py`, a `claude/confident-wilson-a057bb` ágon) a tengelyeket át kell számolni** (dobás, rázás, tájolás) – a firmware-t ez a változtatás nem módosította.
 
-**NeoDriver (Adafruit 5766, 2026-11-17):** függőlegesen a szán **bal sínjének külső oldalán** (ott már nincs hangszóró). A gyártói rajz szerint 25,4 × 25,4 mm, 4 db Ø2,5 furat; alkatrész-oldal kifelé (balra), a sorkapcsok felül (a LED-vezetékek felfelé lépnek ki, fölöttük kb. 9 mm szabad hely van az ívhez), a Qwiic csatlakozók előre és hátra néznek. 4 db M2,5×6 hengeres fejű csavar a sínbe olvasztott betétekbe. A Qwiic lánc az IMU második portjáról egy rövid QT–QT kábellel jön, a jobb és a bal sín résén át (bal: elöl, y 12…16,5, z 4…10).
+**NeoDriver (Adafruit 5766, 2026-11-17):** függőlegesen a szán **jobb sínjének külső oldalán, az IMU előtt** (a bal oldalon a hangszóró miatt nem fér el). A gyártói rajz szerint 25,4 × 25,4 mm, 4 db Ø2,5 furat; alkatrész-oldal kifelé (jobbra), a sorkapcsok felül (a LED-vezetékek felfelé lépnek ki, fölöttük kb. 9 mm szabad hely van az ívhez), a Qwiic csatlakozók előre és hátra néznek. 4 db M2,5×6 hengeres fejű csavar a sínbe olvasztott betétekbe. A Qwiic lánc az IMU második portjáról egy rövid QT–QT kábellel jön, a jobb és a bal sín résén át (a NeoDriver a jobb sínen az IMU mellett van, a QT–QT kábel rövid). A bal sín korábbi NeoDriver-csavaroszlopai és rése a szánon maradtak, betét nélkül, nem használtak.
 
 ## Még pontosítandó (a valódi alkatrészek alapján)
 - a modulok rögzítőfuratai a szánon (Pi, ReSpeaker, UPS, XIAO; az IMU-é a gyártói rajzból kész) – a pontos furatképet a megvásárolt panelekről kell levenni,

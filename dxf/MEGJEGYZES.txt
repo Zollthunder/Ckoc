@@ -47,3 +47,9 @@ M1 + M7 (2026-11-17) – tools/m1_m7_fusion.py, a Fusionben, onnan exportálva:
 
 NeoDriver (2026-11-17) – tools/neodriver_fusion.py, a Fusionben: NYÁK x -22,5…-24,1, y 11,5…36,9, z -24…1,4 (bal sín külső oldala);
 4 csavaroszlop + M2,5 betét (y 14,04 / 26,74; z -21,46 / -1,14), Qwiic-rés a bal sínben (y 12…16,5, z 4…10).
+
+B döntés (2026-11-17) – tools/b_dontes_fusion.py + b_dontes_javitas_fusion.py, a Fusionben:
+- Hangszóró és rögzítőgyűrű a BAL rács mögé tükrözve (3d/nyomtatas/FDM_PETG/hangszoro_rogzito_bal.stl); a jobb rács szellőző.
+- NeoDriver a jobb sín külső oldalán, az IMU előtt: x 22,5…34,1, y 11,5…36,9, z 0…25,4; 4 csavaroszlop + betét (y 14,04 / 26,74; z 2,54 / 22,86).
+- XIAO 90°-kal elforgatva (USB-C jobbra): x -15…6, z -13,5…4. Fedélzet-kivágás a dugófejnek: x 4…16,5, z -12,75…3,25.
+- Jobb sín ablak a Pi OTG-dugójának: y 54,7…65,7, z -0,6…18; a dugó (90°, előre) x 15,6…24, y 56,7…63,7, z 1,4…16; UPS-től 2,5 mm.
