@@ -6,10 +6,10 @@
 ## Összefoglaló
 | # | Téma | Eredmény | Teendő |
 |---|---|---|---|
-| 1 | **Kijelző és a ReSpeaker LED-jei ugyanazon az SPI-buszon** | ❗ PROBLÉMA | próba, majd szükség esetén a két LED-tüske leválasztása; másik lábkiosztás |
-| 2 | **A kijelző nem fér hozzá a Pi tüskesorához** (a ReSpeaker elfoglalja) | ❗ PROBLÉMA | stacking (átmenő) tüskesor; a magasságot a 3D-modellben ellenőrizni |
+| 1 | **Kijelző és a ReSpeaker LED-jei ugyanazon az SPI-buszon** | ❗ PROBLÉMA | próba, majd szükség esetén a két LED-tüske leválasztása az elosztón; másik lábkiosztás |
+| 2 | **A kijelző nem fér hozzá a Pi tüskesorához** (a ReSpeaker elfoglalja) | ✅ döntés: **GPIO 1→2 elosztó panel**; a XIAO is ezen át, UART-on | a 3D-modellben a stacket lejjebb kell tenni |
 | 3 | **A Pi-Ener-lite töltőárama fix 1 A** (a hőkezelés 0,5 A-t kér) | ❗ PROBLÉMA | a hőszámítás újrafuttatása 1 A-re, vagy kérdés a gyártónak |
-| 4 | **31 WS2812 LED a XIAO-ról** | ❗ PROBLÉMA | szintillesztő modul, a LED-táp közvetlenül a UPS 5 V-járól, fényerőkorlát |
+| 4 | **31 WS2812 LED a XIAO-ról** | ✅ döntés: **Adafruit NeoDriver** (I2C → NeoPixel, 5 V-os kimenet) a Qwiic láncon | a LED-táp közvetlenül a UPS 5 V-járól, fényerőkorlát |
 | 5 | **XIAO RP2040: forrasztatlan tüskesor, nincs Qwiic** | ⚠️ ELLENŐRIZENDŐ | gyárilag forrasztott változat + női Dupont-végű Qwiic kábel |
 | 6 | ReSpeaker v2.0 a Pi OS-en | ⚠️ működik, de az overlayt le kell fordítani | install-szkript |
 | 7 | I2C-címek | ✅ OK | – (az 5 V-os felhúzást ellenőrizni) |
@@ -39,10 +39,12 @@ Szabadon marad: GPIO 5, 6, 7, 9, 14, 15, 16, 23, 24, 26. A GPIO4 a UPS-é.
 
 **Megoldás:**
 1. Első lépés: próba a prototípuson, közben figyelni a ReSpeaker LED-jeit.
-2. Ha villognak, a ReSpeaker felé menő 19-es és 23-as tüskét le kell választani a stacking tüskesorban (kivágás vagy visszahajlítás, forrasztás nélkül). A 3 LED-re nincs szükség, a 24-es gyűrű kiváltja őket.
+2. Ha villognak, a ReSpeaker felé menő 19-es és 23-as tüskét le kell választani az elosztó panel ReSpeaker felőli során (visszahajlítás vagy egy köztes aljzatban kivágás, forrasztás nélkül). A 3 LED-re nincs szükség, a 24-es gyűrű kiváltja őket.
 
 ### 2. A kijelző hozzáférése a tüskesorhoz – PROBLÉMA
-A ReSpeakeren valószínűleg nincs átmenő tüskesor [V]. A kijelző vezetékeit forrasztás nélkül **stacking (hosszított, átmenő) 2×20-as tüskesorral** lehet a Pi-re vinni. Ezzel a Pi és a ReSpeaker közötti hézag nő, és a **11 mm-es távtartó kevés lehet** → a 3D-modellben ellenőrizni (a ReSpeaker és a tetőtartó közötti hely).
+A ReSpeakeren valószínűleg nincs átmenő tüskesor [V]. A 3D-ellenőrzés szerint egy stacking tüskesor sem ad hozzáférést: a tüskék a ReSpeaker aljzatában végződnek, és a két panel között nincs elég szabad tüske a Dupont-aljzatnak.
+
+**Döntés (2026-11-17):** **GPIO 1→2 elosztó panel** (pl. Micro Connectors RAS-GP02 vagy GeeekPi, 40 tűs, egy anya és két apa tüskesorral [V, kereskedői leírás]). Az egyik soron a ReSpeaker ül, a másikon Dupont-kábellel a kijelző és a XIAO soros vonala. A ReSpeaker LED-jeinek két tüskéje szükség esetén ezen az elosztón választható le. A stack ettől magasabb lesz: a 3D-modellben a UPS–Pi–ReSpeaker stacket lejjebb kell tenni.
 
 ### 3. Pi-Ener-lite töltőárama – PROBLÉMA
 A gyártói kézikönyv (User Manual V1.0) szerint [E]:
@@ -56,14 +58,14 @@ A gyártói kézikönyv (User Manual V1.0) szerint [E]:
 A [HOKEZELES.md](HOKEZELES.md) (a thermal ágon) 0,5 A-es töltést javasol. **Teendő:** a hőszámítás újrafuttatása 1 A-es töltésre, töltés közbeni takarékmóddal. Párhuzamosan meg lehet kérdezni a fejlesztőt, van-e áramállító ellenállás. A biztonságos leállás saját szkripttel oldható meg: GPIO4 + a CW2015 töltöttség, például 5% alatt `shutdown`.
 
 ### 4. A WS2812 LED-ek – PROBLÉMA
-- **Szintillesztés:** a WS2812 adatbemenetének 5 V-os tápnál kb. 3,5 V kell (a tápfeszültség 70%-a), a XIAO 3,3 V-os kimenete határeset [E, Adafruit NeoPixel útmutató]. → **74AHCT125 szintillesztő modul** csatlakozókkal (vagy I2C→NeoPixel meghajtó).
+- **Szintillesztés:** a WS2812 adatbemenetének 5 V-os tápnál kb. 3,5 V kell (a tápfeszültség 70%-a), a XIAO 3,3 V-os kimenete határeset [E, Adafruit NeoPixel útmutató]. → **Döntés (2026-11-17): Adafruit NeoDriver** (I2C → NeoPixel meghajtó, STEMMA QT, 5 V-os kimenet, csavaros sorkapocs). A Qwiic láncon az IMU után jön, ezért nem foglal XIAO-lábat, nem kell forrasztás, és a gyűrű meg a C-szalag egyetlen láncban megy. Egy csupasz 74AHCT125 IC-hez forrasztani kellene.
 - **Áram:** legfeljebb 60 mA/LED, 31 LED × 60 mA ≈ 1,86 A [E]. Ez túl sok a Pi OTG-portján és a XIAO-n át. → **A LED-ek 5 V-ja közvetlenül a UPS 5 V-járól**, közös GND-vel, és **szoftveres fényerőkorlát** (≤ 30% ≈ 0,6 A). A hőkezelési vizsgálat LED-korlátja ugyanerre mutat.
 
 ### 5. XIAO RP2040 – ELLENŐRIZENDŐ
 - Az alapváltozat **forrasztatlan tüskesorral** jön; van **gyárilag forrasztott („Pre-Soldered”) változat** [E]. → Azt kell rendelni (a forrasztás ütközne az elvekkel).
 - **Nincs rajta STEMMA QT/Qwiic** csatlakozó [E]. → Az IMU-hoz **Adafruit 4397** kábel kell (STEMMA QT → női Dupont-aljzatok, 150 mm), a XIAO tüskéire: 3V3, GND, D4 = SDA, D5 = SCL [E]. *(Az eddig tervezett 4399-es kábel két végén is Qwiic-dugó van, a XIAO-hoz nem jó.)*
 - **Érintés (`touchio`):** RP2040-en külső **1 MΩ-os lehúzó ellenállás** kell a GND felé [E, Adafruit útmutató]; enélkül a `TouchIn` hibát dob [V]. A gombok prototípus-lapjára kerül (ott amúgy is van forrasztás).
-- A XIAO a Pi micro-USB OTG portjára **micro-B → USB-C OTG kábellel** csatlakozik.
+- **Döntés (2026-11-17): a XIAO soros vonalon (UART) kapcsolódik a Pi-hez** (Pi GPIO14/15 ↔ XIAO TX/RX, + 5 V és GND, Dupont-kábellel az elosztó panelről). Így nem kell OTG kábel. A 3D-ellenőrzés szerint a micro-USB dugó nem fért volna el: 1,5 mm maradt volna a hangszóróig, a minimum 2 mm helyett. A Pi Zero 2 W-n ez a „mini UART” (a PL011 a Bluetooth-é), ezért `enable_uart=1` kell, és a soros konzolt ki kell kapcsolni.
 
 ### 6. ReSpeaker v2.0 a Raspberry Pi OS-en – ELLENŐRIZENDŐ
 - A `respeaker-2mic-v2_0` overlay **nincs benne** a Raspberry Pi kernelben (rpi-6.12.y – 6.18.y) [E]. → A Seeed `seeed-linux-dtoverlays` repójából kell lefordítani, a `/boot/firmware/overlays/` alá másolni, és a `config.txt`-be beírni: `dtoverlay=respeaker-2mic-v2_0` [E].
