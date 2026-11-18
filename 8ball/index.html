@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rázd meg! – C-kocka</title>
+<meta name="description" content="A C-kocka „Rázd meg, és dönt helyetted” funkciója önálló programként: tegyél fel egy igen–nem kérdést, rázd meg a kockát, és válaszol.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='6' y='6' width='52' height='52' rx='12' fill='%2330333a'/%3E%3Cpath d='M44 22a14 14 0 1 0 0 20' fill='none' stroke='%23ff9a3c' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+<!--
+  C-kocka · „Rázd meg, és dönt helyetted” (Magic 8 Ball ihlette) – önálló, helyben futó program.
+  Egyetlen fájl, internet és szerver nélkül: elég dupla kattintással megnyitni böngészőben.
+  Rázás: a kockát egérrel / ujjal ide-oda rángatva, a gombbal, a szóközzel, vagy telefonon magát a telefont megrázva.
+  A válasz angol (YES / NO), ugyanúgy, mint a kockán; a felület magyar vagy angol (?lang=en vagy a nyelvváltó).
+-->
+<style>
+  :root {
+    --bg: #0d0f13; --panel: #15181e; --line: #262a33; --text: #ecebe8; --muted: #9a9ea8;
+    --acc: #ff9a3c; --yes: #5cf28a; --no: #ff6b6b; --fog: #8f7bff;
+    --light: var(--acc); --glow: .55;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--text); }
+  body { font: 16px/1.5 system-ui, "Segoe UI", Roboto, sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px 16px 40px; overflow-x: hidden; }
+  header { width: min(720px, 100%); display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .brand { font-weight: 800; font-size: 20px; letter-spacing: -.01em; }
+  .brand b { color: var(--acc); }
+  .lang { background: none; border: 1px solid var(--line); color: var(--muted); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+  .lang:hover { color: var(--text); border-color: var(--muted); }
+  h1 { font-size: clamp(28px, 6vw, 44px); line-height: 1.1; margin: 28px 0 6px; text-align: center; letter-spacing: -.02em; }
+  .lead { color: var(--muted); text-align: center; max-width: 34em; margin: 0 0 20px; }
+
+  .ask { width: min(520px, 100%); display: flex; gap: 8px; }
+  .ask input { flex: 1; min-width: 0; background: var(--panel); border: 1px solid var(--line); color: var(--text); border-radius: 14px; padding: 12px 16px; font: inherit; }
+  .ask input:focus { outline: 2px solid var(--acc); outline-offset: 1px; }
+  .btn { background: var(--acc); color: #1a1006; border: 0; border-radius: 14px; padding: 12px 18px; font: inherit; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .btn:hover { filter: brightness(1.08); }
+  .btn:disabled { opacity: .5; cursor: wait; }
+
+  /* a kocka – ugyanaz a forma, mint a szimulátorban */
+  .stage { margin: 34px 0 10px; display: grid; justify-items: center; gap: 18px; }
+  .cube-wrap { position: relative; width: min(340px, 78vw); aspect-ratio: 1; touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none; }
+  .cube-wrap.dragging { cursor: grabbing; }
+  .cube { position: absolute; inset: 0; border-radius: 15%; background: radial-gradient(120% 120% at 30% 20%, #3a3d44, #1c1e23 55%, #121317);
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.08), inset 0 -10px 30px rgba(0,0,0,.5), 0 30px 50px rgba(0,0,0,.45);
+    transition: transform .45s cubic-bezier(.3,1.5,.5,1); will-change: transform; }
+  .cube.free { transition: none; }
+  .cube.shake { animation: shake .9s; }
+  @keyframes shake { 0%,100% { transform: none; } 10%,30%,50%,70% { transform: translateX(-18px) rotate(-7deg); } 20%,40%,60%,80% { transform: translateX(18px) rotate(7deg); } 90% { transform: translateX(-4px) rotate(-1deg); } }
+  .corner { position: absolute; width: 22%; height: 22%; background: radial-gradient(circle at 35% 30%, #ffb062, #ff8a1f 45%, #c55d06); border-radius: 30%; }
+  .corner.tl { left: -5%; top: -5%; } .corner.tr { right: -5%; top: -5%; } .corner.bl { left: -5%; bottom: -5%; } .corner.br { right: -5%; bottom: -5%; }
+  .c-glow { position: absolute; inset: 10%; width: 80%; height: 80%; overflow: visible; }
+  .c-glow path { stroke: var(--light); opacity: calc(.25 + .75 * var(--glow)); filter: drop-shadow(0 0 calc(16px * var(--glow)) var(--light)); transition: stroke .25s; }
+  .display { position: absolute; left: 25%; top: 25%; width: 50%; height: 50%; border-radius: 50%; background: #050608; overflow: hidden;
+    box-shadow: inset 0 0 0 3px #22252b, inset 0 6px 18px rgba(0,0,0,.8); }
+  .display canvas { width: 100%; height: 100%; display: block; }
+  .floor { position: absolute; left: 12%; right: 12%; bottom: -9%; height: 14%; border-radius: 50%;
+    background: radial-gradient(closest-side, var(--light), transparent); opacity: calc(.15 + .7 * var(--glow)); filter: blur(10px); transition: background .25s; }
+
+  .answer { min-height: 64px; text-align: center; }
+  .answer .word { font-size: 30px; font-weight: 800; letter-spacing: .02em; }
+  .answer .quip { color: var(--muted); font-style: italic; }
+  .hint { color: var(--muted); font-size: 14px; text-align: center; margin: 0; }
+  kbd { background: var(--panel); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; padding: 0 6px; font: inherit; font-size: 13px; }
+
+  .opts { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 14px; }
+  .opt { background: var(--panel); border: 1px solid var(--line); color: var(--muted); border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 14px; cursor: pointer; }
+  .opt[aria-pressed="true"] { color: var(--text); border-color: var(--acc); }
+
+  .history { width: min(520px, 100%); margin-top: 26px; }
+  .history h2 { font-size: 15px; color: var(--muted); font-weight: 600; margin: 0 0 8px; display: flex; justify-content: space-between; }
+  .history h2 span { font-weight: 400; }
+  .history ol { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .history li { display: flex; justify-content: space-between; gap: 16px; padding: 9px 2px; border-bottom: 1px solid var(--line); }
+  .history li .q { color: var(--muted); overflow-wrap: anywhere; }
+  .history li .a { font-weight: 700; white-space: nowrap; }
+  .history .empty { color: var(--muted); font-size: 14px; padding: 10px 2px; }
+  .yes { color: var(--yes); } .no { color: var(--no); }
+  footer { margin-top: 34px; color: #6f7480; font-size: 13px; text-align: center; }
+  @media (prefers-reduced-motion: reduce) { .cube.shake { animation-duration: .3s; } }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand"><b>C</b><span data-t="brand">-kocka</span></div>
+  <button class="lang" id="lang" type="button">EN</button>
+</header>
+
+<h1 data-t="title">Rázd meg, és dönt helyetted</h1>
+<p class="lead" data-t="lead">Tegyél fel egy igen–nem kérdést, aztán rázd meg a kockát. A kijelzőn köd kavarog, és előúszik a válasz.</p>
+
+<form class="ask" id="ask" autocomplete="off">
+  <input id="q" maxlength="140" data-tp="placeholder" placeholder="Pl. Megérdemlek még egy kávét?">
+  <button class="btn" id="go" type="submit" data-t="shake">🎱 Rázd meg!</button>
+</form>
+
+<div class="stage">
+  <div class="cube-wrap" id="wrap" data-ta="cubeLabel" aria-label="A kocka – rángasd ide-oda a rázáshoz">
+    <div class="cube" id="cube">
+      <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+      <svg class="c-glow" viewBox="0 0 200 200" aria-hidden="true"><path d="M154 58 A72 72 0 1 0 154 142" fill="none" stroke-linecap="round" stroke-width="16"/></svg>
+      <div class="display"><canvas id="screen" width="320" height="320"></canvas></div>
+    </div>
+    <div class="floor"></div>
+  </div>
+  <div class="answer" id="answer" aria-live="polite"></div>
+  <p class="hint" id="hint" data-th="hint">Rángasd ide-oda a kockát, nyomd meg a <kbd>Szóköz</kbd> billentyűt, vagy telefonon rázd meg magát a telefont.</p>
+</div>
+
+<div class="opts">
+  <button class="opt" id="optSound" type="button" aria-pressed="true" data-t="sound">🔊 Hang</button>
+  <button class="opt" id="optVoice" type="button" aria-pressed="true" data-t="voice">🗣️ Felolvasás</button>
+  <button class="opt" id="optMotion" type="button" aria-pressed="false" data-t="motion" hidden>📱 Telefon rázása</button>
+</div>
+
+<section class="history">
+  <h2><span data-t="histTitle">Eddigi döntések</span><span id="stats"></span></h2>
+  <ol id="hist"></ol>
+</section>
+
+<footer data-t="footer">C-kocka · koncepciótermék · Tervezte: Zollo &amp; C (Claude) · a Magic 8 Ball játék ihlette</footer>
+
+<script>
+'use strict';
+// ------------------------------------------------------------------ nyelv
+const TXT = {
+  hu: {
+    brand: '-kocka', title: 'Rázd meg, és dönt helyetted',
+    lead: 'Tegyél fel egy igen–nem kérdést, aztán rázd meg a kockát. A kijelzőn köd kavarog, és előúszik a válasz.',
+    placeholder: 'Pl. Megérdemlek még egy kávét?', shake: '🎱 Rázd meg!',
+    cubeLabel: 'A kocka – rángasd ide-oda a rázáshoz',
+    hint: 'Rángasd ide-oda a kockát, nyomd meg a <kbd>Szóköz</kbd> billentyűt, vagy telefonon rázd meg magát a telefont.',
+    sound: '🔊 Hang', voice: '🗣️ Felolvasás', motion: '📱 Telefon rázása',
+    histTitle: 'Eddigi döntések', empty: 'Még nem döntött semmiről. Kérdezz valamit!', noQuestion: '(kérdés nélkül)',
+    stats: (y, n) => `${y} igen · ${n} nem`,
+    footer: 'C-kocka · koncepciótermék · Tervezte: Zollo & C (Claude) · a Magic 8 Ball játék ihlette',
+    motionDenied: 'A telefon nem engedte a mozgásérzékelőt. A gomb és a rángatás továbbra is működik.',
+    other: 'EN', title_doc: 'Rázd meg! – C-kocka',
+  },
+  en: {
+    brand: '-Cube', title: 'Shake it, and it decides for you',
+    lead: 'Ask a yes-or-no question, then shake the cube. Fog swirls on the screen, and the answer floats up.',
+    placeholder: 'E.g. Do I deserve another coffee?', shake: '🎱 Shake it!',
+    cubeLabel: 'The cube – jiggle it back and forth to shake',
+    hint: 'Jiggle the cube back and forth, press <kbd>space</kbd>, or on a phone shake the phone itself.',
+    sound: '🔊 Sound', voice: '🗣️ Read aloud', motion: '📱 Shake the phone',
+    histTitle: 'Decisions so far', empty: 'Nothing decided yet. Ask it something!', noQuestion: '(no question)',
+    stats: (y, n) => `${y} yes · ${n} no`,
+    footer: 'C-Cube · concept product · Designed by Zollo & C (Claude) · inspired by the Magic 8 Ball',
+    motionDenied: "The phone didn't allow the motion sensor. The button and jiggling still work.",
+    other: 'HU', title_doc: 'Shake it! – C-Cube',
+  },
+};
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('c8_' + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem('c8_' + k, JSON.stringify(v)); } catch { /* privát ablak: nem baj */ } },
+};
+let lang = new URLSearchParams(location.search).get('lang') || store.get('lang', (navigator.language || '').startsWith('hu') ? 'hu' : 'en');
+if (!TXT[lang]) lang = 'hu';
+const L = () => TXT[lang];
+function applyLang() {
+  const t = L();
+  document.documentElement.lang = lang; document.title = t.title_doc;
+  document.querySelectorAll('[data-t]').forEach(el => { el.textContent = t[el.dataset.t]; });
+  document.querySelectorAll('[data-th]').forEach(el => { el.innerHTML = t[el.dataset.th]; });
+  document.querySelectorAll('[data-tp]').forEach(el => { el.placeholder = t[el.dataset.tp]; });
+  document.querySelectorAll('[data-ta]').forEach(el => { el.setAttribute('aria-label', t[el.dataset.ta]); });
+  $('lang').textContent = t.other;
+  renderHistory();
+}
+const $ = id => document.getElementById(id);
+
+// ------------------------------------------------------------------ válaszok (a DESIGN.md 10. pontja szerint, angolul)
+const QUIPS = {
+  YES: ['Obviously.', "…but don't tell Andor.", 'Go for it, Captain.', 'The cube has spoken.', 'Absolutely.', 'Without a doubt.', 'Yes. Coffee first, though.'],
+  NO: ['Nice try.', 'Not today.', 'Ask again after coffee.', 'Absolutely not.', 'Andor says no too.', 'The cube has spoken.', 'Hard pass.'],
+};
+const rnd = () => crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
+const pick = a => a[Math.floor(rnd() * a.length)];
+const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+const asked = new Map();            // ugyanarra a kérdésre ugyanazt mondja – és ezt szóvá is teszi
+function decide(question) {
+  const key = norm(question);
+  if (key && asked.has(key)) {
+    const word = asked.get(key);
+    return { word, quip: word === 'YES' ? 'Still YES. Stop asking.' : "Still NO. Shaking harder won't help.", repeat: true };
+  }
+  const word = rnd() < 0.5 ? 'YES' : 'NO';
+  if (key) asked.set(key, word);
+  return { word, quip: rnd() < 0.45 ? pick(QUIPS[word]) : '' };
+}
+
+// ------------------------------------------------------------------ hang (WebAudio, kódból, mint a kockán)
+let audio = null;
+const opt = { sound: store.get('sound', true), voice: store.get('voice', true) };
+function ac() { if (!audio) { try { audio = new (window.AudioContext || window.webkitAudioContext)(); } catch { audio = null; } } if (audio?.state === 'suspended') audio.resume(); return audio; }
+function tone(f, t, d, type = 'sine', v = .2, f2 = null) {
+  const a = ac(); if (!a || !opt.sound) return;
+  const o = a.createOscillator(), g = a.createGain(); o.type = type; o.frequency.setValueAtTime(f, t);
+  if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .01); g.gain.exponentialRampToValueAtTime(.0001, t + d);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t + d + .02);
+}
+function noise(t, d, v = .2, freq = 1200, q = 1) {
+  const a = ac(); if (!a || !opt.sound) return;
+  const n = Math.floor(a.sampleRate * d), b = a.createBuffer(1, n, a.sampleRate), ch = b.getChannelData(0);
+  for (let i = 0; i < n; i++) ch[i] = (Math.random() * 2 - 1) * (1 - i / n);
+  const s = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
+  s.buffer = b; f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = q; g.gain.value = v;
+  s.connect(f).connect(g).connect(a.destination); s.start(t);
+}
+const SFX = {
+  rattle() { const a = ac(); if (!a) return; const t = a.currentTime; noise(t, .06, .35, 2600, 4); tone(180 + rnd() * 80, t, .05, 'triangle', .08); },
+  swirl() { const a = ac(); if (!a) return; const t = a.currentTime; noise(t, 1.0, .12, 500, .7); tone(220, t, 1.0, 'sine', .05, 440); },
+  yes() { const a = ac(); if (!a) return; const t = a.currentTime; tone(880, t, .5, 'sine', .2); tone(1320, t + .08, .55, 'sine', .12); tone(1760, t + .16, .5, 'sine', .06); },
+  no() { const a = ac(); if (!a) return; const t = a.currentTime; tone(392, t, .28, 'triangle', .2); tone(294, t + .2, .45, 'triangle', .2); },
+};
+function speak(text) {
+  if (!opt.voice || !window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text.replace('…', ', ')); u.lang = 'en-US'; u.rate = 1.02; u.pitch = 1.15;
+  const v = speechSynthesis.getVoices().find(v => v.lang?.startsWith('en'));
+  if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+
+// ------------------------------------------------------------------ kijelző (arc → köd → válasz)
+const cv = $('screen'), g = cv.getContext('2d'), W = 320, C = W / 2;
+const S = { mode: 'face', t0: 0, word: '', quip: '', look: { x: 0, y: 0 }, target: { x: 0, y: 0 }, blink: 0, nextBlink: 2, busy: false };
+const root = document.documentElement.style;
+function setLight(color, glow) { root.setProperty('--light', color); root.setProperty('--glow', glow); }
+
+function drawFace(t) {
+  S.look.x += (S.target.x - S.look.x) * .12; S.look.y += (S.target.y - S.look.y) * .12;
+  if (t > S.nextBlink) { S.blink = t; S.nextBlink = t + 2 + rnd() * 3; }
+  const bl = Math.max(0, 1 - Math.abs(t - S.blink - .07) / .07);   // 0..1 pislogás
+  const ex = S.look.x * 22, ey = S.look.y * 16;
+  g.fillStyle = '#bff6ff'; g.shadowColor = '#7ee8ff'; g.shadowBlur = 18;
+  for (const sx of [-40, 40]) {
+    const h = 46 * (1 - bl * .9);
+    g.beginPath(); g.roundRect(C + sx - 14 + ex, C - 14 - h / 2 + ey, 28, h, 14); g.fill();
+  }
+  g.strokeStyle = '#bff6ff'; g.lineWidth = 9; g.lineCap = 'round';
+  g.beginPath(); g.arc(C + ex * .6, C + 36 + ey * .6, 26, .2 * Math.PI, .8 * Math.PI); g.stroke();
+  g.shadowBlur = 0;
+}
+function drawFog(t, k) {                          // k: 0..1 erősség; forgó, egymásba úszó felhők
+  g.save(); g.globalCompositeOperation = 'lighter';
+  for (let i = 0; i < 9; i++) {
+    const a = t * (1.6 + i * .17) * (i % 2 ? -1 : 1) + i * 2.1, r = 40 + 34 * Math.sin(t * .9 + i);
+    const x = C + Math.cos(a) * r, y = C + Math.sin(a) * r * .85, R = 70 + 20 * Math.sin(t * 1.3 + i * 1.7);
+    const hue = 250 + 30 * Math.sin(i + t * .5);
+    const gr = g.createRadialGradient(x, y, 0, x, y, R);
+    gr.addColorStop(0, `hsla(${hue},85%,62%,${.36 * k})`); gr.addColorStop(1, 'hsla(260,80%,40%,0)');
+    g.fillStyle = gr; g.beginPath(); g.arc(x, y, R, 0, Math.PI * 2); g.fill();
+  }
+  g.restore();
+}
+function drawAnswer(t, dt) {
+  const col = S.word === 'YES' ? '#5cf28a' : '#ff6b6b';
+  const e = Math.min(1, dt / .7), ease = 1 - Math.pow(1 - e, 3);
+  drawFog(t, Math.max(.25, 1 - dt / 1.2));                       // a köd lassan elül, de ott marad mögötte
+  g.save(); g.globalAlpha = ease; g.translate(C, C + (1 - ease) * 70 - (S.quip ? 14 : 0)); g.scale(.6 + .4 * ease, .6 + .4 * ease);
+  g.fillStyle = col; g.shadowColor = col; g.shadowBlur = 24; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.font = `800 ${S.word === 'YES' ? 96 : 110}px system-ui, "Segoe UI", sans-serif`; g.fillText(S.word, 0, 0);
+  g.restore();
+  if (S.quip && dt > .5) {
+    g.save(); g.globalAlpha = Math.min(1, (dt - .5) / .5); g.fillStyle = '#e8e6ff'; g.textAlign = 'center';
+    g.font = 'italic 600 21px system-ui, "Segoe UI", sans-serif'; wrap(S.quip, C, C + 62, 210, 24); g.restore();
+  }
+}
+function wrap(text, x, y, max, lh) {
+  const words = text.split(' '); let line = '', lines = [];
+  for (const w of words) { const tryL = line ? line + ' ' + w : w; if (g.measureText(tryL).width > max && line) { lines.push(line); line = w; } else line = tryL; }
+  lines.push(line); lines.slice(0, 2).forEach((l, i) => g.fillText(l, x, y + i * lh));
+}
+function frame(ms) {
+  const t = ms / 1000, dt = t - S.t0;
+  g.clearRect(0, 0, W, W);
+  if (S.mode === 'face') drawFace(t);
+  else if (S.mode === 'fog') { drawFog(t, Math.min(1, dt / .4)); setLight(`hsl(${255 + 25 * Math.sin(t * 6)},90%,70%)`, .55 + .4 * Math.abs(Math.sin(t * 7))); }
+  else if (S.mode === 'answer') {
+    drawAnswer(t, dt);
+    const on = dt < 1.2 ? (Math.floor(dt * 6) % 2 === 0) : true;      // a C háromszor felvillan, aztán világít
+    setLight(S.word === 'YES' ? '#5cf28a' : '#ff6b6b', on ? .95 : .2);
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// ------------------------------------------------------------------ rázás
+const cube = $('cube'), wrapEl = $('wrap');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function shake(source = 'button') {
+  if (S.busy) return;
+  S.busy = true; $('go').disabled = true; $('answer').innerHTML = '';
+  const q = $('q').value.trim();
+  if (source !== 'drag') { cube.classList.remove('shake'); void cube.offsetWidth; cube.classList.add('shake'); for (let i = 0; i < 6; i++) setTimeout(SFX.rattle, i * 120); }
+  window.speechSynthesis?.cancel();
+  S.mode = 'fog'; S.t0 = performance.now() / 1000; SFX.swirl();
+  if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+  await sleep(1300);
+  const r = decide(q);
+  S.word = r.word; S.quip = r.quip; S.mode = 'answer'; S.t0 = performance.now() / 1000;
+  (r.word === 'YES' ? SFX.yes : SFX.no)();
+  $('answer').innerHTML = `<div class="word ${r.word === 'YES' ? 'yes' : 'no'}">${r.word}</div>${r.quip ? `<div class="quip">${esc(r.quip)}</div>` : ''}`;
+  speak(r.word + (r.quip ? '. ' + r.quip : '.'));
+  addHistory(q, r.word);
+  await sleep(4200);
+  S.mode = 'face'; setLight('#ff9a3c', .55);
+  S.busy = false; $('go').disabled = false;
+}
+const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+
+// egér / ujj: a kocka követi a húzást; ha gyorsan ide-oda rángatod (4 irányváltás 1,2 mp-en belül), az rázás
+const drag = { on: false, x0: 0, y0: 0, lastX: 0, dir: 0, run: 0, flips: [] };
+wrapEl.addEventListener('pointerdown', e => {
+  ac();
+  Object.assign(drag, { on: true, x0: e.clientX, y0: e.clientY, lastX: e.clientX, dir: 0, run: 0, flips: [] });
+  wrapEl.setPointerCapture(e.pointerId); wrapEl.classList.add('dragging'); cube.classList.add('free'); cube.classList.remove('shake');
+});
+wrapEl.addEventListener('pointermove', e => {
+  const r = wrapEl.getBoundingClientRect();
+  S.target = { x: Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (r.width * .9))), y: Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height / 2)) / (r.height * .9))) };
+  if (!drag.on) return;
+  const dx = Math.max(-70, Math.min(70, e.clientX - drag.x0)), dy = Math.max(-50, Math.min(50, e.clientY - drag.y0));
+  cube.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx * .12}deg)`;
+  const step = e.clientX - drag.lastX; drag.lastX = e.clientX;
+  const d = Math.sign(step); if (!d) return;
+  if (d === drag.dir) drag.run += Math.abs(step);
+  else {
+    if (drag.run > 14) { const now = performance.now(); drag.flips = drag.flips.filter(f => now - f < 1200); drag.flips.push(now); SFX.rattle(); }
+    drag.dir = d; drag.run = Math.abs(step);
+  }
+  if (drag.flips.length >= 4 && !S.busy) { drag.flips = []; shake('drag'); }
+});
+const release = () => { if (!drag.on) return; drag.on = false; wrapEl.classList.remove('dragging'); cube.classList.remove('free'); cube.style.transform = ''; };
+wrapEl.addEventListener('pointerup', release); wrapEl.addEventListener('pointercancel', release);
+document.addEventListener('pointerleave', () => { S.target = { x: 0, y: 0 }; });
+
+$('ask').addEventListener('submit', e => { e.preventDefault(); ac(); shake('button'); });
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && document.activeElement !== $('q') && !e.repeat) { e.preventDefault(); ac(); shake('key'); }
+});
+
+// telefon: a gyorsulásérzékelő (iOS-en engedélyt kér, és csak https-en vagy localhoston működik)
+let motionOn = false, lastPeak = 0, peaks = 0;
+function onMotion(e) {
+  const a = e.accelerationIncludingGravity; if (!a) return;
+  const m = Math.hypot(a.x || 0, a.y || 0, a.z || 0), now = performance.now();
+  if (Math.abs(m - 9.81) > 11) {
+    if (now - lastPeak > 90) { peaks = now - lastPeak < 600 ? peaks + 1 : 1; lastPeak = now; SFX.rattle(); }
+    if (peaks >= 3 && !S.busy) { peaks = 0; shake('motion'); }
+  }
+}
+async function enableMotion() {
+  try {
+    if (typeof DeviceMotionEvent?.requestPermission === 'function' && (await DeviceMotionEvent.requestPermission()) !== 'granted') throw new Error('denied');
+    window.addEventListener('devicemotion', onMotion); motionOn = true;
+  } catch { motionOn = false; $('hint').textContent = L().motionDenied; }
+  $('optMotion').setAttribute('aria-pressed', String(motionOn));
+}
+if ('DeviceMotionEvent' in window && matchMedia('(pointer: coarse)').matches) {
+  $('optMotion').hidden = false;
+  if (typeof DeviceMotionEvent.requestPermission !== 'function') enableMotion();   // Androidon engedély nélkül megy
+}
+$('optMotion').addEventListener('click', () => { if (motionOn) { window.removeEventListener('devicemotion', onMotion); motionOn = false; $('optMotion').setAttribute('aria-pressed', 'false'); } else enableMotion(); });
+
+// ------------------------------------------------------------------ beállítások és előzmények
+for (const k of ['sound', 'voice']) {
+  const b = $('opt' + k[0].toUpperCase() + k.slice(1));
+  b.setAttribute('aria-pressed', String(opt[k]));
+  b.addEventListener('click', () => { opt[k] = !opt[k]; store.set(k, opt[k]); b.setAttribute('aria-pressed', String(opt[k])); if (k === 'voice' && !opt[k]) window.speechSynthesis?.cancel(); });
+}
+$('lang').addEventListener('click', () => { lang = lang === 'hu' ? 'en' : 'hu'; store.set('lang', lang); applyLang(); });
+
+let hist = store.get('hist', []);
+function addHistory(q, word) { hist.unshift({ q, word }); hist = hist.slice(0, 50); store.set('hist', hist); renderHistory(); }
+function renderHistory() {
+  const t = L();
+  $('hist').innerHTML = hist.length
+    ? hist.slice(0, 8).map(h => `<li><span class="q">${h.q ? esc(h.q) : t.noQuestion}</span><span class="a ${h.word === 'YES' ? 'yes' : 'no'}">${h.word}</span></li>`).join('')
+    : `<li class="empty">${t.empty}</li>`;
+  const y = hist.filter(h => h.word === 'YES').length;
+  $('stats').textContent = hist.length ? t.stats(y, hist.length - y) : '';
+}
+applyLang();
+</script>
+</body>
+</html>

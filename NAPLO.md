@@ -590,3 +590,17 @@ A műfaj ismert elemeit használja (napsugaras hátterek, beugró feliratok vast
 **Elakadás:** a projekt fájljai Windows-sorvégeket (CRLF) használnak, ezért az AI első, többsoros szövegcseréi nem találták a cserélendő részt. Írt egy kis segédet, ami a sorvégeket is kezeli.
 
 **Tanulság:** a beadás előtt érdemes kívülről ránézni: mit lát az, aki csak a linket kapja meg? Több kész munka (videók, napló) egyszerűen nem volt elérhető onnan.
+
+## 2026-11-18 – „Rázd meg!” külön programként
+
+**Példaprompt:**
+> „A magic 8 ball rázós rézét tudnánk egy külön progira csinálni? amit lehetne futtatni lokálisan”
+
+**Mi készült el:** [8ball/index.html](8ball/index.html), a kocka „Rázd meg, és dönt helyetted” funkciója önálló programként. **Egyetlen HTML-fájl**, internet, szerver és telepítés nélkül: letöltés után dupla kattintással indul.
+- Tegyél fel egy igen–nem kérdést, és rázd meg a kockát: a gombbal, a szóközzel, a kocka egérrel vagy ujjal való ide-oda rángatásával, vagy telefonon magát a telefont megrázva (gyorsulásérzékelő).
+- A kijelzőn lila köd kavarog, aztán előúszik a válasz: **YES** vagy **NO**. A C háromszor zölden vagy pirosan felvillan, és néha jön egy beszólás is („…but don't tell Andor.”), ahogy a [DESIGN.md](DESIGN.md) 10. pontja leírja. A szimulátorban eddig csak egy egyszerű „…” → YES/NO volt.
+- Hang kódból (zörgés rázáskor, köd-suhogás, külön dallam igenre és nemre), angol felolvasás a böngésző beszédhangjával. Mindkettő kikapcsolható.
+- **Poén:** ugyanarra a kérdésre (kis- vagy nagybetűvel, írásjellel vagy anélkül) ugyanazt feleli, és szóvá is teszi: „Still YES. Stop asking.”
+- Az előzmények (utolsó döntések, igen/nem számláló) a böngészőben maradnak. A felület magyar és angol, a válasz mindig angol, mint a kockán.
+
+**Ellenőrzés:** az AI a beépített böngészőben, a fájlt közvetlenül megnyitva próbálta ki: gomb, rángatás (szimulált egérmozgással), ismételt kérdés, angol felület és telefonméret. A telefon megrázását és a hangot nem tudta kipróbálni, ezt nekem kell megnéznem.
