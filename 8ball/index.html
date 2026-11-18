@@ -240,7 +240,7 @@ let voiceEl = null;
 function stopVoice() { if (voiceEl) { voiceEl.pause(); voiceEl = null; } }
 function speak(id) {
   stopVoice(); if (!opt.voice) return;
-  voiceEl = new Audio(`voice/${id}.mp3`); voiceEl.volume = .95;
+  voiceEl = new Audio(`voice/${id}.mp3?v=2`); voiceEl.volume = .95;
   voiceEl.play().catch(() => {});                   // ha a fájl hiányzik vagy a böngésző tiltja: néma marad, a felirat ott van
 }
 

@@ -613,3 +613,11 @@ A műfaj ismert elemeit használja (napsugaras hátterek, beugró feliratok vast
 - **Több Andor és a banda:** 24 beszólás és 4 „már megkérdezted” válasz, köztük Andor, Bence, Benyó, Blanyó, Zsombró és Bro. Pl. „Andor would knock on wood, but Andor is the wood.” Zsákból húzás: egy beszólás sem ismétlődik, amíg a többi el nem hangzott.
 - **A magyar nevek angol hanggal:** a kijelzőn helyesen írva jelennek meg, a felolvasott szövegben viszont angolos fonetikával (Bentseh, Benyo, Blahnyo, Zhombro), hogy a kiejtés közelebb legyen a magyarhoz. Ezt a Whisper nem tudja megítélni, ehhez az én fülem kell.
 - **Elakadás:** két mondatnál a Whisper szerint elveszett a név eleje („Lanyo”, „Ander”). Az újragenerálás ugyanazokat a jelölteket adta, mert a generátor rögzített véletlenszámmal dolgozik, ezért a szöveget kellett módosítani („Blahnyo”, „Hard pass. Even Andor agrees.”). Így mindkettő tiszta lett.
+
+**Második javítás (ugyanaznap):**
+> „nem mind sikerült, van ami 0 másodperces, van ami 2 mp, és azok üresek, nézd át megint légyszi”
+
+- **Az ok:** a Whisper jó felvételeket választott, a hiba az MP3-átalakításnál keletkezett. Az ffmpeg hangerő-kiegyenlítő szűrője (`loudnorm`) 3 másodpercnél rövidebb klipeken félremér, és szinte némára halkítja őket. A Rázd meg! 30 mondatából 10 lett ilyen.
+- **Mellékes lelet:** ugyanez a hiba a szimulátorban is megvolt, az élő oldalon is: a 81 mondatból 50 halk volt, néhány gyakorlatilag néma (-40…-58 dB). Ez eddig senkinek nem tűnt fel.
+- **Javítás:** közös átalakító ([tools/voice_mp3_lib.js](tools/voice_mp3_lib.js)) egyszerű, mért erősítéssel: az átlag -18 dB-re, a csúcs legfeljebb -1,5 dB-re. A végén minden fájlt visszamér, és jelzi, ha halk vagy túl rövid. Mind a 111 fájl rendben.
+- **Tanulság:** a Whisper ellenőrzése a kiválasztott WAV-ra vonatkozott, nem a végső MP3-ra, amit a böngésző lejátszik. Mindig a kész terméket kell visszamérni, nem egy köztes fájlt.

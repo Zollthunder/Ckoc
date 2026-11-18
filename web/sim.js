@@ -154,7 +154,7 @@ let voiceSrc = null, voiceAn = null;
 async function clip(id) {
   if (clips[id] !== undefined) return clips[id];
   try {
-    const r = await fetch(`web/voice/${id}.mp3`);
+    const r = await fetch(`web/voice/${id}.mp3?v=2`);
     if (!r.ok) throw new Error(r.status);
     clips[id] = await audio.decodeAudioData(await r.arrayBuffer());
   } catch { clips[id] = null; }
