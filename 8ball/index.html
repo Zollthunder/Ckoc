@@ -109,7 +109,7 @@
 
 <div class="opts">
   <button class="opt" id="optSound" type="button" aria-pressed="true" data-t="sound">🔊 Hang</button>
-  <button class="opt" id="optVoice" type="button" aria-pressed="true" data-t="voice">🗣️ Felolvasás</button>
+  <button class="opt" id="optVoice" type="button" aria-pressed="true" data-t="voice">🗣️ Beszéd</button>
   <button class="opt" id="optMotion" type="button" aria-pressed="false" data-t="motion" hidden>📱 Telefon rázása</button>
 </div>
 
@@ -130,7 +130,7 @@ const TXT = {
     placeholder: 'Pl. Megérdemlek még egy kávét?', shake: '🎱 Rázd meg!',
     cubeLabel: 'A kocka – rángasd ide-oda a rázáshoz',
     hint: 'Rángasd ide-oda a kockát, nyomd meg a <kbd>Szóköz</kbd> billentyűt, vagy telefonon rázd meg magát a telefont.',
-    sound: '🔊 Hang', voice: '🗣️ Felolvasás', motion: '📱 Telefon rázása',
+    sound: '🔊 Hang', voice: '🗣️ Beszéd', motion: '📱 Telefon rázása',
     histTitle: 'Eddigi döntések', empty: 'Még nem döntött semmiről. Kérdezz valamit!', noQuestion: '(kérdés nélkül)',
     stats: (y, n) => `${y} igen · ${n} nem`,
     footer: 'C-kocka · koncepciótermék · Tervezte: Zollo & C (Claude) · a Magic 8 Ball játék ihlette',
@@ -143,7 +143,7 @@ const TXT = {
     placeholder: 'E.g. Do I deserve another coffee?', shake: '🎱 Shake it!',
     cubeLabel: 'The cube – jiggle it back and forth to shake',
     hint: 'Jiggle the cube back and forth, press <kbd>space</kbd>, or on a phone shake the phone itself.',
-    sound: '🔊 Sound', voice: '🗣️ Read aloud', motion: '📱 Shake the phone',
+    sound: '🔊 Sound', voice: '🗣️ Voice', motion: '📱 Shake the phone',
     histTitle: 'Decisions so far', empty: 'Nothing decided yet. Ask it something!', noQuestion: '(no question)',
     stats: (y, n) => `${y} yes · ${n} no`,
     footer: 'C-Cube · concept product · Designed by Zollo & C (Claude) · inspired by the Magic 8 Ball',
@@ -171,10 +171,28 @@ function applyLang() {
 const $ = id => document.getElementById(id);
 
 // ------------------------------------------------------------------ válaszok (a DESIGN.md 10. pontja szerint, angolul)
-const QUIPS = {
-  YES: ['Obviously.', "…but don't tell Andor.", 'Go for it, Captain.', 'The cube has spoken.', 'Absolutely.', 'Without a doubt.', 'Yes. Coffee first, though.'],
-  NO: ['Nice try.', 'Not today.', 'Ask again after coffee.', 'Absolutely not.', 'Andor says no too.', 'The cube has spoken.', 'Hard pass.'],
-};
+// Minden mondatnak van előre felvett hangja: voice/<id>.mp3 (XTTS-v2 „Daisy Studious”, a kocka hangja, Whisperrel válogatva).
+// A szöveg forrása a voice/lines.json; itt is benne van, hogy fájlként megnyitva (file://) is működjön.
+// [id, válasz, felirat, ismétlés?]  – a felirat üres, ha csak a puszta YES / NO hangzik el
+const LINES = [
+  ['yes', 'YES', ''], ['no', 'NO', ''],
+  ['y01', 'YES', 'Obviously.'], ['y02', 'YES', "…but don't tell Andor."], ['y03', 'YES', 'Go for it, Captain.'],
+  ['y04', 'YES', 'Andor already knew.'], ['y05', 'YES', 'Andor nods. Woodenly.'], ['y06', 'YES', 'Even Bence agrees, and Bence never agrees.'],
+  ['y07', 'YES', 'Benyó is already doing a happy dance.'], ['y08', 'YES', 'Blanyó owes me a coffee now.'], ['y09', 'YES', 'Zsombró called it yesterday.'],
+  ['y10', 'YES', 'Bro, trust me.'], ['y11', 'YES', 'Coffee first, though.'], ['y12', 'YES', 'Andor and Bro both approve. That never happens.'],
+  ['n01', 'NO', 'Nice try.'], ['n02', 'NO', 'Andor says no too.'], ['n03', 'NO', 'Even Andor laughed at that one.'],
+  ['n04', 'NO', 'Ask again after coffee.'], ['n05', 'NO', 'Bence tried that last week. Ask Bence how it went.'], ['n06', 'NO', "Benyó, don't even think about it."],
+  ['n07', 'NO', 'Blanyó already asked. Still no.'], ['n08', 'NO', 'Zsombró says yes to everything, and even Zsombró says no.'], ['n09', 'NO', 'Sorry, Bro.'],
+  ['n10', 'NO', 'Not even for Bro.'], ['n11', 'NO', 'Hard pass. Even Andor agrees.'], ['n12', 'NO', 'Andor would knock on wood, but Andor is the wood.'],
+  ['r_yes', 'YES', 'Stop asking.', 1], ['r_yes2', 'YES', 'Andor is getting dizzy.', 1],
+  ['r_no', 'NO', "Shaking harder won't help.", 1], ['r_no2', 'NO', 'Bro asked three times too.', 1],
+].map(([id, word, quip, repeat]) => ({ id, word, quip, repeat: !!repeat }));
+const bag = {};                     // „zsákból húzás”: egy beszólás sem ismétlődik, amíg a többi el nem hangzott
+function draw(word, repeat) {
+  const k = word + (repeat ? 'r' : '');
+  if (!bag[k]?.length) bag[k] = LINES.filter(l => l.word === word && l.repeat === repeat && l.quip).sort(() => rnd() - .5);
+  return bag[k].pop();
+}
 const rnd = () => crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
 const pick = a => a[Math.floor(rnd() * a.length)];
 const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
@@ -182,12 +200,13 @@ const asked = new Map();            // ugyanarra a kérdésre ugyanazt mondja �
 function decide(question) {
   const key = norm(question);
   if (key && asked.has(key)) {
-    const word = asked.get(key);
-    return { word, quip: word === 'YES' ? 'Still YES. Stop asking.' : "Still NO. Shaking harder won't help.", repeat: true };
+    const l = draw(asked.get(key), true);
+    return { word: l.word, quip: `Still ${l.word}. ${l.quip}`, id: l.id, still: true };
   }
   const word = rnd() < 0.5 ? 'YES' : 'NO';
   if (key) asked.set(key, word);
-  return { word, quip: rnd() < 0.45 ? pick(QUIPS[word]) : '' };
+  const l = rnd() < 0.7 ? draw(word, false) : LINES.find(x => x.id === word.toLowerCase());
+  return { word, quip: l.quip, id: l.id };
 }
 
 // ------------------------------------------------------------------ hang (WebAudio, kódból, mint a kockán)
@@ -215,13 +234,14 @@ const SFX = {
   yes() { const a = ac(); if (!a) return; const t = a.currentTime; tone(880, t, .5, 'sine', .2); tone(1320, t + .08, .55, 'sine', .12); tone(1760, t + .16, .5, 'sine', .06); },
   no() { const a = ac(); if (!a) return; const t = a.currentTime; tone(392, t, .28, 'triangle', .2); tone(294, t + .2, .45, 'triangle', .2); },
 };
-function speak(text) {
-  if (!opt.voice || !window.speechSynthesis) return;
-  speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text.replace('…', ', ')); u.lang = 'en-US'; u.rate = 1.02; u.pitch = 1.15;
-  const v = speechSynthesis.getVoices().find(v => v.lang?.startsWith('en'));
-  if (v) u.voice = v;
-  speechSynthesis.speak(u);
+// A válasz felvételről szól (nem a böngésző felolvasójával: az a magyar gépeken magyar hanggal törné az angolt).
+// <audio> elemmel, mert a fetch fájlként megnyitva (file://) nem működik, a lejátszás viszont igen.
+let voiceEl = null;
+function stopVoice() { if (voiceEl) { voiceEl.pause(); voiceEl = null; } }
+function speak(id) {
+  stopVoice(); if (!opt.voice) return;
+  voiceEl = new Audio(`voice/${id}.mp3`); voiceEl.volume = .95;
+  voiceEl.play().catch(() => {});                   // ha a fájl hiányzik vagy a böngésző tiltja: néma marad, a felirat ott van
 }
 
 // ------------------------------------------------------------------ kijelző (arc → köd → válasz)
@@ -266,13 +286,13 @@ function drawAnswer(t, dt) {
   g.restore();
   if (S.quip && dt > .5) {
     g.save(); g.globalAlpha = Math.min(1, (dt - .5) / .5); g.fillStyle = '#e8e6ff'; g.textAlign = 'center';
-    g.font = 'italic 600 21px system-ui, "Segoe UI", sans-serif'; wrap(S.quip, C, C + 62, 210, 24); g.restore();
+    const fs = S.quip.length > 34 ? 17 : 21; g.font = `italic 600 ${fs}px system-ui, "Segoe UI", sans-serif`; wrap(S.quip, C, C + 58, 220, fs + 3); g.restore();
   }
 }
 function wrap(text, x, y, max, lh) {
   const words = text.split(' '); let line = '', lines = [];
   for (const w of words) { const tryL = line ? line + ' ' + w : w; if (g.measureText(tryL).width > max && line) { lines.push(line); line = w; } else line = tryL; }
-  lines.push(line); lines.slice(0, 2).forEach((l, i) => g.fillText(l, x, y + i * lh));
+  lines.push(line); lines.slice(0, 3).forEach((l, i) => g.fillText(l, x, y + i * lh));
 }
 function frame(ms) {
   const t = ms / 1000, dt = t - S.t0;
@@ -296,7 +316,7 @@ async function shake(source = 'button') {
   S.busy = true; $('go').disabled = true; $('answer').innerHTML = '';
   const q = $('q').value.trim();
   if (source !== 'drag') { cube.classList.remove('shake'); void cube.offsetWidth; cube.classList.add('shake'); for (let i = 0; i < 6; i++) setTimeout(SFX.rattle, i * 120); }
-  window.speechSynthesis?.cancel();
+  stopVoice();
   S.mode = 'fog'; S.t0 = performance.now() / 1000; SFX.swirl();
   if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
   await sleep(1300);
@@ -304,7 +324,7 @@ async function shake(source = 'button') {
   S.word = r.word; S.quip = r.quip; S.mode = 'answer'; S.t0 = performance.now() / 1000;
   (r.word === 'YES' ? SFX.yes : SFX.no)();
   $('answer').innerHTML = `<div class="word ${r.word === 'YES' ? 'yes' : 'no'}">${r.word}</div>${r.quip ? `<div class="quip">${esc(r.quip)}</div>` : ''}`;
-  speak(r.word + (r.quip ? '. ' + r.quip : '.'));
+  setTimeout(() => speak(r.id), 350);                 // előbb a csilingelés, aztán a kocka mondja
   addHistory(q, r.word);
   await sleep(4200);
   S.mode = 'face'; setLight('#ff9a3c', .55);
@@ -370,7 +390,7 @@ $('optMotion').addEventListener('click', () => { if (motionOn) { window.removeEv
 for (const k of ['sound', 'voice']) {
   const b = $('opt' + k[0].toUpperCase() + k.slice(1));
   b.setAttribute('aria-pressed', String(opt[k]));
-  b.addEventListener('click', () => { opt[k] = !opt[k]; store.set(k, opt[k]); b.setAttribute('aria-pressed', String(opt[k])); if (k === 'voice' && !opt[k]) window.speechSynthesis?.cancel(); });
+  b.addEventListener('click', () => { opt[k] = !opt[k]; store.set(k, opt[k]); b.setAttribute('aria-pressed', String(opt[k])); if (k === 'voice' && !opt[k]) stopVoice(); });
 }
 $('lang').addEventListener('click', () => { lang = lang === 'hu' ? 'en' : 'hu'; store.set('lang', lang); applyLang(); });
 

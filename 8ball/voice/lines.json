@@ -1,0 +1,35 @@
+[
+ {"id":"yes","word":"YES","display":"","text":"Yes."},
+ {"id":"no","word":"NO","display":"","text":"No."},
+
+ {"id":"y01","word":"YES","display":"Obviously.","text":"Yes. Obviously."},
+ {"id":"y02","word":"YES","display":"…but don't tell Andor.","text":"Yes... but don't tell Andor."},
+ {"id":"y03","word":"YES","display":"Go for it, Captain.","text":"Yes. Go for it, Captain."},
+ {"id":"y04","word":"YES","display":"Andor already knew.","text":"Yes. Andor already knew."},
+ {"id":"y05","word":"YES","display":"Andor nods. Woodenly.","text":"Yes. Andor nods. Woodenly."},
+ {"id":"y06","word":"YES","display":"Even Bence agrees, and Bence never agrees.","text":"Yes. Even Bentseh agrees, and Bentseh never agrees."},
+ {"id":"y07","word":"YES","display":"Benyó is already doing a happy dance.","text":"Yes. Benyo is already doing a happy dance."},
+ {"id":"y08","word":"YES","display":"Blanyó owes me a coffee now.","text":"Yes. Blanyo owes me a coffee now."},
+ {"id":"y09","word":"YES","display":"Zsombró called it yesterday.","text":"Yes. Zhombro called it yesterday."},
+ {"id":"y10","word":"YES","display":"Bro, trust me.","text":"Yes. Bro, trust me."},
+ {"id":"y11","word":"YES","display":"Coffee first, though.","text":"Yes. Coffee first, though."},
+ {"id":"y12","word":"YES","display":"Andor and Bro both approve. That never happens.","text":"Yes. Andor and Bro both approve. That never happens."},
+
+ {"id":"n01","word":"NO","display":"Nice try.","text":"No. Nice try."},
+ {"id":"n02","word":"NO","display":"Andor says no too.","text":"No. Andor says no too."},
+ {"id":"n03","word":"NO","display":"Even Andor laughed at that one.","text":"No. Even Andor laughed at that one."},
+ {"id":"n04","word":"NO","display":"Ask again after coffee.","text":"No. Ask again after coffee."},
+ {"id":"n05","word":"NO","display":"Bence tried that last week. Ask Bence how it went.","text":"No. Bentseh tried that last week. Ask Bentseh how it went."},
+ {"id":"n06","word":"NO","display":"Benyó, don't even think about it.","text":"No. Benyo, don't even think about it."},
+ {"id":"n07","word":"NO","display":"Blanyó already asked. Still no.","text":"No. Blahnyo already asked. Still no."},
+ {"id":"n08","word":"NO","display":"Zsombró says yes to everything, and even Zsombró says no.","text":"No. Zhombro says yes to everything, and even Zhombro says no."},
+ {"id":"n09","word":"NO","display":"Sorry, Bro.","text":"No. Sorry, Bro."},
+ {"id":"n10","word":"NO","display":"Not even for Bro.","text":"Nope. Not even for Bro."},
+ {"id":"n11","word":"NO","display":"Hard pass. Even Andor agrees.","text":"No. Hard pass. Even Andor agrees."},
+ {"id":"n12","word":"NO","display":"Andor would knock on wood, but Andor is the wood.","text":"No. Andor would knock on wood, but Andor is the wood."},
+
+ {"id":"r_yes","word":"YES","display":"Still YES. Stop asking.","text":"Still yes. Stop asking.","repeat":true},
+ {"id":"r_yes2","word":"YES","display":"Still YES. Andor is getting dizzy.","text":"Still yes. Andor is getting dizzy.","repeat":true},
+ {"id":"r_no","word":"NO","display":"Still NO. Shaking harder won't help.","text":"Still no. Shaking harder won't help.","repeat":true},
+ {"id":"r_no2","word":"NO","display":"Still NO. Bro asked three times too.","text":"Still no. Bro asked three times too.","repeat":true}
+]

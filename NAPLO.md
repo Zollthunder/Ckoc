@@ -604,3 +604,12 @@ A műfaj ismert elemeit használja (napsugaras hátterek, beugró feliratok vast
 - Az előzmények (utolsó döntések, igen/nem számláló) a böngészőben maradnak. A felület magyar és angol, a válasz mindig angol, mint a kockán.
 
 **Ellenőrzés:** az AI a beépített böngészőben, a fájlt közvetlenül megnyitva próbálta ki: gomb, rángatás (szimulált egérmozgással), ismételt kérdés, angol felület és telefonméret. A telefon megrázását és a hangot nem tudta kipróbálni, ezt nekem kell megnéznem.
+
+**Javítás (ugyanaznap):**
+> „kiéjtése nagyon tört magyaros, legyen angol nyelvű, ez így nem jó. lehetne több Andoros referencia. Tehetsz bele Bencét,Benyót, Blanyót, Zsombrót, Bro-t is.”
+
+- **Az ok ugyanaz volt, mint a szimulátornál:** a böngésző felolvasója ezen a gépen magyar hanggal olvasta az angol szöveget. Az AI ezt már egyszer megoldotta, de az új programnál a böngésző hangját használta újra. **Tanulság:** amit egyszer megtanultunk, azt minden új résznél alkalmazni kell, nem csak ott, ahol először előjött.
+- **A megoldás:** mind a 30 mondatot előre felvette a kocka saját hangján (XTTS-v2, „Daisy Studious”), mondatonként 4 jelöltből a Whisper választott (a video-narration skill szerint, MP3-ba: [tools/8ball_voice_mp3.js](tools/8ball_voice_mp3.js)). Hangerő-kiegyenlített MP3-ak, összesen kb. 750 KB, a [8ball/voice/](8ball/voice/) mappában. A program ezeket játssza le, a böngésző felolvasóját egyáltalán nem használja.
+- **Több Andor és a banda:** 24 beszólás és 4 „már megkérdezted” válasz, köztük Andor, Bence, Benyó, Blanyó, Zsombró és Bro. Pl. „Andor would knock on wood, but Andor is the wood.” Zsákból húzás: egy beszólás sem ismétlődik, amíg a többi el nem hangzott.
+- **A magyar nevek angol hanggal:** a kijelzőn helyesen írva jelennek meg, a felolvasott szövegben viszont angolos fonetikával (Bentseh, Benyo, Blahnyo, Zhombro), hogy a kiejtés közelebb legyen a magyarhoz. Ezt a Whisper nem tudja megítélni, ehhez az én fülem kell.
+- **Elakadás:** két mondatnál a Whisper szerint elveszett a név eleje („Lanyo”, „Ander”). Az újragenerálás ugyanazokat a jelölteket adta, mert a generátor rögzített véletlenszámmal dolgozik, ezért a szöveget kellett módosítani („Blahnyo”, „Hard pass. Even Andor agrees.”). Így mindkettő tiszta lett.
