@@ -65,20 +65,53 @@
   <!-- ===== Videó ===== -->
   <section id="video" class="section stage">
     <h2>A videó</h2>
-    <p class="section-lead">2:56 a C-kockáról: hogyan ébred, mit tud, és hogyan készült. A videó is kódból készült – a 3D jelenet, a zene és a hangeffektek is. A videó <strong>angol nyelvű</strong> (angolul a termék neve C-Cube), a narrációt helyi AI-hangmodell (XTTS-v2) mondja.</p>
+    <p class="section-lead">1:52 a C-kockáról, ütemre vágva: hogyan ébred, mit tud, és hogyan készült. A videó is kódból készült – a 3D jelenet, a zene és a hangeffektek is. A videó <strong>angol nyelvű</strong> (angolul a termék neve C-Cube), a narrációt helyi AI-hangmodell (XTTS-v2) mondja, a legjobb felvételt pedig egy beszédfelismerő (Whisper) választotta ki.</p>
     <div class="video-wrap">
       <video controls preload="metadata" poster="assets/poster.jpg">
+        <source src="video/c-kocka_bemutato_porgos.mp4" type="video/mp4">
+        A böngésződ nem tudja lejátszani a videót – <a href="video/c-kocka_bemutato_porgos.mp4">töltsd le innen</a>.
+      </video>
+    </div>
+    <details class="full-cut">
+      <summary>Ráérsz? A teljes, hosszabb változat (2:56) ▸</summary>
+      <div class="video-wrap">
+      <video controls preload="none" poster="assets/poster.jpg">
         <source src="video/c-kocka.mp4" type="video/mp4">
         A böngésződ nem tudja lejátszani a videót – <a href="video/c-kocka.mp4">töltsd le innen</a>.
       </video>
-    </div>
-    <h3 style="margin-top:56px">Bónusz: „japán reklám” 🇯🇵</h3>
-    <p class="section-lead">31 másodperc a műfaj stílusában: gyors vágások, napsugaras hátterek, óriási feliratok, taiko-dob és „PRICELESS!”. Japán narráció (helyi AI-hang), angol felirattal – a zene és minden hanghatás kódból készült.</p>
-    <div class="video-wrap">
-      <video controls preload="metadata">
+      </div>
+    </details>
+    <h3 class="bonus-h">Bónusz: ugyanaz a kocka, négy műfajban</h3>
+    <p class="section-lead">Ugyanazzal a kódból épülő videómotorral készült reklámparódiák – egy-egy délután alatt. A zene és minden hanghatás is kódból van.</p>
+    <div class="vgrid">
+      <figure class="vcard">
+        <div class="video-wrap"><video controls preload="none" poster="assets/poster-japan.jpg">
         <source src="video/c-cube_japan.mp4" type="video/mp4">
         A böngésződ nem tudja lejátszani a videót – <a href="video/c-cube_japan.mp4">töltsd le innen</a>.
-      </video>
+      </video></div>
+        <figcaption><b>„Japán reklám” 🇯🇵</b> <span class="dur">0:31</span><span>Gyors vágások, napsugaras hátterek, óriási feliratok, taiko-dob és „PRICELESS!”. Japán AI-narráció angol felirattal.</span></figcaption>
+      </figure>
+      <figure class="vcard">
+        <div class="video-wrap"><video controls preload="none" poster="assets/poster-90s.jpg">
+        <source src="video/c-cube_90s.mp4" type="video/mp4">
+        A böngésződ nem tudja lejátszani a videót – <a href="video/c-cube_90s.mp4">töltsd le innen</a>.
+      </video></div>
+        <figcaption><b>90-es évekbeli amerikai tévéreklám 📼</b> <span class="dur">0:42</span><span>„Hey you!” – harsány bemondó, VHS-zaj, időbélyeg a sarokban és 13 vágás ütemre.</span></figcaption>
+      </figure>
+      <figure class="vcard">
+        <div class="video-wrap"><video controls preload="none" poster="assets/poster-retro-hu.jpg">
+        <source src="video/c-kocka_retro_hu.mp4" type="video/mp4">
+        A böngésződ nem tudja lejátszani a videót – <a href="video/c-kocka_retro_hu.mp4">töltsd le innen</a>.
+      </video></div>
+        <figcaption><b>Retró magyar tévéreklám 📺</b> <span class="dur">0:41</span><span>1978 · 1993 · 2004: három korszak magyar reklámjainak stílusában, magyar AI-narrációval.</span></figcaption>
+      </figure>
+      <figure class="vcard tall">
+        <div class="video-wrap"><video controls preload="none" poster="assets/poster-catmode.jpg">
+        <source src="video/c-kocka_catmode_short.mp4" type="video/mp4">
+        A böngésződ nem tudja lejátszani a videót – <a href="video/c-kocka_catmode_short.mp4">töltsd le innen</a>.
+      </video></div>
+        <figcaption><b>Cat mode – függőleges rövid klip 🐱</b> <span class="dur">0:20</span><span>9:16 telefonra: simogatásra dorombol (hang + rezgés). Horog az első fél másodpercben, körbeérő zárás.</span></figcaption>
+      </figure>
     </div>
   </section>
 
@@ -175,6 +208,20 @@
     <h2>Hogyan készült?</h2>
     <p class="section-lead">A kihívás lényege nem csak az eredmény volt, hanem az, hogyan tanulok meg valami újat egy AI segítségével. Az eszközöm a <b>Claude Code</b> volt.</p>
 
+    <ul class="numbers" aria-label="A projekt számokban">
+      <li><b>5</b><span>munkanap</span></li>
+      <li><b>70+</b><span>commit a GitHubon</span></li>
+      <li><b>~20 000</b><span>sor kód (Python, JavaScript)</span></li>
+      <li><b>17</b><span>dokumentum: terv, kutatás, napló</span></li>
+      <li><b>97 + 91</b><span>DXF és STL a gyártáshoz</span></li>
+      <li><b>6</b><span>videó, mind kódból</span></li>
+    </ul>
+
+    <div class="roles">
+      <div><h4>🧑 Amit én csináltam</h4><ul><li>a téma és a poénok (dobálható kocka, favicc-gomb, leskelődés, cat mode)</li><li>a tervezési elvek: szerelhetőség, kész modulok, költség</li><li>a döntések (méret, alkatrészek, költségcsökkentés)</li><li>a hibák kiszúrása („van Fusion MCP”, „van videókártya”)</li><li>a hang végső bírája: a fülem</li></ul></div>
+      <div><h4>🤖 Amit az AI (Claude Code) csinált</h4><ul><li>a Fusion 360 modell szkriptből, és az ellenőrzése MCP-n át</li><li>gyártási fájlok, szerelési útmutató, kutatások</li><li>a videók: 3D jelenet, zene, hangeffekt, narráció</li><li>a weboldal, a szimulátor és a kocka szoftvere tesztekkel</li><li>a napló első változata minden lépés után</li></ul></div>
+    </div>
+
     <ol class="timeline">
       <li>
         <h4>1 · Ötlet</h4>
@@ -217,9 +264,9 @@
         <p>Python a Raspberry Pi-re, CircuitPython a XIAO RP2040-re, szimulált hardverrel és automatikus tesztekkel. Egy független AI-átnézés még 15 hibát talált, mindet javítottuk.</p>
       </li>
       <li>
-        <h4>9 · Bónusz: japán reklám</h4>
+        <h4>9 · Bónusz: reklámparódiák és rövid klip</h4>
         <blockquote>„szokásos gyors vágások, hanghatások, amire az ember gondolna egy virális japán reklámra gondolva”</blockquote>
-        <p>31 másodperc, 11 vágás ütemre, japán AI-narráció. Ugyanazzal a kódból épülő videómotorral készült, egy délután alatt.</p>
+        <p>Japán reklám, 90-es évekbeli amerikai és retró magyar tévéreklám, egy függőleges „cat mode” klip, végül a fő videó pörgős, ütemre vágott változata. Mind ugyanazzal a kódból épülő videómotorral készült, egy-egy délután alatt.</p>
       </li>
       <li>
         <h4>10 · Ez a weboldal</h4>
@@ -241,7 +288,7 @@
     <ul class="tools">
       <li>Claude Code (AI)</li><li>Autodesk Fusion 360 + Python API</li><li>Fusion MCP szerver</li><li>three.js</li><li>Node.js</li><li>ffmpeg</li><li>F5-TTS, XTTS-v2 (helyi AI-hang)</li><li>Whisper (beszédfelismerés)</li><li>Python, CircuitPython</li><li>Claude API</li><li>Git + GitHub Pages</li>
     </ul>
-    <p class="center"><a class="btn" href="NAPLO.md">📝 A teljes napló (példapromptokkal)</a> <a class="btn" href="DESIGN.md">💡 Tervezési koncepció</a></p>
+    <p class="center"><a class="btn" href="kutatasok.html#naplo">📝 A teljes napló (példapromptokkal)</a> <a class="btn" href="kutatasok.html#design">💡 Tervezési koncepció</a></p>
   </section>
 
   <!-- ===== Letöltések ===== -->
@@ -258,7 +305,8 @@
       <a href="3d/c-kocka.step" download><b>c-kocka.step</b><span>STEP – bármely CAD programhoz</span></a>
       <a href="3d/c-kocka.stl" download><b>c-kocka.stl</b><span>STL – 3D nyomtatáshoz / nézegetéshez</span></a>
       <a href="3d/fusion/CKocka/CKocka.py" download><b>CKocka.py</b><span>a modellt felépítő Fusion szkript</span></a>
-      <a href="video/c-kocka.mp4" download><b>c-kocka.mp4</b><span>a videó (1080p)</span></a>
+      <a href="video/c-kocka_bemutato_porgos.mp4" download><b>c-kocka_bemutato_porgos.mp4</b><span>a videó, 1:52 (1080p)</span></a>
+      <a href="video/c-kocka.mp4" download><b>c-kocka.mp4</b><span>a teljes változat, 2:56 (1080p)</span></a>
     </div>
   </section>
 </main>

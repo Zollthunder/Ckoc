@@ -149,3 +149,6 @@ body.embed .nav, body.embed .foot, body.embed .stage-head h1, body.embed .stage-
 body.embed .sim { padding: 0; }
 body.app-only .sim { grid-template-columns: 380px; justify-content: center; }
 body.app-only .stage, body.app-only .log, body.app-only .nav nav { display: none; }
+.talk-note .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.talk-note .chip { font: inherit; font-size: 13px; color: var(--stage-text, #ecebe8); background: #20242c; border: 1px solid var(--stage-line, #262a33); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.talk-note .chip:hover { border-color: #ff9a3c; color: #ffd0a3; }

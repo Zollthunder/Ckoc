@@ -2,6 +2,7 @@
 // Az app parancsokat küld a kockának (ugyanazon az oldalon, vagy külön ablakból BroadcastChannel-en át),
 // a kocka eseményeket küld vissza. Minden üzenet megjelenik a protokollnaplóban.
 import { LANG, T, applyStatic, addLangSwitch } from './i18n.js';
+import { demoReply } from './demo_brain.js';
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 const APP_ONLY = new URLSearchParams(location.search).has('app');
@@ -565,7 +566,8 @@ async function touch() {
 // A böngésző felismeri, amit mondasz (vagy beírod), a helyi szerver (serve.js → talk.js) Claude-tól kér rá választ,
 // a kocka pedig kimondja. A kulcs a szerveren marad; a nyilvános oldalon (GitHub Pages) ez a rész nem él.
 const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-const TALK = { ready: false, mock: false, reason: null, history: [], rec: null };
+const TALK = { ready: false, mock: false, demo: false, reason: null, history: [], rec: null };
+const DEMO_CHIPS = ['Mesélj egy viccet!', 'Ki vagy te?', 'Rossz napom van', 'Tudsz dorombolni?'];
 const TALK_NOTES = {
   offline: 'A beszélgetéshez a kocka „agya” kell: töltsd le a projektet, és indítsd el helyben a <code>node serve.js</code> paranccsal, Claude API-kulccsal. A nyilvános oldalon ez nem fut, mert a kulcs nem kerülhet egy weboldalba.',
   'no-key': 'A szerver fut, de nincs Claude API-kulcs. Állítsd be az <code>ANTHROPIC_API_KEY</code> környezeti változót, és indítsd újra a <code>node serve.js</code>-t. Kulcs nélküli próbához: <code>CKOCKA_TALK_MOCK=1</code>.',
@@ -578,8 +580,11 @@ function updateTalkUI() {
   $('#mic').disabled = !ok || !SR;
   let note = ok ? '' : T(TALK_NOTES[TALK.reason] || TALK_NOTES.offline);
   if (ok && TALK.mock) note = T('Próbamód: a válaszok előre megírtak, nem Claude-tól jönnek.');
+  if (ok && TALK.demo) note = T('Demó mód: a weboldalon a kocka néhány témára előre megírt mondatokkal felel. Helyben futtatva (<code>node serve.js</code> + API-kulcs) Claude válaszol neki.')
+    + (TALK.reason && TALK.reason !== 'offline' ? ' ' + T(TALK_NOTES[TALK.reason] || '') : '')
+    + '<span class="chips">' + DEMO_CHIPS.map(q => `<button type="button" class="chip" data-q="${T(q)}">${T(q)}</button>`).join('') + '</span>';
   if (ok && !SR) note += (note ? ' ' : '') + T('Ez a böngésző nem ismeri a beszédfelismerést, írd be, mit mondanál.');
-  if (ok && !TALK.mock) note += (note ? ' ' : '') + T('A kocka angolul válaszol. Ha leveszed a hangját, a választ feliratként olvashatod.');
+  if (ok && !TALK.mock && !TALK.demo) note += (note ? ' ' : '') + T('A kocka angolul válaszol. Ha leveszed a hangját, a választ feliratként olvashatod.');
   $('#talkNote').innerHTML = note;
 }
 async function talkStatus() {
@@ -587,7 +592,8 @@ async function talkStatus() {
     const r = await fetch('api/talk', { cache: 'no-store' });
     if (!r.ok) throw new Error(r.status);
     Object.assign(TALK, { reason: null }, await r.json());
-  } catch { TALK.ready = false; TALK.reason = 'offline'; }
+    if (!TALK.ready) Object.assign(TALK, { ready: true, demo: true });   // a szerver fut, de Claude nem érhető el: addig a demó felel
+  } catch { Object.assign(TALK, { ready: true, demo: true, reason: 'offline' }); }   // nincs szerver (GitHub Pages): demó mód
   updateTalkUI();
 }
 function listen() {
@@ -637,7 +643,10 @@ async function converse(text) {
   backToFace(sc); F.mouth = 'flat'; F.target = { x: 0.55, y: -0.65 }; cubeEl.classList.add('thinking');
   subtitle(T('Te: „{0}”   🤔', text), 20000);
   let res = null, why = '';
-  try {
+  if (TALK.demo) {
+    await sleep(700 + Math.random() * 600);
+    res = demoReply(text, { persona: S.persona, nick: S.nick });
+  } else try {
     const r = await fetch('api/talk', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ persona: S.persona, sliders: S.sliders, nick: S.nick, history: TALK.history }),
@@ -667,6 +676,7 @@ async function converse(text) {
 if (!APP_ONLY) {
   $('#talk').addEventListener('submit', e => { e.preventDefault(); const t = $('#say').value; $('#say').value = ''; converse(t); });
   $('#mic').addEventListener('click', listen);
+  $('#talkNote').addEventListener('click', e => { const q = e.target.closest('.chip')?.dataset.q; if (q) converse(q); });
   $('#lang').value = store.get('lang', navigator.language?.startsWith('hu') ? 'hu-HU' : 'en-US');
   $('#lang').addEventListener('change', e => store.set('lang', e.target.value));
   talkStatus();

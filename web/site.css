@@ -204,3 +204,33 @@ figure.wide { margin-top: 28px; }
 .doc tr:last-child td { border-bottom: 0; }
 @media (max-width: 960px) { .research-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 620px) { .research-grid { grid-template-columns: 1fr; } .rcard { padding: 20px; } }
+
+/* videók: teljes változat és bónuszgaléria */
+.full-cut { margin-top: 18px; }
+.full-cut summary { cursor: pointer; color: #a7abb3; font-weight: 600; padding: 10px 0; }
+.full-cut summary:hover { color: var(--stage-text); }
+.full-cut[open] summary { margin-bottom: 12px; }
+.bonus-h { margin-top: 64px; }
+.vgrid { display: grid; grid-template-columns: repeat(3, 1fr) minmax(0, .62fr); gap: 20px; align-items: start; }
+.vcard { margin: 0; }
+.vcard video { display: block; aspect-ratio: 16 / 9; object-fit: contain; background: #000; }
+.vcard.tall video { aspect-ratio: 9 / 16; }
+.vcard figcaption { padding-top: 12px; font-size: 15px; color: #a7abb3; }
+.vcard figcaption b { color: var(--stage-text); font-size: 16px; }
+.vcard figcaption .dur { color: #6f7480; font-variant-numeric: tabular-nums; margin-left: 4px; }
+.vcard figcaption span:last-child { display: block; margin-top: 4px; }
+@media (max-width: 1000px) { .vgrid { grid-template-columns: 1fr 1fr; } .vcard.tall { max-width: 300px; } }
+@media (max-width: 600px) { .vgrid { grid-template-columns: 1fr; } .vcard.tall { max-width: 260px; margin: 0 auto; } }
+
+/* a projekt számokban + ki mit csinált */
+.numbers { list-style: none; padding: 0; margin: 0 0 40px; display: grid; grid-template-columns: repeat(6, 1fr); border-top: 2px solid var(--text); }
+.numbers li { padding: 18px 16px 18px 0; display: flex; flex-direction: column; gap: 4px; }
+.numbers b { font-size: clamp(26px, 3vw, 38px); font-weight: 800; line-height: 1.05; color: var(--acc); }
+.numbers span { font-size: 14px; color: var(--muted); }
+.roles { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 48px; }
+.roles > div { background: var(--bg2); padding: 22px 24px; }
+.roles h4 { margin: 0 0 10px; font-size: 18px; }
+.roles ul { margin: 0; padding-left: 20px; color: var(--muted); font-size: 15px; }
+.roles li + li { margin-top: 6px; }
+@media (max-width: 900px) { .numbers { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px) { .numbers { grid-template-columns: repeat(2, 1fr); } .roles { grid-template-columns: 1fr; } }

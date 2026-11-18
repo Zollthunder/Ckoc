@@ -537,3 +537,56 @@ A műfaj ismert elemeit használja (napsugaras hátterek, beugró feliratok vast
 **Elakadás:** a gépen **Node 14** fut, a Claude hivatalos JavaScript SDK-ja viszont Node 18-at kér. A szerver ezért régi Node-on is elindul, a beszélgetés pedig kiírja, mi hiányzik. Az éles próbához újabb Node és API-kulcs kell.
 
 **Tanulság:** amikor egyszerre sok független feladat van, érdemes őket szétosztani: külön sessionök, külön ágak, és mindegyik csak a saját fájljaihoz nyúl. Így nem írják felül egymás munkáját.
+
+## 2026-11-17 – Párhuzamos sessionök: hő, kompatibilitás, tanúsítás, „B döntés”
+
+**Hogyan:** az előző bejegyzésben szétosztott feladatok külön Claude Code sessionökben, saját git-ágon (worktree-ben) futottak, majd az AI összefésülte őket. Egy-egy session csak a saját fájljaihoz nyúlt.
+
+**Mi készült el:**
+- **Hőkezelés** ([HOKEZELES.md](HOKEZELES.md)): teljesítménymérleg üzemmódonként és egyszerű hőmodell. Kiderült, hogy az eredeti beállítással a kocka **túlmelegszik**: hallgatás közben, 25 °C-on a Pi ~92 °C, és a hő fele a 31 LED-ből jön. Javítócsomag: LED-fényerőkorlát, szellőzőrés, borda, alvás töltés közben.
+- **Kompatibilitás** ([KOMPATIBILITAS.md](KOMPATIBILITAS.md)): adatlapok alapján ellenőrizte, összeillenek-e a kész modulok (buszok, lábkiosztás, címek, töltőáram). Itt derült ki, hogy a kijelző és a LED-ek ugyanazon az SPI-n ütköznének.
+- **„B döntés”:** az AI a kijelző bekötésére több változatot tett elém, én választottam: **„B: arc a XIAO-n”**. A kijelzőt a XIAO hajtja, az arcot is ő rajzolja, a GPIO-elosztó panel elmaradt. A döntés egyszerre ment át a 3D modellbe (Fusion), a firmware-be (138, majd 149 teszt zöld) és a dokumentációba.
+- **Költségoptimalizálás** ([KOLTSEGOPTIMALIZALAS.md](KOLTSEGOPTIMALIZALAS.md)): alkatrészenként, sorozatnagyság szerint. A nyitott kérdéseket rábíztam az AI-ra, ő döntött és indokolt: ~140 ezerről ~111 ezer Ft/db.
+- **Tanúsítás** ([TANUSITAS.md](TANUSITAS.md)) és **marketing** ([MARKETING.md](MARKETING.md)): CE/RED, kiberreziliencia, MI-rendelet, EPR, export; szlogenek és kampányterv.
+
+**Elakadás:** a párhuzamos ágak ugyanazokat a dokumentumokat is módosították (pl. ELEKTRONIKA.md), ezért az összefésülés után az AI egy külön commitban egységesítette a szöveget.
+
+**Tanulság:** a párhuzamos munka gyors, de a döntéseket egy helyen kell meghozni. Amikor a „B döntés” megszületett, minden érintett sessionnek szólni kellett, különben a régi terv szerint dolgoztak volna tovább.
+
+## 2026-11-17 – Még három bónuszvideó, cat mode és a pörgős bemutató
+
+**Példapromptok:**
+> „…hozzá inspirációnak retro magyar reklámokat, amikor még nem csak átszinkronizálták a meglévő külföldi rek[lámokat]…”
+> „…lehetne egy "cat mode" ahol a C kocka ara átalakulna egy macskáére, és tudna dorombolni is…”
+> „egy picit pörgősebb, mint az eredeti… kevés az az idő…”
+
+**Mi készült el:**
+- **90-es évekbeli amerikai tévéreklám** (42 mp): harsány bemondó (XTTS, Whisperrel válogatva), neon hátterek, krómfeliratok, VHS-zaj és időbélyeg, 13 vágás ütemre.
+- **Retró magyar tévéreklám** (41 mp): 1978 · 1993 · 2004, csatornaváltós átmenetekkel. Filmszemcse és stop-motion, „házi” WordArt-betűk, korai digitális fények és AKCIÓ-csillag. Magyar AI-narráció két hanggal.
+- **Cat mode:** egy új üzemmód, amit végig átvezettünk: macskaarc a XIAO-n, a PC-s előnézetben és a szimulátorban, simogatásra dorombolás (hang + rezgőmotor), bekapcsoláskor miaú, 11 új teszt.
+- **Cat mode rövid klip** (20 mp, függőleges 9:16): horog az első fél másodpercben, kb. 1 mp-es vágások, nagy feliratok, hurokba illő zárás.
+- **Pörgős bemutató** (1:52): az eredeti 2:56-os videó jelenete vágólistával újravágva, ütemre (120 BPM), tömörebb narrációval (10 új mondat) és cat mode-blokkal. A hangkeverőt úgy alakította át az AI, hogy az eredeti videó hangsávja bitre azonos maradt.
+- **Kutatások aloldal** ([kutatasok.html](kutatasok.html)): kártyák a fő számokkal, és egy olvasó, ami a .md dokumentumokat közvetlenül jeleníti meg (HU/EN).
+
+**Tanulság:** a kódból épülő videómotor itt hozta vissza a befektetést: egy új reklám már csak forgatókönyv, idővonal és hang, a 3D kocka és az arc kész.
+
+## 2026-11-18 – Beadás előtti átnézés
+
+**Példapromptok:**
+> „cső C! ötletek a projekthez? van amin érdemes lenne változtatni?”
+> „mehet mind!”
+
+**Hogyan:** az AI átnézte a repót, a weboldalt és az élő oldalt, és fontossági sorrendben javasolt változtatásokat. Ezeket egy menetben megcsinálta.
+
+**Mi változott:**
+- **A fő videó a pörgős, 1:52-es lett.** A kiírás 1–3 percet kér, és a rövidebb változatot nagyobb eséllyel nézik végig. A teljes, 2:56-os változat lenyitható alatta.
+- **Bónuszgaléria:** a négy bónuszvideó (japán, 90-es, retró magyar, cat mode) borítóképpel egy helyen. Eddig csak a japán volt fent, a többi csak a repóban.
+- **Demó beszélgetés a nyilvános oldalon:** eddig a szimulátorban csak helyben, API-kulccsal lehetett beszélgetni. Most a weboldalon egy kis „demó agy” felel (kulcsszavak alapján, előre megírt mondatokkal), javasolt kérdésgombokkal. Helyben továbbra is Claude válaszol.
+- **„Számokban” és „ki mit csinált”:** a „Hogyan készült?” elején a projekt számai (napok, commitok, kódsorok, fájlok), és két oszlop arról, mit csináltam én és mit az AI.
+- **A napló olvasható a weboldalon:** a GitHub Pages a .md fájlokat nyers szövegként mutatta, ezért a napló és a tervezési koncepció most a Kutatások oldal olvasójában nyílik meg.
+- **Ez a napló** is pótolva lett a 11-17-i munkákkal.
+- **Új skill:** `c-kocka-render`, ami leírja, hogyan kell bármelyik videót újragenerálni (melyik szkript, milyen sorrendben, mire figyelni).
+
+**Elakadás:** a projekt fájljai Windows-sorvégeket (CRLF) használnak, ezért az AI első, többsoros szövegcseréi nem találták a cserélendő részt. Írt egy kis segédet, ami a sorvégeket is kezeli.
+
+**Tanulság:** a beadás előtt érdemes kívülről ránézni: mit lát az, aki csak a linket kapja meg? Több kész munka (videók, napló) egyszerűen nem volt elérhető onnan.

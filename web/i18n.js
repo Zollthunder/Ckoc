@@ -54,6 +54,8 @@ const EN = {
   'A Claude SDK-hoz Node 18 vagy újabb kell, ezen a gépen régebbi fut.': 'The Claude SDK needs Node 18 or newer; this machine runs an older one.',
   'Hiányzik a Claude SDK: futtasd az <code>npm install</code> parancsot, majd indítsd újra a szervert.': 'The Claude SDK is missing: run <code>npm install</code>, then restart the server.',
   'Próbamód: a válaszok előre megírtak, nem Claude-tól jönnek.': 'Test mode: the answers are canned, not from Claude.',
+  'Demó mód: a weboldalon a kocka néhány témára előre megírt mondatokkal felel. Helyben futtatva (<code>node serve.js</code> + API-kulcs) Claude válaszol neki.': 'Demo mode: on the website the cube answers a few topics with pre-written lines. Run it locally (<code>node serve.js</code> + an API key) and Claude answers instead.',
+  'Mesélj egy viccet!': 'Tell me a joke!', 'Ki vagy te?': 'Who are you?', 'Rossz napom van': "I'm having a bad day", 'Tudsz dorombolni?': 'Can you purr?',
   'Ez a böngésző nem ismeri a beszédfelismerést, írd be, mit mondanál.': "This browser can't do speech recognition – type what you'd say.",
   'A kocka angolul válaszol. Ha leveszed a hangját, a választ feliratként olvashatod.': 'The cube answers in English. If you mute it, you can read the answer as a subtitle.',
 };

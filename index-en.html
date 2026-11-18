@@ -65,20 +65,53 @@
   <!-- ===== Videó ===== -->
   <section id="video" class="section stage">
     <h2>The video</h2>
-    <p class="section-lead">2:56 about the C-Cube: how it wakes up, what it can do, and how it was made. The video was made from code too – the 3D scene, the music and the sound effects. The narration is spoken by a local AI voice model (XTTS-v2).</p>
+    <p class="section-lead">1:52 about the C-Cube, cut to the beat: how it wakes up, what it can do, and how it was made. The video was made from code too – the 3D scene, the music and the sound effects. The narration is spoken by a local AI voice model (XTTS-v2), and the best take of each line was picked by a speech recogniser (Whisper).</p>
     <div class="video-wrap">
       <video controls preload="metadata" poster="assets/poster.jpg">
+        <source src="video/c-kocka_bemutato_porgos.mp4" type="video/mp4">
+        Your browser can't play the video – <a href="video/c-kocka_bemutato_porgos.mp4">download it here</a>.
+      </video>
+    </div>
+    <details class="full-cut">
+      <summary>Got time? The full, longer cut (2:56) ▸</summary>
+      <div class="video-wrap">
+      <video controls preload="none" poster="assets/poster.jpg">
         <source src="video/c-kocka.mp4" type="video/mp4">
         Your browser can't play the video – <a href="video/c-kocka.mp4">download it here</a>.
       </video>
-    </div>
-    <h3 style="margin-top:56px">Bonus: a “Japanese commercial” 🇯🇵</h3>
-    <p class="section-lead">31 seconds in the style of the genre: rapid cuts, sunburst backgrounds, giant captions, taiko drums and “PRICELESS!”. Japanese narration (local AI voice) with English subtitles – the music and every sound effect were made from code.</p>
-    <div class="video-wrap">
-      <video controls preload="metadata">
+      </div>
+    </details>
+    <h3 class="bonus-h">Bonus: the same cube in four genres</h3>
+    <p class="section-lead">Commercial parodies made with the same code-built video engine – one afternoon each. The music and every sound effect are made from code too.</p>
+    <div class="vgrid">
+      <figure class="vcard">
+        <div class="video-wrap"><video controls preload="none" poster="assets/poster-japan.jpg">
         <source src="video/c-cube_japan.mp4" type="video/mp4">
         Your browser can't play the video – <a href="video/c-cube_japan.mp4">download it here</a>.
-      </video>
+      </video></div>
+        <figcaption><b>“Japanese commercial” 🇯🇵</b> <span class="dur">0:31</span><span>Rapid cuts, sunburst backgrounds, giant captions, taiko drums and “PRICELESS!”. Japanese AI narration with English subtitles.</span></figcaption>
+      </figure>
+      <figure class="vcard">
+        <div class="video-wrap"><video controls preload="none" poster="assets/poster-90s.jpg">
+        <source src="video/c-cube_90s.mp4" type="video/mp4">
+        Your browser can't play the video – <a href="video/c-cube_90s.mp4">download it here</a>.
+      </video></div>
+        <figcaption><b>90s American TV ad 📼</b> <span class="dur">0:42</span><span>“Hey you!” – a loud announcer, VHS noise, a timestamp in the corner and 13 beat-synced cuts.</span></figcaption>
+      </figure>
+      <figure class="vcard">
+        <div class="video-wrap"><video controls preload="none" poster="assets/poster-retro-hu.jpg">
+        <source src="video/c-kocka_retro_hu.mp4" type="video/mp4">
+        Your browser can't play the video – <a href="video/c-kocka_retro_hu.mp4">download it here</a>.
+      </video></div>
+        <figcaption><b>Retro Hungarian TV ad 📺</b> <span class="dur">0:41</span><span>1978 · 1993 · 2004: in the style of three eras of Hungarian commercials, with Hungarian AI narration.</span></figcaption>
+      </figure>
+      <figure class="vcard tall">
+        <div class="video-wrap"><video controls preload="none" poster="assets/poster-catmode.jpg">
+        <source src="video/c-kocka_catmode_short.mp4" type="video/mp4">
+        Your browser can't play the video – <a href="video/c-kocka_catmode_short.mp4">download it here</a>.
+      </video></div>
+        <figcaption><b>Cat mode – vertical short 🐱</b> <span class="dur">0:20</span><span>9:16 for phones: pet it and it purrs (sound + vibration). A hook in the first half second, a loop-ready ending.</span></figcaption>
+      </figure>
     </div>
   </section>
 
@@ -175,6 +208,20 @@
     <h2>How was it made?</h2>
     <p class="section-lead">The point of the challenge wasn't only the result, but how I learn something new with the help of an AI. My tool was <b>Claude Code</b>.</p>
 
+    <ul class="numbers" aria-label="The project in numbers">
+      <li><b>5</b><span>working days</span></li>
+      <li><b>70+</b><span>commits on GitHub</span></li>
+      <li><b>~20,000</b><span>lines of code (Python, JavaScript)</span></li>
+      <li><b>17</b><span>documents: design, research, log</span></li>
+      <li><b>97 + 91</b><span>DXF and STL files for manufacturing</span></li>
+      <li><b>6</b><span>videos, all made from code</span></li>
+    </ul>
+
+    <div class="roles">
+      <div><h4>🧑 What I did</h4><ul><li>the topic and the jokes (throwable cube, dad-joke button, peeking, cat mode)</li><li>the design rules: easy assembly, off-the-shelf modules, cost</li><li>the decisions (size, parts, cost cuts)</li><li>catching mistakes (“there is a Fusion MCP”, “there is a graphics card”)</li><li>the final judge of the audio: my ears</li></ul></div>
+      <div><h4>🤖 What the AI (Claude Code) did</h4><ul><li>the Fusion 360 model from a script, checked through MCP</li><li>manufacturing files, assembly guide, research</li><li>the videos: 3D scene, music, sound effects, narration</li><li>the website, the simulator and the cube’s software with tests</li><li>the first draft of the log after every step</li></ul></div>
+    </div>
+
     <ol class="timeline">
       <li>
         <h4>1 · The idea</h4>
@@ -217,9 +264,9 @@
         <p>Python for the Raspberry Pi, CircuitPython for the XIAO RP2040, with simulated hardware and automated tests. An independent AI review still found 15 bugs, and we fixed them all.</p>
       </li>
       <li>
-        <h4>9 · Bonus: a Japanese commercial</h4>
+        <h4>9 · Bonus: commercial parodies and a short</h4>
         <blockquote>“the usual fast cuts, sound effects, what youd think of when you think of a viral japanese ad”</blockquote>
-        <p>31 seconds, 11 beat-synced cuts, Japanese AI narration. Made with the same code-built video engine, in one afternoon.</p>
+        <p>A Japanese commercial, a 90s American and a retro Hungarian TV ad, a vertical “cat mode” short, and finally a fast, beat-cut version of the main video. All made with the same code-built video engine, one afternoon each.</p>
       </li>
       <li>
         <h4>10 · This website</h4>
@@ -241,7 +288,7 @@
     <ul class="tools">
       <li>Claude Code (AI)</li><li>Autodesk Fusion 360 + Python API</li><li>Fusion MCP server</li><li>three.js</li><li>Node.js</li><li>ffmpeg</li><li>F5-TTS, XTTS-v2 (local AI voice)</li><li>Whisper (speech recognition)</li><li>Python, CircuitPython</li><li>Claude API</li><li>Git + GitHub Pages</li>
     </ul>
-    <p class="center"><a class="btn" href="NAPLO.md">📝 The full log, with example prompts (in Hungarian)</a> <a class="btn" href="DESIGN.md">💡 Design concept (in Hungarian)</a></p>
+    <p class="center"><a class="btn" href="kutatasok.html?lang=en#naplo">📝 The full log, with example prompts (in Hungarian)</a> <a class="btn" href="kutatasok.html?lang=en#design">💡 Design concept (in Hungarian)</a></p>
   </section>
 
   <!-- ===== Letöltések ===== -->
@@ -258,7 +305,8 @@
       <a href="3d/c-kocka.step" download><b>c-kocka.step</b><span>STEP – for any CAD program</span></a>
       <a href="3d/c-kocka.stl" download><b>c-kocka.stl</b><span>STL – for 3D printing / viewing</span></a>
       <a href="3d/fusion/CKocka/CKocka.py" download><b>CKocka.py</b><span>the Fusion script that builds the model</span></a>
-      <a href="video/c-kocka.mp4" download><b>c-kocka.mp4</b><span>the video (1080p)</span></a>
+      <a href="video/c-kocka_bemutato_porgos.mp4" download><b>c-kocka_bemutato_porgos.mp4</b><span>the video, 1:52 (1080p)</span></a>
+      <a href="video/c-kocka.mp4" download><b>c-kocka.mp4</b><span>the full cut, 2:56 (1080p)</span></a>
     </div>
   </section>
 </main>

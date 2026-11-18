@@ -42,6 +42,9 @@ const DOCS = [
     facts: [['CE / RED', 'a fő szabály az EU-ban', 'the main EU rule'],
             ['4', 'nagy kockázat', 'major risks'],
             ['2027-12', 'teljes CRA', 'full Cyber Resilience Act']] },
+  // nem kártyák, csak az olvasóban nyílnak meg (a főoldalról linkelve)
+  { key: 'naplo', file: 'NAPLO.md', hidden: true },
+  { key: 'design', file: 'DESIGN.md', hidden: true },
 ];
 
 const L = (hu, en) => (EN ? en : hu);
@@ -75,7 +78,7 @@ if (EN) {
 }
 
 // ---- kártyák ----
-$('cards').innerHTML = DOCS.map((d) => {
+$('cards').innerHTML = DOCS.filter((d) => !d.hidden).map((d) => {
   const [title, text] = EN ? d.en : d.hu;
   const facts = d.facts.map(([n, hu, en]) => `<li><b>${n}</b><span>${L(hu, en)}</span></li>`).join('');
   return `<a class="rcard" href="#${d.key}">

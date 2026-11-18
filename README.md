@@ -10,7 +10,8 @@
 | [index.html](index.html), [web/](web/) | a weboldal (three.js-es interaktív 3D néző) |
 | [3d/](3d/) | a 3D modell: `c-kocka.f3d` (Fusion 360), `c-kocka.step`, `c-kocka.stl` |
 | [3d/fusion/CKocka/CKocka.py](3d/fusion/CKocka/CKocka.py) | a Fusion 360 Python szkript, ami az egész modellt felépíti |
-| [video/c-kocka.mp4](video/c-kocka.mp4) | a 2:56-os videó |
+| [video/c-kocka_bemutato_porgos.mp4](video/c-kocka_bemutato_porgos.mp4) | a videó (1:52); a teljes változat: [video/c-kocka.mp4](video/c-kocka.mp4) (2:56) |
+| [video/](video/) bónuszok | japán, 90-es amerikai és retró magyar reklámparódia, függőleges cat mode klip |
 | [video/](video/) | a videó „forráskódja”: animált jelenet, időzítés, szövegek |
 | [tools/](tools/) | segédprogramok: Fusion MCP kliens, hanggenerálás, zene, renderelés |
 | [NAPLO.md](NAPLO.md) | **a napló**: eszközök, példapromptok, elakadások és megoldások |
@@ -37,7 +38,7 @@ A szimulátorban a 🎙️ gombbal vagy gépelve lehet beszélni a kockához, a 
 ```bash
 ANTHROPIC_API_KEY=... node serve.js
 ```
-Kulcs nélkül, próbamódban: `CKOCKA_TALK_MOCK=1 node serve.js`. A kulcs csak a helyi szerveren van, a weboldalba nem kerül, és a végpont csak a saját gépről hívható. A nyilvános oldalon ezért a beszélgetés nem él.
+Kulcs nélkül, próbamódban: `CKOCKA_TALK_MOCK=1 node serve.js`. A kulcs csak a helyi szerveren van, a weboldalba nem kerül, és a végpont csak a saját gépről hívható. A nyilvános oldalon ezért a szimulátor demó módban fut: kulcsszavak alapján, előre megírt mondatokkal felel ([web/demo_brain.js](web/demo_brain.js)).
 
 ---
 Tervezte: Zollo & C (Claude) · AI Kihívás 2026 · Koncepciótermék, nem kerül forgalomba.
