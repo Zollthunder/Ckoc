@@ -638,3 +638,10 @@ A műfaj ismert elemeit használja (napsugaras hátterek, beugró feliratok vast
 - Bővítési ötlet: a Claude-os beszélgetés a szimulátorból ide is átköltözhet.
 - A neve Zollo kérésére **Matka** lett.
 - **Exe a barátoknak:** `npm run dist` → `release/Matka.exe` (hordozható, ~75 MB, telepítés nélkül), a GitHub Release-be kerül. Elakadások: az electron-builder függőségei Node 14-en nem futnak → az Electron saját Node-jával fut (`build/dist.js`, `process.noAsar`); a winCodeSign csomag kibontása szimbolikus link miatt jogosultsági hibára futott → kézzel kibontva a gyorsítótárba (a hibás macOS-fájlok nem kellenek); egy zárolt `app.asar` miatt új kimeneti mappa (`release/`).
+- **Hibakeresés a kiadás előtt (Windows + Mac):**
+  - A Ctrl+Alt+K / Ctrl+Alt+B gyorsbillentyű a **magyar billentyűzeten AltGr** – az AltGr+B a „{” jel, vagyis gépelés közben elnyelte volna, és bíztatott volna helyette. Új: Ctrl+Shift+Alt+K / B; Macen ⌃⌘K / ⌃⌘B (a ⌘⌥B a Chrome könyvjelzőkezelője lett volna). Ha egy másik program már lefoglalta, a menü nem írja ki.
+  - A hordozható exe minden indításkor ideiglenes mappába bomlik ki, így az „Indítás a Windowszal” egy nem létező exe-re mutatott volna → az eredeti exe útvonala (`PORTABLE_EXECUTABLE_FILE`).
+  - Húzáskor a `setPosition` 125%-os Windows-nagyításnál lassan megnövelte az ablakot (260×330 → 264×332) → `setBounds` fix mérettel.
+  - A számológép a dátumot (2024-11-23) és a telefonszámot (06-30-…) kivonásnak vette → ezek keresések.
+  - Mac: az első kattintás csak aktiválta volna az ablakot (`acceptFirstMouse`); a „minden asztalon látszik” beállítás visszahozta volna a Dock-ikont (`skipTransformProcessType`); a keresőbe nem lehetett volna gépelni, mert a háttérprogram nem lép előre (`app.focus`).
+  - Akku: az arc legfeljebb 30 képet rajzol másodpercenként (alváskor 10), nem 60-at.

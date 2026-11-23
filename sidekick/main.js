@@ -8,15 +8,19 @@ app.setName('Matka');
 if (!app.requestSingleInstanceLock()) { app.quit(); process.exit(0); }
 
 const MAC = process.platform === 'darwin';
-const KEY = MAC ? { search: '⌘⌥K', cheer: '⌘⌥B' } : { search: 'Ctrl+Alt+K', cheer: 'Ctrl+Alt+B' };
+// gyorsbillentyűk: Windowson NEM Ctrl+Alt, mert a magyar billentyűzeten az az AltGr (AltGr+B = „{”, AltGr+K = „ł”),
+// Macen pedig NEM ⌘⌥, mert a ⌘⌥B a Chrome könyvjelzőkezelője. A ⌃⌘K / ⌃⌘B Macen szabad.
+const KEY = MAC ? { search: '⌃⌘K', cheer: '⌃⌘B' } : { search: 'Ctrl+Shift+Alt+K', cheer: 'Ctrl+Shift+Alt+B' };
 const W = 260, H = 330;                 // az ablak: alul a kocka, fölötte a buborék helye
 const IDLE_SLEEP = 5 * 60;              // ennyi másodperc tétlenség után elalszik
-const SEARCH_KEY = 'CommandOrControl+Alt+K';
-const CHEER_KEY = 'CommandOrControl+Alt+B';
+const SEARCH_KEY = MAC ? 'Control+Command+K' : 'Control+Shift+Alt+K';
+const CHEER_KEY = MAC ? 'Control+Command+B' : 'Control+Shift+Alt+B';
+const KEY_OK = { search: false, cheer: false };   // ha egy másik program már lefoglalta, nem írjuk ki a menüben
 
 // ---- beállítások (Windowson az AppData, Macen az Application Support mappában) ----
 // indítás bejelentkezéskor: Windowson forrásból futtatva az electron.exe-t a program mappájával együtt kell elindítani
-const LOGIN = MAC ? {} : app.isPackaged ? { path: process.execPath, args: [] } : { path: process.execPath, args: [path.resolve(__dirname)] };
+// a hordozható Matka.exe minden indításkor egy ideiglenes mappába bomlik ki – a bejelentkezéshez az eredeti exe kell
+const LOGIN = MAC ? {} : app.isPackaged ? { path: process.env.PORTABLE_EXECUTABLE_FILE || process.execPath, args: [] } : { path: process.execPath, args: [path.resolve(__dirname)] };
 const SET_FILE = () => path.join(app.getPath('userData'), 'settings.json');
 const DEFAULTS = { muted: false, reminderMin: 0, pos: null, engine: 'google', cute: false };
 let S = { ...DEFAULTS };
@@ -41,15 +45,15 @@ function createWindow() {
     x: p.x, y: p.y, width: W, height: H,
     frame: false, transparent: true, resizable: false, maximizable: false, minimizable: false, fullscreenable: false,
     alwaysOnTop: true, skipTaskbar: true, hasShadow: false, show: false, backgroundColor: '#00000000',
-    title: 'Matka',
+    title: 'Matka', acceptFirstMouse: true,
     icon: path.join(__dirname, 'build', 'icon.png'),
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false, sandbox: true },
   });
   win.setAlwaysOnTop(true, 'floating');
-  if (MAC) win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });   // Macen minden asztalon látszik
+  if (MAC) win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true, skipTransformProcessType: true });   // Macen minden asztalon látszik (a Dock-ikon nélkül)
   win.setIgnoreMouseEvents(true, { forward: true });     // az átlátszó részek átengedik a kattintást
   win.loadFile(path.join(__dirname, 'cat.html'));
-  win.once('ready-to-show', () => { win.showInactive(); send('settings', { ...S, mac: MAC }); send('hello'); if (process.argv.includes('--demo')) console.log('shown', JSON.stringify(win.getBounds()), win.isVisible()); });
+  win.once('ready-to-show', () => { win.showInactive(); send('settings', { ...S, mac: MAC, keys: KEY, keyOk: KEY_OK }); send('hello'); if (process.argv.includes('--demo')) console.log('shown', JSON.stringify(win.getBounds()), win.isVisible()); });
   win.webContents.on('did-finish-load', () => { if (process.argv.includes('--demo')) console.log('loaded'); });
   win.webContents.on('console-message', (_e, _l, m) => { if (process.argv.includes('--demo')) console.log('renderer:', m); });
   win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
@@ -121,18 +125,18 @@ function trayIcon() {                     // Windowson színes; Macen fekete szi
 
 function menu() {
   const rem = m => ({ label: m ? `${m} percenként` : 'Kikapcsolva', type: 'radio', checked: S.reminderMin === m, click: () => { S.reminderMin = m; saveSettings(); scheduleReminder(); } });
-  const eng = (id, label) => ({ label, type: 'radio', checked: S.engine === id, click: () => { S.engine = id; saveSettings(); send('settings', { ...S, mac: MAC }); } });
+  const eng = (id, label) => ({ label, type: 'radio', checked: S.engine === id, click: () => { S.engine = id; saveSettings(); send('settings', { ...S, mac: MAC, keys: KEY, keyOk: KEY_OK }); } });
   return Menu.buildFromTemplate([
-    { label: `🔎 Keresés…  (${KEY.search})`, click: () => openSearch() },
+    { label: `🔎 Keresés…${KEY_OK.search ? `  (${KEY.search})` : ''}`, click: () => openSearch() },
     { label: '😺 Simogatás', click: () => send('pet') },
-    { label: `💪 Bátoríts!  (${KEY.cheer})`, click: () => send('cheer') },
+    { label: `💪 Bátoríts!${KEY_OK.cheer ? `  (${KEY.cheer})` : ''}`, click: () => send('cheer') },
     { type: 'separator' },
     { label: 'Szünet-emlékeztető', submenu: [rem(0), rem(30), rem(50), rem(60), rem(90)] },
     { label: 'Keresőmotor', submenu: [eng('google', 'Google'), eng('bing', 'Bing'), eng('ddg', 'DuckDuckGo')] },
     { label: 'Cuki üzenetek időnként', type: 'checkbox', checked: S.cute, click: i => { S.cute = i.checked; saveSettings(); } },
-    { label: '🔇 Néma mód', type: 'checkbox', checked: S.muted, click: i => { S.muted = i.checked; saveSettings(); send('settings', { ...S, mac: MAC }); } },
+    { label: '🔇 Néma mód', type: 'checkbox', checked: S.muted, click: i => { S.muted = i.checked; saveSettings(); send('settings', { ...S, mac: MAC, keys: KEY, keyOk: KEY_OK }); } },
     { label: MAC ? 'Indítás bejelentkezéskor' : 'Indítás a Windowszal', type: 'checkbox', checked: app.getLoginItemSettings(LOGIN).openAtLogin, click: i => app.setLoginItemSettings({ ...LOGIN, openAtLogin: i.checked }) },
-    { label: 'Vissza a sarokba', click: () => { const p = defaultPos(); win.setPosition(p.x, p.y); S.pos = p; saveSettings(); } },
+    { label: 'Vissza a sarokba', click: () => { const p = defaultPos(); win.setBounds({ ...p, width: W, height: H }); S.pos = p; saveSettings(); } },
     { label: '❓ Hogyan használd?', click: () => send('help') },
     { type: 'separator' },
     { label: 'Kilépés', click: () => app.quit() },
@@ -142,6 +146,7 @@ function menu() {
 function openSearch() {
   if (!win) return;
   win.setIgnoreMouseEvents(false);
+  if (MAC) app.focus({ steal: true });
   win.show(); win.focus();
   send('search');
 }
@@ -171,7 +176,8 @@ function searchUrl(text) {
 // ---- üzenetek az ablakból ----
 ipcMain.on('mouse', (_e, inside) => { if (win) win.setIgnoreMouseEvents(!inside, { forward: true }); });
 ipcMain.on('drag', (_e, { dx, dy }) => {
-  if (!win) return; const [x, y] = win.getPosition(); win.setPosition(Math.round(x + dx), Math.round(y + dy));
+  if (!win) return; const [x, y] = win.getPosition();
+  win.setBounds({ x: Math.round(x + dx), y: Math.round(y + dy), width: W, height: H });
 });
 ipcMain.on('drag-end', () => { if (!win) return; const [x, y] = win.getPosition(); S.pos = { x, y }; saveSettings(); });
 ipcMain.on('menu', () => menu().popup({ window: win }));
@@ -199,8 +205,8 @@ app.whenReady().then(() => {
   // Windowson: bal klikk simogat, jobb klikk menü; Macen a menüsor-ikonra kattintva a menü nyílik (ez a szokás)
   tray.on('click', () => (MAC ? tray.popUpContextMenu(menu()) : send('pet')));
   tray.on('right-click', () => tray.popUpContextMenu(menu()));
-  globalShortcut.register(SEARCH_KEY, openSearch);
-  globalShortcut.register(CHEER_KEY, () => send('cheer'));
+  KEY_OK.search = globalShortcut.register(SEARCH_KEY, openSearch);
+  KEY_OK.cheer = globalShortcut.register(CHEER_KEY, () => send('cheer'));
   startCursor(); startIdle(); scheduleReminder(); scheduleCute();
   // bemutató mód (npm run demo): sorban végigmegy a viselkedéseken, hogy egyben látszódjon minden
   if (process.argv.includes('--demo')) [[3, 'pet'], [9, 'cute'], [15, 'remind'], [21, 'help'], [27, 'search'], [33, 'sleep', true], [39, 'sleep', false]]
@@ -209,7 +215,7 @@ app.whenReady().then(() => {
       const dir = process.env.SIDEKICK_SHOTS;
       if (dir) setTimeout(() => win.webContents.capturePage().then(img => fs.writeFileSync(path.join(dir, `${t}-${ch}.png`), img.toPNG())), 1500);
     }, t * 1000));
-  screen.on('display-removed', () => { if (win && !onScreen({ x: win.getPosition()[0], y: win.getPosition()[1] })) { const p = defaultPos(); win.setPosition(p.x, p.y); } });
+  screen.on('display-removed', () => { if (win && !onScreen({ x: win.getPosition()[0], y: win.getPosition()[1] })) { const p = defaultPos(); win.setBounds({ ...p, width: W, height: H }); } });
 });
 app.on('second-instance', () => send('pet'));
 app.on('will-quit', () => { globalShortcut.unregisterAll(); clearInterval(cursorTimer); clearInterval(idleTimer); clearInterval(reminderTimer); clearTimeout(cuteTimer); });

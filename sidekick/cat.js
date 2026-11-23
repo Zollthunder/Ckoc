@@ -176,7 +176,7 @@ const CHEER = [
   'Rajta! Ezt is kipipálod mindjárt. ✅',
   'Mindjárt kész, és utána jöhet egy jól megérdemelt simogatás. Nekem. Mármint neked. 😸',
 ];
-const HELP = () => `Kattints rám: dorombolok és bíztatlak 😺 · Dupla katt vagy ${settings.mac ? '⌘⌥K' : 'Ctrl+Alt+K'}: keresés 🔎 · ${settings.mac ? 'Ctrl+katt vagy jobb gomb' : 'Jobb gomb'}: menü (néma mód is) · Húzz arrébb, ha útban vagyok!`;
+const HELP = () => `Kattints rám: dorombolok és bíztatlak 😺 · Dupla katt${settings.keyOk && settings.keyOk.search ? ` vagy ${settings.keys.search}` : ''}: keresés 🔎 · ${settings.mac ? 'Ctrl+katt vagy jobb gomb' : 'Jobb gomb'}: menü (néma mód is) · Húzz arrébb, ha útban vagyok!`;
 function cheer() { pet(true); }
 
 // ------------------------------------------------------------------ keresés és számolás
@@ -191,7 +191,7 @@ find.addEventListener('submit', e => {
   e.preventDefault();
   const t = q.value.trim(); if (!t) return;
   const n = calc(t);
-  if (n !== null) { F.mode = 'face'; say(`${t} = ${fmt(n)}`, 9000); return; }
+  if (n !== null) { F.mode = 'face'; say(`${t.length > 40 ? t.slice(0, 39) + '…' : t} = ${fmt(n)}`, 9000); return; }
   K.send('search', t); K.send('search-done');
   F.mode = 'face'; say(pick(['Már nyitom is! 🐾', 'Utánanézek… 🔎', 'Ugrok! 😼']), 2500);
 });
@@ -201,6 +201,9 @@ q.addEventListener('blur', () => setTimeout(() => { if (!find.hidden && document
 const fmt = n => (Math.round(n * 1e10) / 1e10).toLocaleString('hu-HU', { maximumFractionDigits: 10 });
 // egyszerű számológép (+ − × ÷ ^ % zárójelek), eval nélkül
 function calc(s) {
+  // dátum (2024-11-23, 2024.11.23.) és telefonszám (06-30-123-4567, +36 30 …) nem számolás, hanem keresés
+  if (/^\s*\d{2,4}([-./])\d{1,2}\1\d{1,4}\.?\s*$/.test(s)) return null;
+  if (/^\s*\+?0?\d+([-\s]\d+){2,}\s*$/.test(s) || /^\s*(\+|0)\d*[-\s]\d/.test(s) && !/[*/×x÷:^%]/.test(s)) return null;
   if (!/^[\d\s.,+\-*/×x÷:^%()]+$/.test(s) || !/\d/.test(s) || !/[+\-*/×x÷:^%]/.test(s.replace(/^\s*-/, ''))) return null;
   const src = s.replace(/,/g, '.').replace(/[×x]/g, '*').replace(/[÷:]/g, '/').replace(/\s+/g, '');
   let i = 0;
@@ -233,6 +236,9 @@ K.on('hello', () => !ICON && say('Miaú! Matka vagyok. 😺 Kattints rám, ha j�
 // ------------------------------------------------------------------ az arc rajzolása (240 px, mint a XIAO kijelzője)
 function poly(pts, col) { g.fillStyle = col; g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(120 + x, 120 + y) : g.moveTo(120 + x, 120 + y))); g.closePath(); g.fill(); }
 function draw(now) {
+  // legfeljebb ~30 kép/mp (alváskor 10): egy mindig futó kis segéd ne egye a laptop akkuját
+  const gap = F.mode === 'sleep' ? 100 : 33;
+  if (draw.last && now - draw.last < gap - 4) { requestAnimationFrame(draw); return; }
   const t = now / 1000, dt = Math.min(0.1, (now - (draw.last || now)) / 1000); draw.last = now;
   g.setTransform(SCALE, 0, 0, SCALE, 0, 0);
   g.clearRect(0, 0, 240, 240); g.fillStyle = '#050608'; g.fillRect(0, 0, 240, 240);

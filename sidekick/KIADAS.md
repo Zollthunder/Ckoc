@@ -6,7 +6,7 @@ Matka egy kis macskafejes kocka a képernyő sarkában – a C-kocka „cat mode
 
 ## Mit tud?
 - Kattints rá: dorombol, és bíztat egy kicsit 💪 (62 mondat, nem ismétli magát)
-- Dupla kattintás, vagy Ctrl+Alt+K (Macen ⌘⌥K): keresés – Google, `yt` YouTube, `w` Wikipédia, `map` térkép, és számol is: `12*7+3`
+- Dupla kattintás, vagy Ctrl+Shift+Alt+K (Macen ⌃⌘K): keresés – Google, `yt` YouTube, `w` Wikipédia, `map` térkép, és számol is: `12*7+3`
 - Jobb gomb (Macen Ctrl+kattintás is): menü – néma mód, indítás bejelentkezéskor, szünet-emlékeztető
 - Magától nem szól és nem nyávog, hogy ne zavarjon munka közben
 

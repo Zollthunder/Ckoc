@@ -34,8 +34,8 @@ A gép régi Node-ja miatt a csomagoló az Electron saját Node-jával fut ([bui
 | Mit csinálsz | Mit csinál a cica |
 |---|---|
 | **Kattintasz rá** | dorombol, szívecskéket küld, és mond egy **bíztató mondatot** 💪 |
-| **Dupla kattintás** vagy **Ctrl+Alt+K** (Mac: **⌘⌥K**) | felugrik a **kereső** 🔎 (lásd lent) |
-| **Ctrl+Alt+B** (Mac: **⌘⌥B**) | bíztatás bárhonnan, akkor is, ha épp más ablakban vagy |
+| **Dupla kattintás** vagy **Ctrl+Shift+Alt+K** (Mac: **⌃⌘K**) | felugrik a **kereső** 🔎 (lásd lent) |
+| **Ctrl+Shift+Alt+B** (Mac: **⌃⌘B**) | bíztatás bárhonnan, akkor is, ha épp más ablakban vagy |
 | **Föléviszed az egeret** | hegyezi a fülét |
 | **Megfogod és húzod** | arrébb megy; a helyét megjegyzi |
 | **Jobb gomb** rajta, vagy a tálcaikon (Macen: Ctrl+kattintás, vagy a menüsor-ikon) | menü |
