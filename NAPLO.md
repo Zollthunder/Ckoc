@@ -621,3 +621,20 @@ A műfaj ismert elemeit használja (napsugaras hátterek, beugró feliratok vast
 - **Mellékes lelet:** ugyanez a hiba a szimulátorban is megvolt, az élő oldalon is: a 81 mondatból 50 halk volt, néhány gyakorlatilag néma (-40…-58 dB). Ez eddig senkinek nem tűnt fel.
 - **Javítás:** közös átalakító ([tools/voice_mp3_lib.js](tools/voice_mp3_lib.js)) egyszerű, mért erősítéssel: az átlag -18 dB-re, a csúcs legfeljebb -1,5 dB-re. A végén minden fájlt visszamér, és jelzi, ha halk vagy túl rövid. Mind a 111 fájl rendben.
 - **Tanulság:** a Whisper ellenőrzése a kiválasztott WAV-ra vonatkozott, nem a végső MP3-ra, amit a böngésző lejátszik. Mindig a kész terméket kell visszamérni, nem egy köztes fájlt.
+
+## 2026-11-23 – Matka: a C-kocka cicája kiköltözik az asztalra
+
+**Kérés:** „a macskás (cat mode) részből egy külön asszisztenst … ilyen kis side-kick windowsra”, menet közben pontosítva: tudjon dorombolni, legyenek benne egyszerű keresések, legyen néma mód, legyen benne „lelket tartó akarás”, de bíztatni **csak kattintásra**, hogy ne terelje el a figyelmet a munkáról.
+
+**Mi lett:** [sidekick/](sidekick/) – Electron-alkalmazás, átlátszó, keret nélküli, mindig felül lévő kis ablak a macskaarccal (ugyanaz a rajz, mint a XIAO-n és a szimulátorban).
+- kattintás: dorombolás + szívecskék + bíztató mondat; dupla kattintás / Ctrl+Alt+K: kereső (Google, `yt`, `w`, `map`, számológép eval nélkül)
+- a szeme az egeret követi, 5 perc tétlenség után elalszik, csendben ébred
+- néma mód, szünet-emlékeztető és cuki üzenetek – az utóbbi kettő alapból ki
+- tálcaikon (kódból rajzolt kis macskafej), menü, indítás a Windowszal, Asztal-parancsikon (`npm run parancsikon`)
+
+**Elakadások:**
+- A gép Node-ja (14) régi, de az Electron saját Node-ot hoz, így ez itt nem gond.
+- Az átlátszó ablak a sima képernyőképen nem látszott (rétegzett ablak). Megoldás: a bemutató mód (`npm run demo`) az ablak saját képét menti minden lépés után.
+- Bővítési ötlet: a Claude-os beszélgetés a szimulátorból ide is átköltözhet.
+- A neve Zollo kérésére **Matka** lett.
+- **Exe a barátoknak:** `npm run dist` → `release/Matka.exe` (hordozható, ~75 MB, telepítés nélkül), a GitHub Release-be kerül. Elakadások: az electron-builder függőségei Node 14-en nem futnak → az Electron saját Node-jával fut (`build/dist.js`, `process.noAsar`); a winCodeSign csomag kibontása szimbolikus link miatt jogosultsági hibára futott → kézzel kibontva a gyorsítótárba (a hibás macOS-fájlok nem kellenek); egy zárolt `app.asar` miatt új kimeneti mappa (`release/`).

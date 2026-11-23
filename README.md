@@ -23,6 +23,7 @@
 | [PIACI_TANULMANY.md](PIACI_TANULMANY.md) | piaci előtanulmány: piac, ár, haszonkulcs, sorozatnagyság |
 | [AJANLATKERESEK.md](AJANLATKERESEK.md) | költségbecslés és ajánlatkérés-tervezetek a 3 prototípushoz (gyakorló anyag, nem elküldve) |
 | [8ball/index.html](8ball/index.html) | **„Rázd meg, és dönt helyetted”** önálló programként: egy mappa (a HTML és a felvett hangok), internet és szerver nélkül, az index.html-re duplán kattintva indul |
+| [sidekick/](sidekick/) | **Matka**, a C-kocka cicája: a cat mode kis asztali segédként Windowsra (dorombol, bíztat, keres), [leírás](sidekick/README.md), [letöltés (Matka.exe)](https://github.com/Zollthunder/Ckoc/releases/latest/download/Matka.exe) |
 | [kutatasok.html](kutatasok.html) | a kutatások a weboldalon: kártyák a fő számokkal, és az .md dokumentumok olvasható formában |
 | [KOLTSEGOPTIMALIZALAS.md](KOLTSEGOPTIMALIZALAS.md) | költségoptimalizálás alkatrészenként és sorozatnagyság szerint, döntésekkel |
 | [dxf/vagas/](dxf/vagas/), [3d/nyomtatas/](3d/nyomtatas/) | vágási DXF-ek (lézer/CNC) és nyomtatandó STL-ek gépenként |

@@ -1,0 +1,42 @@
+{
+  "name": "matka",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Matka – a C-kocka cicája: kis asztali segéd Windowsra",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "demo": "electron . --demo",
+    "parancsikon": "powershell -NoProfile -ExecutionPolicy Bypass -File parancsikon.ps1",
+    "icon": "electron . --icon",
+    "dist": "set ELECTRON_RUN_AS_NODE=1&& electron build/dist.js"
+  },
+  "devDependencies": {
+    "electron": "33.4.11",
+    "electron-builder": "^24.13.3"
+  },
+  "productName": "Matka",
+  "build": {
+    "appId": "hu.ckocka.matka",
+    "productName": "Matka",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "cat.html",
+      "cat.css",
+      "cat.js",
+      "build/icon.png"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "build/icon.png"
+    },
+    "portable": {
+      "artifactName": "Matka.exe"
+    }
+  }
+}

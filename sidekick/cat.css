@@ -1,0 +1,42 @@
+html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; user-select: none; font: 14px/1.4 "Segoe UI", system-ui, sans-serif; }
+body { position: relative; }
+
+/* a kocka: sötét, lekerekített, narancs sarkokkal – mint a C-kocka */
+.cube {
+  position: absolute; left: 50%; bottom: 12px; width: 156px; height: 156px; margin-left: -78px;
+  background: linear-gradient(145deg, #2a2d35, #15171c); border-radius: 30px;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.08), 0 8px 18px rgba(0,0,0,.35);
+  cursor: grab; transition: transform .15s;
+}
+.cube:hover { transform: translateY(-2px); }
+.cube.purr { animation: purr .09s linear infinite; }
+.cube.wiggle { animation: wiggle .5s ease; }
+@keyframes purr { 0% { transform: translate(0, 0); } 50% { transform: translate(.6px, -.4px); } 100% { transform: translate(-.6px, .4px); } }
+@keyframes wiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-6deg); } 75% { transform: rotate(6deg); } }
+.corner { position: absolute; width: 26px; height: 26px; background: #ff8a1f; }
+.corner.tl { left: -4px; top: -4px; border-radius: 14px 6px 6px 6px; }
+.corner.tr { right: -4px; top: -4px; border-radius: 6px 14px 6px 6px; }
+.corner.bl { left: -4px; bottom: -4px; border-radius: 6px 6px 6px 14px; }
+.corner.br { right: -4px; bottom: -4px; border-radius: 6px 6px 14px 6px; }
+.display { position: absolute; inset: 14px; border-radius: 50%; background: #050608; overflow: hidden; box-shadow: inset 0 0 0 3px #0b0c10; }
+.display canvas { width: 100%; height: 100%; display: block; }
+
+/* szövegbuborék */
+.bubble {
+  position: absolute; left: 8px; right: 8px; bottom: 184px; padding: 10px 14px; background: #fffdf8; color: #16171b;
+  border-radius: 16px; box-shadow: 0 6px 18px rgba(0,0,0,.28); border: 1.5px solid #ff8a1f; animation: pop .18s ease-out;
+}
+.bubble::after {
+  content: ""; position: absolute; left: 50%; bottom: -9px; width: 16px; height: 16px; margin-left: -8px; background: #fffdf8;
+  border-right: 1.5px solid #ff8a1f; border-bottom: 1.5px solid #ff8a1f; transform: rotate(45deg);
+}
+.bubble[hidden] { display: none; }
+.bubble p { margin: 0; font-weight: 600; }
+.bubble p:empty { display: none; }
+.bubble form input {
+  width: 100%; box-sizing: border-box; margin: 2px 0 4px; padding: 7px 10px; border: 1.5px solid #d9d6cf; border-radius: 10px;
+  font: inherit; outline: none; background: #fff;
+}
+.bubble form input:focus { border-color: #ff8a1f; }
+.bubble small { display: block; color: #6b6d73; font-size: 11px; line-height: 1.35; }
+@keyframes pop { from { transform: translateY(6px) scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }

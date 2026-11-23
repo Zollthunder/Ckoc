@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:">
+<title>Matka</title>
+<link rel="stylesheet" href="cat.css">
+</head>
+<body>
+  <div class="bubble" id="bubble" hidden>
+    <p id="say"></p>
+    <form id="find" hidden autocomplete="off">
+      <input id="q" maxlength="300" spellcheck="false" placeholder="Mit keressek?">
+      <small>Enter: keresés · <b>yt</b> YouTube · <b>w</b> Wikipédia · <b>map</b> térkép · számolás: 12*7+3</small>
+    </form>
+  </div>
+  <div class="cube" id="cube" title="Kattints: simogatás · dupla kattintás: keresés · jobb gomb: menü · húzd: áthelyezés">
+    <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+    <div class="display"><canvas id="face" width="240" height="240"></canvas></div>
+  </div>
+  <script src="cat.js"></script>
+</body>
+</html>

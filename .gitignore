@@ -51,3 +51,7 @@ video/catmode/audio_mix_catmode.wav
 # pörgős bemutató: újragenerálható köztes fájlok
 video/porgos/audio_mix_porgos.wav
 video/porgos/voice48/
+
+# Matka (sidekick): az elkészült exe a GitHub Release-be kerül, nem a repóba
+sidekick/release/
+sidekick/dist/
