@@ -84,7 +84,7 @@ let purring = false;
 // kattintás (simogatás): dorombol, szívecskék, és egy bíztató mondat
 async function pet() {
   if (F.mode === 'sleep') { wake(true); return; }
-  say(pick(CHEER), 8000);
+  say(nextCheer(), 8000);
   F.hearts = performance.now() + 4500;
   if (purring) return;
   purring = true; F.mode = 'purr'; cube.classList.add('purr'); sound('purr');
@@ -96,6 +96,11 @@ function wake(byUser) {
   if (byUser) say('Mi? Ja, csak szundítottam. 😸', 3000);            // magától ébredve csendben marad, nem zavar
 }
 const pick = a => a[Math.floor(Math.random() * a.length)];
+let cheerBag = [];
+function nextCheer() {                 // mindegyik sorra kerül, mielőtt bármelyik megismétlődne
+  if (!cheerBag.length) cheerBag = CHEER.slice().sort(() => Math.random() - 0.5);
+  return cheerBag.pop();
+}
 const REMIND = [
   'Nyújtózz egyet, ahogy a macskák! 🐾', 'Igyál egy pohár vizet! 💧', 'Nézz ki az ablakon 20 másodpercig. 👀',
   'Állj fel egy percre, sétálj egyet! 🚶', 'Lazítsd el a vállad… így. 😌', 'Pislogj nagyokat, a szemed is pihenne. 😽',
@@ -115,6 +120,58 @@ const CHEER = [
     'Büszke vagyok rád. Komolyan, macskabecsszóra. 😽', 'Ha elakadtál, az csak azt jelenti, hogy épp tanulsz valamit. 🧠',
     'A nehéz feladat is véget ér egyszer. Addig itt drukkolok. 📣', 'Te vagy a csapat legjobb embere. Én csak a legszőrösebb. 😸',
     'Kicsi lépés is lépés. És te ma már sokat léptél. 🐾', 'Hiszek benned. Nagyon. Macskamód. 😼',
+  'Nem baj, ha lassan haladsz. Az a lényeg, hogy haladsz. 🐢✨',
+  'A mai nehéz rész holnapra már csak egy jó sztori lesz. 📖',
+  'Minden nagy dolog egy „na jó, nekiállok”-kal kezdődött. 💪',
+  'Már több mindent megoldottál, mint amennyire most emlékszel. 🧠',
+  'Ha ma csak ennyi fér bele, az is elég. Holnap is lesz nap. 🌅',
+  'A hegy is kisebbnek látszik, ha már félúton vagy. ⛰️',
+  'Elfáradni szabad. Feladni nem kell. 🐾',
+  'A hibák nem kudarcok, hanem térképek. Most már tudod, merre ne. 🗺️',
+  'Lépésről lépésre. Egérről egérre. 🐭',
+  'Ami most nehéz, attól leszel holnap ügyesebb. 📈',
+  'Még egy kicsit! Mindjárt átjutsz a nehezén. 🚀',
+  'Nem kell mindent ma megoldani. Csak a következő darabot. 🧩',
+  'A legjobbak is elakadnak. Ők csak nem állnak meg ott. 🏃',
+  'Kitartó vagy, mint egy macska a hűtő előtt. Ez komoly dicséret. 😼',
+  'Okosabb vagy, mint gondolod. Én csak tudom. 😽',
+  'Tudod, mit csinálsz. Bízz magadban egy kicsit jobban. ✨',
+  'Erre a feladatra te vagy a legjobb ember. Nem véletlenül a tiéd. 🎯',
+  'Ha valaki meg tudja csinálni, az te vagy. 🌟',
+  'Láttam már, hogy megoldottál lehetetlennek tűnő dolgokat. 👀',
+  'A képességeid nem tűntek el, csak egy kicsit fáradtak. Pihenj, és visszajönnek. 🔋',
+  'Jó munkát végzel. Akkor is, ha most nem érzed. 💛',
+  'Nem kell tökéletesnek lenned. Elég, ha te vagy. 😺',
+  'Te ennél sokkal nehezebbet is kibírtál már. Ez menni fog. 💪',
+  'Lazíts a vállaidon. Na, ugye, hogy feszültek voltak? 😌',
+  'Légy olyan kedves magadhoz, mint egy barátodhoz lennél. 💛',
+  'Egy korty víz, egy mély levegő, és mehet tovább. 💧',
+  'Szabad szünetet tartani. A macskák is így csinálják, és nézd, milyen jól vagyunk. 😸',
+  'Néha a legjobb ötlet a kávé mellett jön. ☕',
+  'Ha nagyon belefáradtál, nézz ki egy percre az ablakon. Megvárlak. 🪟',
+  'Ne felejts el mosolyogni. Legalább egy kicsit. Így: ω',
+  'Nem minden napnak kell tökéletesnek lennie. Ez is egy jó nap lehet még. 🌤️',
+  'Nem vagy egyedül. Itt vagyok. (Kicsi vagyok, de lelkes.) 🐾',
+  'Ha nagyon nehéz, lökd le az asztalról. Mi így oldjuk meg. 😼 (Csak vicceltem. Majdnem.)',
+  'Ha én megtanultam kinyitni a fiókot mancsokkal, te ezt is meg tudod oldani. 🐾',
+  'Hivatalos macskavélemény: ügyes vagy. Pecsét: 🐾',
+  'Kilenc életem van, és mindegyikben drukkolnék neked. 😽',
+  'Most dorombolok egyet a sikeredért. Előre. Mert biztos lesz. 💛',
+  'Ha nekem sikerült beférnem egy túl kicsi dobozba, neked is sikerül ez. 📦',
+  'Purr-fekt munkát végzel. Bocs, ezt muszáj volt. 😸',
+  'Ma te vagy a nap macskája. Ez a legnagyobb kitüntetés. 🏅',
+  'A macskák sosem kételkednek magukban. Próbáld ki te is! 😼',
+  'Én csak alszom és eszem, te meg ennyi mindent csinálsz. Le a kalappal! 🎩',
+  'Köszönöm, hogy ilyen keményen dolgozol. Látom ám. 👀💛',
+  'Sokat tettél ma bele. Ezt nem mindenki veszi észre, de én igen. 😽',
+  'Büszke lehetsz arra, amit eddig elértél. Én az vagyok. 🌟',
+  'A kitartásod lenyűgöző. Komolyan. 🐾',
+  'Ma is sokat adtál magadból. Este jár egy kis pihenés. 🌙',
+  'Ügyes vagy. Pont. Nincs „de”. ✨',
+  'Hajrá! Az utolsó kör mindig a legszebb. 🏁',
+  'Hajrá, hajrá, hajrá! (Ez itt a szurkolói zászlóm: 🚩)',
+  'Rajta! Ezt is kipipálod mindjárt. ✅',
+  'Mindjárt kész, és utána jöhet egy jól megérdemelt simogatás. Nekem. Mármint neked. 😸',
 ];
 const HELP = 'Kattints rám: dorombolok és bíztatlak 😺 · Dupla katt vagy Ctrl+Alt+K: keresés 🔎 · Jobb gomb: menü (néma mód is) · Húzz arrébb, ha útban vagyok!';
 function cheer() { pet(true); }
