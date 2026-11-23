@@ -7,14 +7,16 @@ app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
 app.setName('Matka');
 if (!app.requestSingleInstanceLock()) { app.quit(); process.exit(0); }
 
+const MAC = process.platform === 'darwin';
+const KEY = MAC ? { search: '⌘⌥K', cheer: '⌘⌥B' } : { search: 'Ctrl+Alt+K', cheer: 'Ctrl+Alt+B' };
 const W = 260, H = 330;                 // az ablak: alul a kocka, fölötte a buborék helye
 const IDLE_SLEEP = 5 * 60;              // ennyi másodperc tétlenség után elalszik
 const SEARCH_KEY = 'CommandOrControl+Alt+K';
 const CHEER_KEY = 'CommandOrControl+Alt+B';
 
-// ---- beállítások (a felhasználó AppData mappájában) ----
-// indítás a Windowszal: az electron.exe-t a program mappájával együtt kell elindítani
-const LOGIN = app.isPackaged ? { path: process.execPath, args: [] } : { path: process.execPath, args: [path.resolve(__dirname)] };
+// ---- beállítások (Windowson az AppData, Macen az Application Support mappában) ----
+// indítás bejelentkezéskor: Windowson forrásból futtatva az electron.exe-t a program mappájával együtt kell elindítani
+const LOGIN = MAC ? {} : app.isPackaged ? { path: process.execPath, args: [] } : { path: process.execPath, args: [path.resolve(__dirname)] };
 const SET_FILE = () => path.join(app.getPath('userData'), 'settings.json');
 const DEFAULTS = { muted: false, reminderMin: 0, pos: null, engine: 'google', cute: false };
 let S = { ...DEFAULTS };
@@ -44,9 +46,10 @@ function createWindow() {
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false, sandbox: true },
   });
   win.setAlwaysOnTop(true, 'floating');
+  if (MAC) win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });   // Macen minden asztalon látszik
   win.setIgnoreMouseEvents(true, { forward: true });     // az átlátszó részek átengedik a kattintást
   win.loadFile(path.join(__dirname, 'cat.html'));
-  win.once('ready-to-show', () => { win.showInactive(); send('settings', S); if (!process.argv.includes('--icon')) send('hello'); if (process.argv.includes('--demo')) console.log('shown', JSON.stringify(win.getBounds()), win.isVisible()); });
+  win.once('ready-to-show', () => { win.showInactive(); send('settings', { ...S, mac: MAC }); send('hello'); if (process.argv.includes('--demo')) console.log('shown', JSON.stringify(win.getBounds()), win.isVisible()); });
   win.webContents.on('did-finish-load', () => { if (process.argv.includes('--demo')) console.log('loaded'); });
   win.webContents.on('console-message', (_e, _l, m) => { if (process.argv.includes('--demo')) console.log('renderer:', m); });
   win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
@@ -94,7 +97,7 @@ function scheduleCute() {
 }
 
 // ---- tálcaikon (egy kis macskafej, kódból rajzolva) ----
-function trayIcon() {
+function trayIcon() {                     // Windowson színes; Macen fekete sziluett átlátszó szemekkel (sablonikon)
   const n = 32, buf = Buffer.alloc(n * n * 4);
   const set = (x, y, [r, g, b, a]) => { const i = (y * n + x) * 4; buf[i] = b; buf[i + 1] = g; buf[i + 2] = r; buf[i + 3] = a; };
   const inTri = (x, y, a, b, c) => { const s = (p, q, r) => (p[0] - r[0]) * (q[1] - r[1]) - (q[0] - r[0]) * (p[1] - r[1]); const d1 = s([x, y], a, b), d2 = s([x, y], b, c), d3 = s([x, y], c, a); return !((d1 < 0 || d2 < 0 || d3 < 0) && (d1 > 0 || d2 > 0 || d3 > 0)); };
@@ -108,24 +111,27 @@ function trayIcon() {
     if (col === BG && Math.hypot(dx, dy) > 3) col = ORG;
     if ((Math.hypot((cx - 11) / 2.2, (cy - 17) / 3.2) <= 1) || (Math.hypot((cx - 21) / 2.2, (cy - 17) / 3.2) <= 1)) col = EYE;
     if (inTri(cx, cy, [14.5, 22], [17.5, 22], [16, 24])) col = [255, 140, 170, 255];
+    if (MAC) col = col[3] === 0 || col === EYE && !inTri(cx, cy, [4, 14], [13, 9], [6, 2]) && !inTri(cx, cy, [28, 14], [19, 9], [26, 2]) || col[0] === 255 && col[1] === 140 ? [0, 0, 0, 0] : [0, 0, 0, 255];
     set(x, y, col);
   }
-  return nativeImage.createFromBitmap(buf, { width: n, height: n });
+  const img = nativeImage.createFromBitmap(buf, { width: n, height: n, scaleFactor: MAC ? 2 : 1 });
+  if (MAC) img.setTemplateImage(true);
+  return img;
 }
 
 function menu() {
   const rem = m => ({ label: m ? `${m} percenként` : 'Kikapcsolva', type: 'radio', checked: S.reminderMin === m, click: () => { S.reminderMin = m; saveSettings(); scheduleReminder(); } });
-  const eng = (id, label) => ({ label, type: 'radio', checked: S.engine === id, click: () => { S.engine = id; saveSettings(); send('settings', S); } });
+  const eng = (id, label) => ({ label, type: 'radio', checked: S.engine === id, click: () => { S.engine = id; saveSettings(); send('settings', { ...S, mac: MAC }); } });
   return Menu.buildFromTemplate([
-    { label: '🔎 Keresés…  (Ctrl+Alt+K)', click: () => openSearch() },
+    { label: `🔎 Keresés…  (${KEY.search})`, click: () => openSearch() },
     { label: '😺 Simogatás', click: () => send('pet') },
-    { label: '💪 Bátoríts!  (Ctrl+Alt+B)', click: () => send('cheer') },
+    { label: `💪 Bátoríts!  (${KEY.cheer})`, click: () => send('cheer') },
     { type: 'separator' },
     { label: 'Szünet-emlékeztető', submenu: [rem(0), rem(30), rem(50), rem(60), rem(90)] },
     { label: 'Keresőmotor', submenu: [eng('google', 'Google'), eng('bing', 'Bing'), eng('ddg', 'DuckDuckGo')] },
     { label: 'Cuki üzenetek időnként', type: 'checkbox', checked: S.cute, click: i => { S.cute = i.checked; saveSettings(); } },
-    { label: '🔇 Néma mód', type: 'checkbox', checked: S.muted, click: i => { S.muted = i.checked; saveSettings(); send('settings', S); } },
-    { label: 'Indítás a Windowszal', type: 'checkbox', checked: app.getLoginItemSettings(LOGIN).openAtLogin, click: i => app.setLoginItemSettings({ ...LOGIN, openAtLogin: i.checked }) },
+    { label: '🔇 Néma mód', type: 'checkbox', checked: S.muted, click: i => { S.muted = i.checked; saveSettings(); send('settings', { ...S, mac: MAC }); } },
+    { label: MAC ? 'Indítás bejelentkezéskor' : 'Indítás a Windowszal', type: 'checkbox', checked: app.getLoginItemSettings(LOGIN).openAtLogin, click: i => app.setLoginItemSettings({ ...LOGIN, openAtLogin: i.checked }) },
     { label: 'Vissza a sarokba', click: () => { const p = defaultPos(); win.setPosition(p.x, p.y); S.pos = p; saveSettings(); } },
     { label: '❓ Hogyan használd?', click: () => send('help') },
     { type: 'separator' },
@@ -172,23 +178,30 @@ ipcMain.on('menu', () => menu().popup({ window: win }));
 ipcMain.on('search', (_e, text) => { const u = searchUrl(text); if (u) shell.openExternal(u); });
 ipcMain.on('search-done', () => { if (win) win.blur(); });
 
+// ---- ikon: a build/icon.png (512 px) elkészítése az arcból – npm run icon ----
+function makeIcon() {
+  const iw = new BrowserWindow({ width: 512, height: 512, x: 0, y: 0, frame: false, transparent: true, skipTaskbar: true, backgroundColor: '#00000000', webPreferences: { preload: path.join(__dirname, 'preload.js'), sandbox: true } });
+  iw.loadFile(path.join(__dirname, 'cat.html'), { hash: 'icon' });
+  iw.webContents.once('did-finish-load', () => setTimeout(() => iw.webContents.capturePage().then(img => {
+    fs.mkdirSync(path.join(__dirname, 'build'), { recursive: true });
+    fs.writeFileSync(path.join(__dirname, 'build', 'icon.png'), img.resize({ width: 512, height: 512, quality: 'best' }).toPNG());
+    app.quit();
+  }), 1200));
+}
+
 app.whenReady().then(() => {
+  if (process.argv.includes('--icon')) return makeIcon();
+  if (MAC && app.dock) app.dock.hide();            // Macen nem kell Dock-ikon, a menüsorban lakik
   loadSettings();
   createWindow();
   tray = new Tray(trayIcon());
   tray.setToolTip('Matka – a C-kocka cicája');
-  tray.on('click', () => send('pet'));
+  // Windowson: bal klikk simogat, jobb klikk menü; Macen a menüsor-ikonra kattintva a menü nyílik (ez a szokás)
+  tray.on('click', () => (MAC ? tray.popUpContextMenu(menu()) : send('pet')));
   tray.on('right-click', () => tray.popUpContextMenu(menu()));
   globalShortcut.register(SEARCH_KEY, openSearch);
   globalShortcut.register(CHEER_KEY, () => send('cheer'));
   startCursor(); startIdle(); scheduleReminder(); scheduleCute();
-  if (process.argv.includes('--icon')) {           // npm run icon: a build/icon.png elkészítése az arcból
-    win.setIgnoreMouseEvents(false);
-    setTimeout(() => win.webContents.capturePage({ x: (W - 172) / 2, y: H - 12 - 164, width: 172, height: 172 }).then(img => {
-      fs.mkdirSync(path.join(__dirname, 'build'), { recursive: true });
-      fs.writeFileSync(path.join(__dirname, 'build', 'icon.png'), img.resize({ width: 256, height: 256, quality: 'best' }).toPNG()); app.quit();
-    }), 1500);
-  }
   // bemutató mód (npm run demo): sorban végigmegy a viselkedéseken, hogy egyben látszódjon minden
   if (process.argv.includes('--demo')) [[3, 'pet'], [9, 'cute'], [15, 'remind'], [21, 'help'], [27, 'search'], [33, 'sleep', true], [39, 'sleep', false]]
     .forEach(([t, ch, d]) => setTimeout(() => {

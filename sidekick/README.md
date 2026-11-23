@@ -1,4 +1,4 @@
-# Matka – a C-kocka cicája, kis asztali segéd Windowsra
+# Matka – a C-kocka cicája, kis asztali segéd Windowsra és Macre
 
 A C-kocka „cat mode”-ja kiköltözött az asztalodra. **Matka** egy kis macskafejes kocka a képernyő sarkában:
 figyel, dorombol, és ha nehéz a meló, egy kattintásra lelket önt beléd. **Magától nem szól és nem nyávog**,
@@ -7,12 +7,16 @@ hogy ne vonja el a figyelmedet a munkáról.
 ![Matka](docs/cica.png)
 
 ## Letöltés – a barátaidnak is
-**[⬇ Matka.exe](https://github.com/Zollthunder/Ckoc/releases/latest/download/Matka.exe)** (Windows 10/11, ~75 MB). Telepíteni nem kell: töltsd le, és indítsd el dupla kattintással.
-Ha azt szeretnéd, hogy mindig elinduljon, a menüben kapcsold be az **Indítás a Windowszal** pontot.
+- **Windows 10/11:** [⬇ Matka.exe](https://github.com/Zollthunder/Ckoc/releases/latest/download/Matka.exe) (~75 MB). Telepíteni nem kell, dupla kattintással indul.
+- **Mac (Intel és Apple Silicon):** [⬇ Matka-mac.dmg](https://github.com/Zollthunder/Ckoc/releases/latest/download/Matka-mac.dmg). Nyisd meg, és húzd a Matkát az Alkalmazások mappába.
 
-**Első indításkor a Windows figyelmeztethet**, hogy „A Windows megvédte a számítógépet”. Ennek az az oka, hogy az exe nincs
-digitálisan aláírva (ahhoz fizetős tanúsítvány kellene), nem az, hogy baj lenne vele. Kattints a **További információ** linkre,
-majd a **Futtatás mindenképp** gombra. Ezt csak egyszer kell.
+Ha azt szeretnéd, hogy mindig elinduljon, a menüben kapcsold be az **Indítás a Windowszal** (Macen: **Indítás bejelentkezéskor**) pontot.
+
+**Első indításkor a rendszer figyelmeztet**, mert a program nincs digitálisan aláírva (ahhoz fizetős tanúsítvány kellene, egy ingyenes hobbiprojektnél ez nem éri meg). Egyszer kell átengedni:
+- **Windows:** „A Windows megvédte a számítógépet” → **További információ** → **Futtatás mindenképp**.
+- **Mac:** Ctrl+kattintás a Matkán → **Megnyitás** → **Megnyitás**. macOS 15-től: **Rendszerbeállítások → Adatvédelem és biztonság → Megnyitás mindenképp**. Ha azt írja, hogy „sérült”, a Terminálban: `xattr -cr /Applications/Matka.app` (lásd [KIADAS.md](KIADAS.md)).
+
+> A Mac-változatot a GitHub építi (`.github/workflows/matka.yml`), Macen még nem próbáltuk ki – ha furcsán viselkedik, szólj!
 
 ## Forrásból futtatás (fejlesztőknek)
 Kell hozzá a [Node.js](https://nodejs.org). A `sidekick` mappában:
@@ -23,17 +27,18 @@ npm run parancsikon
 Az első parancs letölti az Electront, a második egy **„Matka”** parancsikont tesz az Asztalra. Parancsikon nélkül: `npm start`.
 
 Az exe elkészítése: `npm run icon` (az ikon az arcból), majd `npm run dist` → `release/Matka.exe`.
+Kiadás (Windows + Mac egyszerre): egy `matka-v…` tag feltöltése, pl. `git tag matka-v0.2.0 && git push origin matka-v0.2.0` – a GitHub Actions megépíti mindkettőt, és feltölti a Release-be a [KIADAS.md](KIADAS.md) szövegével.
 A gép régi Node-ja miatt a csomagoló az Electron saját Node-jával fut ([build/dist.js](build/dist.js)).
 
 ## Használat
 | Mit csinálsz | Mit csinál a cica |
 |---|---|
 | **Kattintasz rá** | dorombol, szívecskéket küld, és mond egy **bíztató mondatot** 💪 |
-| **Dupla kattintás** vagy **Ctrl+Alt+K** | felugrik a **kereső** 🔎 (lásd lent) |
-| **Ctrl+Alt+B** | bíztatás bárhonnan, akkor is, ha épp más ablakban vagy |
+| **Dupla kattintás** vagy **Ctrl+Alt+K** (Mac: **⌘⌥K**) | felugrik a **kereső** 🔎 (lásd lent) |
+| **Ctrl+Alt+B** (Mac: **⌘⌥B**) | bíztatás bárhonnan, akkor is, ha épp más ablakban vagy |
 | **Föléviszed az egeret** | hegyezi a fülét |
 | **Megfogod és húzod** | arrébb megy; a helyét megjegyzi |
-| **Jobb gomb** rajta (vagy a tálcaikonon) | menü |
+| **Jobb gomb** rajta, vagy a tálcaikon (Macen: Ctrl+kattintás, vagy a menüsor-ikon) | menü |
 | **Nem nyúlsz a géphez 5 percig** | elszunyókál (zzz); ha visszajössz, csendben felébred |
 
 A szeme mindig az egérmutatót követi, és néha pislog.
@@ -63,7 +68,7 @@ Az Esc bezárja a keresőt.
 - **❓ Hogyan használd?** – rövid súgó a buborékban
 - **Kilépés**
 
-A beállítások itt vannak: `%APPDATA%\Matka\settings.json`.
+A beállítások itt vannak: Windowson `%APPDATA%\Matka\settings.json`, Macen `~/Library/Application Support/Matka/settings.json`.
 
 ## Bemutató mód
 `npm run demo` – sorban végigmegy mindenen (bíztatás, cuki üzenet, emlékeztető, súgó, kereső, alvás, ébredés), hogy egyben lásd.

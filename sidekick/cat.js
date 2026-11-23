@@ -4,12 +4,15 @@
 const K = window.kocka || { on() {}, send() {} };   // böngészős előnézetben nincs Electron-híd
 const $ = id => document.getElementById(id);
 const cube = $('cube'), bubble = $('bubble'), sayEl = $('say'), find = $('find'), q = $('q');
+const ICON = location.hash === '#icon';             // npm run icon: nagy, éles kép az alkalmazásikonhoz
+const SCALE = ICON ? 3 : 1;
+if (ICON) { document.body.classList.add('icon'); $('face').width = $('face').height = 240 * SCALE; }
 const g = $('face').getContext('2d');
 
 const CAT = { eye: '#c4f06e', nose: '#ff8caa', ear: '#783c50' };
 const PURR_LEN = 3.2;
 const F = { hearts: 0, mode: 'face', look: { x: 0, y: 0 }, target: { x: 0, y: 0 }, blink: 0, nextBlink: 2, talkUntil: 0, hover: false };
-let settings = { muted: false };
+let settings = { muted: false, mac: /Mac/.test(navigator.platform) };
 
 // ------------------------------------------------------------------ hangok (kódból, mint a szimulátorban)
 let audio, master;
@@ -61,7 +64,7 @@ for (const el of [cube, bubble]) {
 
 // húzás, kattintás (simogatás), dupla kattintás (keresés), jobb gomb (menü)
 let drag = null, clickTimer = null;
-cube.addEventListener('mousedown', e => { if (e.button === 0) drag = { x: e.screenX, y: e.screenY, moved: false }; });
+cube.addEventListener('mousedown', e => { if (e.button === 0 && !e.ctrlKey) drag = { x: e.screenX, y: e.screenY, moved: false }; });
 addEventListener('mousemove', e => {
   if (!drag || !(e.buttons & 1)) return;
   const dx = e.screenX - drag.x, dy = e.screenY - drag.y;
@@ -173,7 +176,7 @@ const CHEER = [
   'Rajta! Ezt is kipipálod mindjárt. ✅',
   'Mindjárt kész, és utána jöhet egy jól megérdemelt simogatás. Nekem. Mármint neked. 😸',
 ];
-const HELP = 'Kattints rám: dorombolok és bíztatlak 😺 · Dupla katt vagy Ctrl+Alt+K: keresés 🔎 · Jobb gomb: menü (néma mód is) · Húzz arrébb, ha útban vagyok!';
+const HELP = () => `Kattints rám: dorombolok és bíztatlak 😺 · Dupla katt vagy ${settings.mac ? '⌘⌥K' : 'Ctrl+Alt+K'}: keresés 🔎 · ${settings.mac ? 'Ctrl+katt vagy jobb gomb' : 'Jobb gomb'}: menü (néma mód is) · Húzz arrébb, ha útban vagyok!`;
 function cheer() { pet(true); }
 
 // ------------------------------------------------------------------ keresés és számolás
@@ -224,13 +227,14 @@ K.on('remind', () => { if (F.mode !== 'sleep') say(pick(REMIND), 12000, { meow: 
 K.on('sleep', on => { if (on) { hideBubble(); F.mode = 'sleep'; } else if (F.mode === 'sleep') wake(false); });
 K.on('cheer', () => cheer());
 K.on('cute', () => { if (F.mode !== 'sleep' && bubble.hidden) say(pick(CUTE), 9000, { meow: Math.random() < 0.5 }); });
-K.on('help', () => say(HELP, 15000));
-K.on('hello', () => say('Miaú! Matka vagyok. 😺 Kattints rám, ha jólesne egy kis bíztatás, vagy duplán, ha keresnél valamit.', 7000, { meow: true }));
+K.on('help', () => say(HELP(), 15000));
+K.on('hello', () => !ICON && say('Miaú! Matka vagyok. 😺 Kattints rám, ha jólesne egy kis bíztatás, vagy duplán, ha keresnél valamit.', 7000, { meow: true }));
 
 // ------------------------------------------------------------------ az arc rajzolása (240 px, mint a XIAO kijelzője)
 function poly(pts, col) { g.fillStyle = col; g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(120 + x, 120 + y) : g.moveTo(120 + x, 120 + y))); g.closePath(); g.fill(); }
 function draw(now) {
   const t = now / 1000, dt = Math.min(0.1, (now - (draw.last || now)) / 1000); draw.last = now;
+  g.setTransform(SCALE, 0, 0, SCALE, 0, 0);
   g.clearRect(0, 0, 240, 240); g.fillStyle = '#050608'; g.fillRect(0, 0, 240, 240);
   g.lineCap = 'round'; g.shadowBlur = 18; g.shadowColor = CAT.eye;
   const sleep = F.mode === 'sleep', purr = F.mode === 'purr', listen = F.hover && !sleep && !purr, think = F.mode === 'think';

@@ -2,7 +2,7 @@
   "name": "matka",
   "version": "0.1.0",
   "private": true,
-  "description": "Matka – a C-kocka cicája: kis asztali segéd Windowsra",
+  "description": "Matka – a C-kocka cicája: kis asztali segéd Windowsra és Macre",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -37,6 +37,15 @@
     },
     "portable": {
       "artifactName": "Matka.exe"
+    },
+    "mac": {
+      "target": "dir",
+      "icon": "build/icon.png",
+      "category": "public.app-category.lifestyle",
+      "identity": null,
+      "extendInfo": {
+        "LSUIElement": true
+      }
     }
   }
 }
