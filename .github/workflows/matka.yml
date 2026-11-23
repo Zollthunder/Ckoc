@@ -1,11 +1,16 @@
 # Matka (sidekick/) elkészítése Windowsra és Macre, és feltöltése a GitHub Release-be.
-# Indul: egy "matka-v…" tag feltöltésekor (pl. matka-v0.1.0), vagy kézzel az Actions fülön (ekkor csak letölthető artifact lesz).
+# Indul: egy "matka-v…" tag feltöltésekor (pl. matka-v0.1.0), vagy kézzel az Actions fülön – ott egy meglévő kiadás
+# tagjét megadva a hiányzó fájl (pl. a Mac-változat) utólag is felkerül a kiadáshoz.
 name: Matka build
 
 on:
   push:
     tags: ['matka-v*']
   workflow_dispatch:
+    inputs:
+      tag:
+        description: "Meglévő kiadás tagje (pl. matka-v0.1.1), amihez a fájlok felkerüljenek – üresen csak artifact lesz"
+        required: false
 
 permissions:
   contents: write
@@ -15,8 +20,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, macos-latest]
+        # Mac: Intel-es gép, mert az Apple Silicon-os gépekre a GitHubon órákig kell várni (a build így is univerzális)
+        os: [windows-latest, macos-15-intel]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     defaults:
       run:
         working-directory: sidekick
@@ -53,9 +60,10 @@ jobs:
             sidekick/release/Matka-mac.dmg
           if-no-files-found: ignore
 
+  # akkor is kiadja, ha az egyik rendszer nem készült el – ami megvan, az felkerül (a másik később pótolható)
   release:
     needs: build
-    if: startsWith(github.ref, 'refs/tags/')
+    if: always() && (startsWith(github.ref, 'refs/tags/') || inputs.tag != '')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -65,6 +73,8 @@ jobs:
           merge-multiple: true
       - uses: softprops/action-gh-release@v2
         with:
-          name: Matka ${{ github.ref_name }} – a C-kocka cicája az asztalodra
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          name: Matka ${{ inputs.tag || github.ref_name }} – a C-kocka cicája az asztalodra
           body_path: sidekick/KIADAS.md
           files: out/*
+          fail_on_unmatched_files: false

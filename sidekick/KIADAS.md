@@ -2,7 +2,7 @@ Matka egy kis macskafejes kocka a képernyő sarkában – a C-kocka „cat mode
 
 ## Letöltés
 - **Windows 10/11:** `Matka.exe` (~75 MB). Telepíteni nem kell, dupla kattintással indul.
-- **Mac (Intel és Apple Silicon, macOS 11+):** `Matka-mac.dmg`. Nyisd meg, és húzd a Matkát az Alkalmazások mappába.
+- **Mac (Intel és Apple Silicon, macOS 11+):** `Matka-mac.dmg`. Nyisd meg, és húzd a Matkát az Alkalmazások mappába. (Ha még nincs itt, hamarosan felkerül – a GitHub Mac-gépeire néha sokat kell várni.)
 
 ## Mit tud?
 - Kattints rá: dorombol, és bíztat egy kicsit 💪 (62 mondat, nem ismétli magát)
